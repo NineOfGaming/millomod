@@ -1,0 +1,169 @@
+package net.millo.millomod.mod.features.gui.elements;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.millo.millomod.mod.features.gui.ClickableElementI;
+import net.millo.millomod.mod.features.gui.ElementFadeIn;
+import net.millo.millomod.mod.features.gui.ScrollableEntryI;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.ScreenRect;
+import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
+import java.util.function.Consumer;
+
+@Environment(EnvType.CLIENT)
+public class ButtonElement implements ScrollableEntryI, Element, Widget, Selectable, ClickableElementI {
+    private int x, y, realX, realY;
+    protected int width, height;
+    protected boolean hovered;
+    public boolean active = true, visible = true;
+    protected float alpha = 1.F;
+
+    @Nullable
+    private Tooltip tooltip;
+
+    PressAction onPress;
+    ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.RIGHT);
+
+    TextWidget textWidget;
+    TextRenderer textRenderer;
+    public ButtonElement(int x, int y, int width, int height, Text message, PressAction onPress, TextRenderer textRenderer) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.onPress = onPress;
+        this.textRenderer = textRenderer;
+
+        textWidget = new TextWidget(x, y, width, height, message, textRenderer);
+    }
+
+    public ButtonElement setFade(ElementFadeIn fade) {
+        this.fade = fade;
+        return this;
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        if (this.visible) {
+            this.hovered = mouseX >= this.getRealX() && mouseY >= this.getRealY() && mouseX < this.getRealX() + this.width && mouseY < this.getRealY() + this.height;
+            this.renderWidget(context, mouseX, mouseY, delta);
+            if (this.tooltip != null) {
+                this.tooltip.render(this.isHovered(), this.isFocused(), this.getNavigationFocus());
+            }
+
+        }
+    }
+    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        fade.fadeIn(delta);
+
+        int x = getX() + fade.getXOffset();
+        int y = getY() + fade.getYOffset();
+        int color = new Color(0, 0, 0, (int)(fade.getProgress() * 150)).hashCode();
+        if (isHovered()) color = new Color(12, 11, 9, (int)(fade.getProgress() * 150)).hashCode();
+
+        context.getMatrices().push();
+        context.fill(x, y, x+width, y+height, 0, color);
+        context.getMatrices().pop();
+
+        textWidget.setX(x);
+        textWidget.setY(y);
+        textWidget.render(context, mouseX, mouseY, delta);
+
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setRealX(int x) {
+        realX = x;
+    }
+
+    public void setRealY(int y) {
+        realY = y;
+    }
+
+    public int getRealX() {
+        return realX;
+    }
+
+    public int getRealY() {
+        return realY;
+    }
+
+
+    public void forEachChild(Consumer<ClickableWidget> consumer) {}
+
+
+
+    @Override
+    public void setFocused(boolean focused) {}
+
+    @Override
+    public boolean isFocused() {
+        return false;
+    }
+
+    @Override
+    public SelectionType getType() {
+        return SelectionType.NONE;
+    }
+    public boolean isHovered() {
+        return this.hovered;
+    }
+
+    @Override
+    public void appendNarrations(NarrationMessageBuilder builder) {
+
+    }
+
+    public ScreenRect getNavigationFocus() {
+        return new ScreenRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    }
+
+    @Override
+    public void onPress() {
+        onPress.onPress(this);
+    }
+
+    public void setText(Text message) {
+        textWidget = new TextWidget(x, y, width, height, message, textRenderer);
+    }
+
+    @Environment(EnvType.CLIENT)
+    public interface PressAction {
+        void onPress(ButtonElement button);
+    }
+}

@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "net.millo.millomod.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ChestSearchAccessor",
+    "MChestSearch",
+    "MClientCommonNetworkHandler"
+  ],
+  "client": [
+    "MContainerScreen",
+    "MInGameHUD"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}
