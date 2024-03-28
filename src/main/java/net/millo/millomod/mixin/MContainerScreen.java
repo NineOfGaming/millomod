@@ -2,6 +2,7 @@ package net.millo.millomod.mixin;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import net.millo.millomod.config.Config;
 import net.millo.millomod.mod.util.StaticSkinRenderer;
 import net.minecraft.block.AbstractSkullBlock;
 import net.minecraft.block.Block;
@@ -21,16 +22,20 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.UUID;
 
 @Mixin(HandledScreen.class)
 public class MContainerScreen {
 
+
     @Inject(method = "drawMouseoverTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTooltip(Lnet/minecraft/client/font/TextRenderer;Ljava/util/List;Ljava/util/Optional;II)V"), locals = LocalCapture.CAPTURE_FAILHARD)
     private void renderTooltip(DrawContext context, int x, int y, CallbackInfo ci, ItemStack stack) {
         // TODO config
+
+        boolean enabled = Config.getInstance().get("previewskin.enabled");
+        if (!enabled) return;
+
         Item item = stack.getItem();
         if (item instanceof BlockItem) {
             Block block = ((BlockItem) item).getBlock();
@@ -61,6 +66,7 @@ public class MContainerScreen {
 //        var entity = new Skin
     }
 
+    @Unique
     private GameProfile readGameProfile(NbtCompound skullOwner) {
         UUID uuid = skullOwner.getUuid("Id");
         String name = skullOwner.getString("Name");

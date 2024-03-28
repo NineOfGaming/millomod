@@ -1,10 +1,15 @@
-package net.millo.millomod.mod.features.gui;
+package net.millo.millomod.mod.util.gui;
 
 public class ElementFadeIn {
     private float progress = 0f;
-    private Direction direction;
+    private final Direction direction;
     public ElementFadeIn(Direction direction) {
         this.direction = direction;
+    }
+
+    public ElementFadeIn(ElementFadeIn fade) {
+        direction = fade.direction;
+        progress = fade.progress;
     }
 
     public boolean fadeIn(float delta) {
@@ -24,9 +29,13 @@ public class ElementFadeIn {
         return progress;
     }
 
+    public void setProgress(float progress) {
+        this.progress = progress;
+    }
+
     public enum Direction {
-        UP(0, 1),
-        DOWN(0, -1),
+        UP(0, -1),
+        DOWN(0, 1),
         LEFT(-1, 0),
         RIGHT(1, 0);
 

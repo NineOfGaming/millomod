@@ -4,16 +4,16 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.millo.millomod.mod.commands.ArgBuilder;
 import net.millo.millomod.mod.commands.Command;
-import net.millo.millomod.mod.features.gui.SettingsGUI;
+import net.millo.millomod.mod.features.gui.ColorsGUI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandRegistryAccess;
 
-public class SettingsCommand extends Command {
+public class ColorsCommand extends Command {
     @Override
     public void register(MinecraftClient instance, CommandDispatcher<FabricClientCommandSource> cd, CommandRegistryAccess context) {
-        cd.register(ArgBuilder.literal("settings")
+        cd.register(ArgBuilder.literal("colors")
                 .executes(ctx -> {
-                    new SettingsGUI().open();
+                    new ColorsGUI().open();
                     return 1;
                 })
         );

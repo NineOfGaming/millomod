@@ -1,5 +1,6 @@
 package net.millo.millomod.mixin;
 
+import net.millo.millomod.config.Config;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -12,6 +13,7 @@ import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -31,17 +33,23 @@ public abstract class MChestSearch extends Screen {
         super(title);
     }
 
+    @Unique
     private final int SEARCH_BOX_WIDTH = 96;
+    @Unique
     private boolean isChestScreen;
-    private boolean isEmptyString;
+    @Unique
+    private boolean isEmptyString, enabled;
+    @Unique
     private static TextFieldWidget itemSearchBox;
 
     @Inject(at = @At("RETURN"), method = "init()V")
     private void addSearchBox(CallbackInfo info) {
+        enabled = Config.getInstance().get("menusearch.enabled");
+        if (!enabled) return;
+
         isChestScreen = ((ChestSearchAccessor) this).getHandler() instanceof GenericContainerScreenHandler handler && handler.getInventory() instanceof SimpleInventory;
         if (!isChestScreen) return;
 //        isChestScreen = title.getString().contains("Functions") || title.getString().contains("Processes");
-//        if (!isChestScreen) return;
 
         itemSearchBox = new TextFieldWidget(MinecraftClient.getInstance().textRenderer,
                 this.x + backgroundWidth - SEARCH_BOX_WIDTH - 8,
@@ -63,6 +71,7 @@ public abstract class MChestSearch extends Screen {
 
     @Inject(at = @At("TAIL"), method = "drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V")
     private void renderMatchingResults(DrawContext context, Slot slot, CallbackInfo info) {
+        if (!enabled) return;
         if (!isChestScreen || isEmptyString) return;
 
         int color;
@@ -82,17 +91,19 @@ public abstract class MChestSearch extends Screen {
 
     @Inject(at = @At("HEAD"), method = "keyPressed(III)Z", cancellable = true)
     private void checkKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> info) {
-        if (keyCode == 257) {
-            itemSearchBox.setFocused(false);
-        }
+        if (enabled) {
+            if (keyCode == 257) {
+                itemSearchBox.setFocused(false);
+            }
 
-        if (modifiers == 2 && keyCode == 70) {
-            itemSearchBox.setEditable(true);
-            itemSearchBox.setSelectionStart(0);
-            itemSearchBox.setSelectionEnd(itemSearchBox.getText().length());
-            this.setFocused(itemSearchBox);
-            info.cancel();
-            return;
+            if (modifiers == 2 && keyCode == 70) {
+                itemSearchBox.setEditable(true);
+                itemSearchBox.setSelectionStart(0);
+                itemSearchBox.setSelectionEnd(itemSearchBox.getText().length());
+                this.setFocused(itemSearchBox);
+                info.cancel();
+                return;
+            }
         }
 
         if (super.keyPressed(keyCode, scanCode, modifiers)) {
@@ -111,6 +122,7 @@ public abstract class MChestSearch extends Screen {
 
     @Inject(at = @At("RETURN"), method = "render(Lnet/minecraft/client/gui/DrawContext;IIF)V")
     private void renderSearchBox(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo info) {
+        if (!enabled) return;
         if (!isChestScreen) return;
         itemSearchBox.render(context, mouseX, mouseY, delta);
 

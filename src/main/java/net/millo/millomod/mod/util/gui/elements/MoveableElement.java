@@ -1,8 +1,8 @@
-package net.millo.millomod.mod.features.gui.elements;
+package net.millo.millomod.mod.util.gui.elements;
 
 import net.millo.millomod.config.Config;
-import net.millo.millomod.mod.features.Renderable;
-import net.millo.millomod.mod.features.gui.ElementFadeIn;
+import net.millo.millomod.mod.features.IRenderable;
+import net.millo.millomod.mod.util.gui.ElementFadeIn;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
@@ -19,8 +19,8 @@ public class MoveableElement extends ClickableWidget implements Drawable, Elemen
     private final ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.UP);
     TextWidget textWidget;
 
-    Renderable renderable;
-    public MoveableElement(Renderable renderable, String name, TextRenderer textRenderer) {
+    IRenderable renderable;
+    public MoveableElement(IRenderable renderable, String name, TextRenderer textRenderer) {
         super(renderable.getX(), renderable.getY(), renderable.getWidth(), renderable.getHeight(), Text.literal(name));
         this.renderable = renderable;
         textWidget = new TextWidget(getX(), getY(), renderable.getWidth(), renderable.getHeight(), Text.literal(name), textRenderer);
@@ -46,7 +46,7 @@ public class MoveableElement extends ClickableWidget implements Drawable, Elemen
         if (button == 0) {
             if (dragged) {
                 Config config = Config.getInstance();
-                String key = "hud."+renderable.getKeyName();
+                String key = "hud."+renderable.getKey();
                 config.set(key+".x", getX());
                 config.set(key+".y", getY());
 

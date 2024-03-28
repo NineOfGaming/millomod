@@ -1,10 +1,10 @@
-package net.millo.millomod.mod.features.gui.elements;
+package net.millo.millomod.mod.util.gui.elements;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.millo.millomod.mod.features.gui.ClickableElementI;
-import net.millo.millomod.mod.features.gui.ElementFadeIn;
-import net.millo.millomod.mod.features.gui.ScrollableEntryI;
+import net.millo.millomod.mod.util.gui.ClickableElementI;
+import net.millo.millomod.mod.util.gui.ElementFadeIn;
+import net.millo.millomod.mod.util.gui.ScrollableEntryI;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
@@ -15,7 +15,6 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,8 +26,7 @@ public class ButtonElement implements ScrollableEntryI, Element, Widget, Selecta
     private int x, y, realX, realY;
     protected int width, height;
     protected boolean hovered;
-    public boolean active = true, visible = true;
-    protected float alpha = 1.F;
+    public boolean visible = true;
 
     @Nullable
     private Tooltip tooltip;
@@ -38,20 +36,25 @@ public class ButtonElement implements ScrollableEntryI, Element, Widget, Selecta
 
     TextWidget textWidget;
     TextRenderer textRenderer;
-    public ButtonElement(int x, int y, int width, int height, Text message, PressAction onPress, TextRenderer textRenderer) {
+    public ButtonElement(int x, int y, int width, int height, PressAction onPress) {
         this.x = x;
         this.y = y;
+        this.realX = x;
+        this.realY = y;
         this.width = width;
         this.height = height;
         this.onPress = onPress;
-        this.textRenderer = textRenderer;
+    }
 
+    public ButtonElement(int x, int y, int width, int height, Text message, PressAction onPress, TextRenderer textRenderer) {
+        this(x, y, width, height, onPress);
+
+        this.textRenderer = textRenderer;
         textWidget = new TextWidget(x, y, width, height, message, textRenderer);
     }
 
-    public ButtonElement setFade(ElementFadeIn fade) {
+    public void setFade(ElementFadeIn fade) {
         this.fade = fade;
-        return this;
     }
 
     @Override
@@ -73,14 +76,12 @@ public class ButtonElement implements ScrollableEntryI, Element, Widget, Selecta
         int color = new Color(0, 0, 0, (int)(fade.getProgress() * 150)).hashCode();
         if (isHovered()) color = new Color(12, 11, 9, (int)(fade.getProgress() * 150)).hashCode();
 
-        context.getMatrices().push();
         context.fill(x, y, x+width, y+height, 0, color);
-        context.getMatrices().pop();
 
+        if (textWidget == null) return;
         textWidget.setX(x);
         textWidget.setY(y);
         textWidget.render(context, mouseX, mouseY, delta);
-
     }
 
     public void setX(int x) {
@@ -153,6 +154,14 @@ public class ButtonElement implements ScrollableEntryI, Element, Widget, Selecta
         return new ScreenRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
     }
 
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (!isHovered()) return false;
+        onPress();
+        return true;
+    }
+
     @Override
     public void onPress() {
         onPress.onPress(this);
@@ -160,6 +169,10 @@ public class ButtonElement implements ScrollableEntryI, Element, Widget, Selecta
 
     public void setText(Text message) {
         textWidget = new TextWidget(x, y, width, height, message, textRenderer);
+    }
+
+    public void setTooltip(Text literal) {
+        tooltip = Tooltip.of(literal);
     }
 
     @Environment(EnvType.CLIENT)

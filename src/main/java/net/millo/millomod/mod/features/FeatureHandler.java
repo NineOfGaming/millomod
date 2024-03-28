@@ -1,62 +1,94 @@
 package net.millo.millomod.mod.features;
 
 import net.millo.millomod.config.Config;
+import net.millo.millomod.mod.features.impl.LagslayerHUD;
+import net.millo.millomod.mod.features.impl.MenuSearch;
+import net.millo.millomod.mod.features.impl.PacketHandler;
+import net.millo.millomod.mod.features.impl.PreviewSkin;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.network.listener.PacketListener;
 import net.minecraft.network.packet.Packet;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 public class FeatureHandler {
 
-    private static final List<Feature> features = new ArrayList<>();
+    private static final HashMap<String, Feature> features = new HashMap<>();
 
+    static PacketHandler packetHandler;
     public static void load() {
+        packetHandler = new PacketHandler();
+
         features.clear();
         register(new LagslayerHUD());
-        configUpdate(Config.getInstance());
+        register(new PreviewSkin());
+        register(new MenuSearch());
+
+        Config config = Config.getInstance();
+        defaultConfig(config);
+        configUpdate(config);
+
+        try {
+            config.saveConfig();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 
     private static void register(Feature feature) {
-        features.add(feature);
+        packetHandler.register(feature);
+        features.put(feature.getKey(), feature);
     }
 
-    static ArrayList<String> l = new ArrayList<>();
+
+
+//     Pass through
+//    static ArrayList<String> packets = new ArrayList<>();
     public static <T extends PacketListener> boolean handlePacket(Packet<T> packet) {
+        return packetHandler.handlePacket(packet);
 
-        for (Feature feature : features) {
-            if (feature.onReceivePacket(packet)) return true;
-        }
-
-//        if (packet instanceof GameMessageS2CPacket) {
-//            // On receive chat message
-////            System.out.println(">>> " + ((GameMessageS2CPacket) packet).content().getString());
-////            System.out.println(">> " + ((GameMessageS2CPacket) packet).content());
+//        for (Feature feature : features.values()) {
+//            if (feature.onReceivePacket(packet)) return true;
 //        }
+//
+//        if (packet instanceof GameMessageS2CPacket) {
+//            String message = ((GameMessageS2CPacket) packet).content().getString();
+//            System.out.println("> "+ message);
+//        }
+//
+//        if (!packets.contains(packet.getClass().toString())) {
+//            System.out.println(packet.getClass());
+//            packets.add(packet.getClass().toString());
+//        }
+////        packet instanceof GameMessageS2CPacket  // On receive chat message;
 
-//        if (l.contains(packet.getClass().getName())) return false;
-//        l.add(packet.getClass().getName());
-
-//        System.out.println(packet.getClass().getName());
-
-        return false;
     }
 
     public static void renderHUD(DrawContext context, float tickDelta, TextRenderer textRenderer) {
-        for (Feature feature : features) {
-            if (feature instanceof Renderable) {
-                ((Renderable) feature).render(context, tickDelta, textRenderer);
+        for (Feature feature : getFeatures()) {
+            if (feature instanceof IRenderable) {
+                ((IRenderable) feature).render(context, tickDelta, textRenderer);
             }
         }
     }
 
     public static void configUpdate(Config config) {
-        features.forEach(feature -> feature.onConfigUpdate(config));
+        features.forEach((key, feature) -> feature.onConfigUpdate(config));
+    }
+    private static void defaultConfig(Config config) {
+        features.forEach((key, feature) -> feature.defaultConfig(config));
     }
 
-    public static List<Feature> getFeatures() {
-        return features;
+
+    // Getters // setters
+
+    public static Collection<Feature> getFeatures() {
+        return features.values();
+    }
+    public static Feature getFeature(String key) {
+        return features.get(key);
     }
 }

@@ -13,11 +13,74 @@ import java.util.*;
 public class Config {
 
     private static Config INSTANCE;
-    private static final HashMap<String, String> config = new HashMap<>();
+    private static final HashMap<String, ConfigEntry<?>> config = new HashMap<>();
 
     private final File file;
 
     private boolean broken = false;
+
+
+    public static class ConfigEntry<T> {
+        private final String key;
+        private final T defaultValue;
+        private T value;
+
+        public ConfigEntry(String key, T value) {
+            this.key = key;
+            this.value = value;
+            defaultValue = value;
+        }
+
+        public <U> boolean isOfType(Class<U> otherType) {
+            return getValue().getClass().equals(otherType);
+        }
+
+        public static ConfigEntry<?> of(String from) {
+            /// key:i=5
+            String[] parts = from.split("[=:]", 3);
+            if (parts.length != 3) {
+                throw new RuntimeException("Syntax error in config file on: " + from);
+            }
+
+            String key = parts[0];
+            String type = parts[1];
+            String value = parts[2];
+
+            return switch(type) {
+                case "b" -> new ConfigEntry<>(key, value.equals("true"));
+                case "d" -> new ConfigEntry<>(key, Double.parseDouble(value));
+                case "i" -> new ConfigEntry<>(key, Integer.parseInt(value));
+                case "s" -> new ConfigEntry<>(key, value);
+                default -> throw new IllegalStateException("Unexpected value: " + type);
+            };
+        }
+
+        public void setValue(T value) {
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public T getDefaultValue() {
+            return defaultValue;
+        }
+
+        public T getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            String type = "";
+            if (value instanceof Boolean) type = "b";
+            if (value instanceof Integer) type = "i";
+            if (value instanceof Double) type = "d";
+            if (value instanceof String) type = "s";
+            return key+":"+ type +"=" + value;
+        }
+    }
 
 
     public Config(String filename) {
@@ -50,38 +113,58 @@ public class Config {
         return INSTANCE;
     }
 
-    public <T extends Comparable<? super T>> void set(String key, T value) {
-        if (!(value instanceof Integer || value instanceof Double || value instanceof String || value instanceof Boolean)) {
-            throw new IllegalArgumentException("Type T must be Integer, Double, String, or Boolean.");
+//    public <T extends Comparable<? super T>> void set(String key, T value) {
+//        if (!(value instanceof Integer || value instanceof Double || value instanceof String || value instanceof Boolean)) {
+//            throw new IllegalArgumentException("Type T must be Integer, Double, String, or Boolean.");
+//        }
+//        config.put(key, value.toString());
+//    }
+
+
+    /// Sets only when the key doesn't exist in the config file
+    public <T> void setIfNull(String key, T value) {
+        ConfigEntry<T> entry = (ConfigEntry<T>) getEntry(key);
+        if (entry == null) {
+            entry = new ConfigEntry<>(key, value);
+            config.put(key, entry);
         }
-        config.put(key, value.toString());
     }
 
+    public <T> void set(String key, T value) {
+        ConfigEntry<T> entry = (ConfigEntry<T>) getEntry(key);
+        if (entry != null) {
+            entry.setValue(value);
+            return;
+        }
+
+        entry = new ConfigEntry<>(key, value);
+        config.put(key, entry);
+    }
+
+//    public <T> void set(ConfigEntry<T> entry, T value) {
+//        config.put(entry.getKey(), );
+//    }
 
     private void createConfig() throws IOException {
         file.getParentFile().mkdirs();
         Files.createFile(file.toPath());
 
-        ModConfigs.loadDefaults();
-
         saveConfig();
     }
     private void loadConfig() throws IOException {
         Scanner reader = new Scanner(file);
-        for (int line = 1; reader.hasNextLine(); line ++) {
-            parseConfigEntry(reader.nextLine(), line);
+        while (reader.hasNextLine()) {
+            parseConfigEntry(reader.nextLine());
         }
     }
     public void saveConfig() throws IOException {
         // Generate the config string
         StringBuilder configString = new StringBuilder();
-        for (Map.Entry<String, String> entry : config.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            configString.append(key).append("=").append(value).append("\n");
+        for (Map.Entry<String, ConfigEntry<?>> entry : config.entrySet()) {
+            configString.append(entry.getValue().toString()).append("\n");
         }
 
-        System.out.println(configString);
+        System.out.println("Saving Config: " + configString);
 
         // Write the config in the file
         if (!file.exists()) {
@@ -104,43 +187,22 @@ public class Config {
         return path.resolve(filename + ".config").toFile();
     }
 
-    private void parseConfigEntry(String entry, int line) {
+    private void parseConfigEntry(String entry) {
         if (entry.isEmpty() || entry.startsWith("#")) return;
-        String[] parts = entry.split("=", 2);
-        if (parts.length == 2) {
-            config.put(parts[0], parts[1]);
-        } else {
-            throw new RuntimeException("Syntax error in config file on line " + line);
-        }
+        ConfigEntry<?> configEntry = ConfigEntry.of(entry);
+        config.put(configEntry.getKey(), configEntry);
     }
 
 
-    private String get(String key) {
+
+
+    private ConfigEntry<?> getEntry(String key) {
         return config.get(key);
     }
-    public boolean getOrDefault(String key, boolean def) {
-        String val = get(key);
-        if (val != null) {
-            return val.equalsIgnoreCase("true");
-        }
-        return def;
+    public <T> T get(String key) {
+        ConfigEntry<?> entry = config.get(key);
+        if (entry == null) return null;
+        return (T) entry.getValue();
     }
-    public int getOrDefault(String key, int def) {
-        try {
-            return Integer.parseInt(get(key));
-        } catch (NumberFormatException e) {
-            return def;
-        }
-    }
-    public double getOrDefault(String key, double def) {
-        try {
-            return Double.parseDouble(get(key));
-        } catch (NumberFormatException e) {
-            return def;
-        }
-    }
-    public String getOrDefault(String key, String def) {
-        String val = get(key);
-        return val == null ? def : val;
-    }
+
 }

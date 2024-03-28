@@ -1,6 +1,9 @@
-package net.millo.millomod.mod.features;
+package net.millo.millomod.mod.features.impl;
 
 import net.millo.millomod.config.Config;
+import net.millo.millomod.mod.features.Feature;
+import net.millo.millomod.mod.features.IRenderable;
+import net.millo.millomod.mod.features.PacketListener;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
@@ -15,7 +18,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LagslayerHUD extends Feature implements Renderable {
+public class LagslayerHUD extends Feature implements IRenderable {
 
     private float cpuUsage = 0f;
     private float renderedCpuUsage = 0f;
@@ -25,24 +28,29 @@ public class LagslayerHUD extends Feature implements Renderable {
     private int x, y;
     private final Pattern lsRegex = Pattern.compile("^CPU Usage: \\[▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮] \\((\\d+\\.\\d+)%\\)$");
 
+
+    @Override
+    public void defaultConfig(Config config) {
+        super.defaultConfig(config);
+    }
+
     @Override
     public void onConfigUpdate(Config config) {
         super.onConfigUpdate(config);
-        updatePosFromConfig(config, 20, 20);
+        updatePosFromConfig(config);
     }
 
     @Override
-    String getKey() {
+    public String getKey() {
         return "lagslayer";
     }
 
-    @Override
-    public boolean onReceivePacket(Packet<?> packet) {
+    @PacketListener
+    public boolean onActionbar(OverlayMessageS2CPacket packet) {
         if (!enabled) return false;
-        if (!(packet instanceof OverlayMessageS2CPacket)) return false;
 
         // CPU Usage: [▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮] (00.00%)
-        String content = ((OverlayMessageS2CPacket) packet).getMessage().getString();
+        String content = packet.getMessage().getString();
         Matcher matcher = lsRegex.matcher(content);
         if (matcher.find()) {
             String cpuUsageStr = matcher.group(1);
@@ -57,6 +65,8 @@ public class LagslayerHUD extends Feature implements Renderable {
         }
         return false;
     }
+
+
 
     private void renderDonut(DrawContext context, float delta, float centerX, float centerY, float innerRadius, float outerRadius, int segments, int color) {
         renderDonut(context, delta, centerX, centerY, innerRadius, outerRadius, segments, color, 0, 1);
@@ -120,7 +130,7 @@ public class LagslayerHUD extends Feature implements Renderable {
         int y = getY() + 10;
 
         int backgroundColor = new Color(0.25f, 0.25f, 0.25f, renderedAlpha).hashCode();
-        Color color = Color.getHSBColor((100f - renderedCpuUsage) / 360f, 1f, 1f);
+        Color color = Color.getHSBColor(Math.max(0f, (100f - renderedCpuUsage) / 360f), 1f, 1f);
         int foregroundColor = new Color(color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f, renderedAlpha).hashCode();
 
         if (alpha > 0) {
@@ -151,8 +161,4 @@ public class LagslayerHUD extends Feature implements Renderable {
         return 20;
     }
 
-    @Override
-    public String getKeyName() {
-        return "lagslayer";
-    }
 }

@@ -2,8 +2,8 @@ package net.millo.millomod.mod.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.millo.millomod.mod.commands.impl.ColorsCommand;
 import net.millo.millomod.mod.commands.impl.SettingsCommand;
-import net.millo.millomod.mod.commands.impl.ViewerCommand;
 import net.millo.millomod.mod.commands.impl.savestate.RedevCommand;
 import net.millo.millomod.mod.commands.impl.savestate.SaveCommand;
 import net.minecraft.client.MinecraftClient;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandHandler {
-    private static List<Command> cmds = new ArrayList<>();
+    private static final List<Command> cmds = new ArrayList<>();
 
     public static List<Command> getCommands() {
         return cmds;
@@ -25,7 +25,7 @@ public class CommandHandler {
                 new SettingsCommand(),
                 new RedevCommand(),
                 new SaveCommand(),
-                new ViewerCommand()
+                new ColorsCommand()
         );
     }
 

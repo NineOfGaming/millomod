@@ -1,8 +1,7 @@
-package net.millo.millomod.mod.features.gui.elements;
+package net.millo.millomod.mod.util.gui.elements;
 
-import net.millo.millomod.mod.features.gui.ClickableElementI;
-import net.millo.millomod.mod.features.gui.ElementFadeIn;
-import net.millo.millomod.mod.features.gui.ScrollableEntryI;
+import net.millo.millomod.mod.util.gui.ClickableElementI;
+import net.millo.millomod.mod.util.gui.ScrollableEntryI;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 
 public class ScrollableElement extends ClickableWidget implements Drawable, Element {
 
-    private static final Identifier SCROLLER_TEXTURE = new Identifier("widget/scroller");
     private static final int SCROLLER_WIDTH = 4;
     private double scrollY;
     private boolean scrollbarDragged;
@@ -120,13 +118,12 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
         int i = this.getY() + this.getPadding();
         int j = this.getX() + this.getPadding();
 
-        int dx = j;
         int dy = i + (int) (-this.scrollY);
 
         context.getMatrices().push();
         context.getMatrices().translate(j, i, 0.0);
         for (ScrollableEntryI drawable : drawables) {
-            drawable.setRealX(drawable.getX() + dx);
+            drawable.setRealX(drawable.getX() + j);
             drawable.setRealY(drawable.getY() + dy);
             drawable.render(context, mouseX, mouseY, delta);
 

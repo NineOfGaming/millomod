@@ -7,23 +7,19 @@ public abstract class Feature {
 
     protected boolean enabled = true;
 
-    abstract String getKey();
+    public abstract String getKey();
 
-
-    public boolean onReceivePacket(Packet<?> packet) {
-        return false;
-    }
-
-    // Does not work yet
-    public boolean onSendPacket(Packet<?> packet) {
-        return false;
-    }
 
     // Does not work yet
     public void onTick() {}
 
     public void onConfigUpdate(Config config) {
-        enabled = config.getOrDefault(getKey()+".enabled", true);
+        enabled = config.get(getKey()+".enabled");
+    }
+    public void defaultConfig(Config config) {
+        config.setIfNull(getKey()+".enabled", !disabledByDefault());
+        if (this instanceof IRenderable) ((IRenderable) this).setHudConfig(config);
     }
 
+    public boolean disabledByDefault() { return false; }
 }

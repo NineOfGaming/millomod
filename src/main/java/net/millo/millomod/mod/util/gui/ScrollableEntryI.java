@@ -1,4 +1,4 @@
-package net.millo.millomod.mod.features.gui;
+package net.millo.millomod.mod.util.gui;
 
 import net.minecraft.client.gui.Drawable;
 

@@ -3,7 +3,6 @@ package net.millo.millomod;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.millo.millomod.config.Config;
-import net.millo.millomod.config.ModConfigs;
 import net.millo.millomod.mod.commands.CommandHandler;
 import net.millo.millomod.mod.features.FeatureHandler;
 import net.minecraft.client.MinecraftClient;
@@ -11,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MilloMod implements ClientModInitializer {
-    private static MinecraftClient mc;
-
 
     public static final String MOD_ID = "millomod";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
@@ -22,7 +19,6 @@ public class MilloMod implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        mc = MinecraftClient.getInstance();
         Config.getInstance();
 
         FeatureHandler.load();

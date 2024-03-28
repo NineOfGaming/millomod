@@ -4,16 +4,24 @@ import net.millo.millomod.config.Config;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 
-public interface Renderable {
+public interface IRenderable {
 
     // Something
     default void render(DrawContext context, float delta, TextRenderer textRenderer) {}
     default void renderContainer(DrawContext context, float delta, TextRenderer textRenderer) {}
 
-    default void updatePosFromConfig(Config config, int defX, int defY) {
-        setX(config.getOrDefault("hud."+getKeyName()+".x", defX));
-        setY(config.getOrDefault("hud."+getKeyName()+".y", defY));
+
+
+    default void setHudConfig(Config config) {
+        config.setIfNull("hud."+getKey()+".x", 20);
+        config.setIfNull("hud."+getKey()+".y", 20);
     }
+
+    default void updatePosFromConfig(Config config) {
+        setX(config.get("hud."+getKey()+".x"));
+        setY(config.get("hud."+getKey()+".y"));
+    }
+
 
     void setX(int x);
     void setY(int y);
@@ -21,7 +29,7 @@ public interface Renderable {
     int getY();
     int getWidth();
     int getHeight();
-    String getKeyName();
+    String getKey();
 
 
 }
