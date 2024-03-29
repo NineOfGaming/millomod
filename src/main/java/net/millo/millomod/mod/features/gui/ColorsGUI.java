@@ -43,9 +43,9 @@ public class ColorsGUI extends GUI {
 
         recentColorElements = new ArrayList<>();
 
-        addDrawable(new TextElement(x, y+5, 25, 20, Text.literal("hue").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
-        addDrawable(new TextElement(x, y+25, 25, 20, Text.literal("sat").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
-        addDrawable(new TextElement(x, y+45, 25, 20, Text.literal("bri").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
+        addDrawable(new TextElement(x, y+5, 25, 20, Text.literal("H").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
+        addDrawable(new TextElement(x, y+25, 25, 20, Text.literal("S").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
+        addDrawable(new TextElement(x, y+45, 25, 20, Text.literal("B").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
         addDrawable(new TextElement(x, y+70, 25, 20, Text.literal("R").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
         addDrawable(new TextElement(x, y+90, 25, 20, Text.literal("G").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
         addDrawable(new TextElement(x, y+110, 25, 20, Text.literal("B").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
@@ -57,24 +57,28 @@ public class ColorsGUI extends GUI {
         TextFieldElement g = new TextFieldElement(textRenderer, x+25, y+90, 30, 16, Text.literal("255"));
         TextFieldElement b = new TextFieldElement(textRenderer, x+25, y+110, 30, 16, Text.literal("255"));
         TextFieldElement hex = new TextFieldElement(textRenderer, x+60, y+90, 50, 16, Text.literal("255"));
+        TextFieldElement sample = new TextFieldElement(textRenderer, x+60, y+5, backgroundWidth - 70, 16, Text.literal(""));
+        sample.setText("Sample Text");
 
-        colorPicker.setTextFields(hue, sat, bri, r, g, b, hex);
+        colorPicker.setTextFields(hue, sat, bri, r, g, b, hex, sample);
         colorPicker.updateColor();
 
         addDrawableChildren(getCopyButton(x, y));
 
-        addDrawableChildren(hue, sat, bri, r, g, b, hex);
+        addDrawableChildren(hue, sat, bri, r, g, b, hex, sample);
         addDrawableChild(colorPicker);
+
 
         updateRecentColors();
     }
 
     @NotNull
     private ButtonElement getCopyButton(int x, int y) {
-        ButtonElement copyButton = new ButtonElement(x +60, y + 110, 50, 16, Text.literal("Copy"), (button) -> {
+        ButtonElement copyButton = new ButtonElement(x+60, y + 110, 50, 16, Text.literal("Copy"), (button) -> {
             Color color = ColorPickerElement.getSelectedColor();
             String hexString = String.format("<#%02x%02x%02x>", color.getRed(), color.getGreen(), color.getBlue());
             if (hasShiftDown()) hexString = "&" + String.join("&", String.format("x%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()).split(""));
+            if (hasControlDown()) hexString = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
             MinecraftClient.getInstance().keyboard.setClipboard(hexString);
 
             recentColors.remove(color);
@@ -83,7 +87,7 @@ public class ColorsGUI extends GUI {
             updateRecentColors();
 
         }, textRenderer);
-        copyButton.setTooltip(Text.literal("Click to copy, Shift for old variant"));
+        copyButton.setTooltip(Text.literal("Click to copy, Shift for old variant, Ctrl for hex"));
         return copyButton;
     }
 
@@ -96,9 +100,9 @@ public class ColorsGUI extends GUI {
         Iterator<Color> iter = recentColors.iterator();
         for (int i = 0; iter.hasNext(); ++i) {
             ColorTemplateElement element = new ColorTemplateElement(iter.next(),
-                    colorPicker,
-                    (i % 5) * 20 + x + backgroundWidth / 2,
-                    (int) ((double) (i / 5) * 20 + y + 10),
+                    this, colorPicker,
+                    (i % 5) * 20 + x + 120,
+                    (int) ((double) (i / 5) * 20 + y + 26),
                     15,
                     15);
             ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.DOWN);
@@ -107,6 +111,12 @@ public class ColorsGUI extends GUI {
             addDrawableChild(element);
             recentColorElements.add(element);
         }
+
+    }
+
+    protected void removeRecentColor(Color color) {
+        recentColors.remove(color);
+        updateRecentColors();
     }
 
     @SafeVarargs
@@ -152,14 +162,27 @@ public class ColorsGUI extends GUI {
         return true;
     }
 
-    private static class ColorTemplateElement extends ButtonElement {
+    public static class ColorTemplateElement extends ButtonElement {
         ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.UP);
         private final Color color;
-        public ColorTemplateElement(Color color, ColorPickerElement colorPicker, int x, int y, int width, int height) {
-            super(x, y, width, height, (button) -> {
-                colorPicker.setSelectedColor(color);
-            });
+        private final ColorPickerElement colorPicker;
+        private final ColorsGUI colorsGUI;
+        public ColorTemplateElement(Color color, ColorsGUI colorsGUI, ColorPickerElement colorPicker, int x, int y, int width, int height) {
+            super(x, y, width, height, (button) -> {});
+            this.colorPicker = colorPicker;
             this.color = color;
+            this.colorsGUI = colorsGUI;
+        }
+
+        @Override
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            if (!isHovered()) return false;
+            if (button == 1) {
+                colorsGUI.removeRecentColor(color);
+                return true;
+            }
+            colorPicker.setSelectedColor(color);
+            return true;
         }
 
         @Override

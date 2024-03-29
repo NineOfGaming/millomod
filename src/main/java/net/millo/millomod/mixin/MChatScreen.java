@@ -23,7 +23,7 @@ public class MChatScreen extends Screen {
 
     @Inject(method = "render", at = @At("RETURN"))
     public void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        boolean enabled = Config.getInstance().get("autocommand.enabled");
+        boolean enabled = Config.getInstance().get("auto_command.enabled");
         if (!enabled) return;
 
         context.fill(0, height - 14, 2, height - 2, Color.PINK.hashCode());

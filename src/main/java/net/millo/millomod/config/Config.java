@@ -201,7 +201,10 @@ public class Config {
     }
     public <T> T get(String key) {
         ConfigEntry<?> entry = config.get(key);
-        if (entry == null) return null;
+        if (entry == null) {
+            System.out.println("CONFIG NOT FOUND! >> " + key);
+            return null;
+        }
         return (T) entry.getValue();
     }
 

@@ -5,6 +5,8 @@ import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ public class ColorPickerElement implements Drawable, Element, Widget, Selectable
     public ElementFadeIn getFade() {
         return fade;
     }
+
 
 
     static class Point {
@@ -103,11 +106,13 @@ public class ColorPickerElement implements Drawable, Element, Widget, Selectable
 
         String hex = String.format("#%02x%02x%02x", selectedColor.getRed(), selectedColor.getGreen(), selectedColor.getBlue());
         TFhex.setText(hex);
+
+        TFsample.setEditableColor(selectedColor.hashCode());
     }
 
     boolean editHSB = false, editRGB = false, editHex = false;
-    TextFieldElement TFhue, TFsat, TFbri, TFred, TFgre, TFblu, TFhex;
-    public void setTextFields(TextFieldElement hue, TextFieldElement sat, TextFieldElement bri, TextFieldElement red, TextFieldElement gre, TextFieldElement blu, TextFieldElement hex) {
+    TextFieldElement TFhue, TFsat, TFbri, TFred, TFgre, TFblu, TFhex, TFsample;
+    public void setTextFields(TextFieldElement hue, TextFieldElement sat, TextFieldElement bri, TextFieldElement red, TextFieldElement gre, TextFieldElement blu, TextFieldElement hex, TextFieldElement sample) {
         TFhue = hue;
         TFsat = sat;
         TFbri = bri;
@@ -117,6 +122,7 @@ public class ColorPickerElement implements Drawable, Element, Widget, Selectable
         TFblu = blu;
 
         TFhex = hex;
+        TFsample = sample;
     }
 
     public void tick() {
@@ -181,7 +187,7 @@ public class ColorPickerElement implements Drawable, Element, Widget, Selectable
             if (newHue/360f == hue && newSat/100f == sat && newBri/100f == bri) return;
             if (newHue < 0 || newHue > 360) return;
             if (newSat < 0 || newSat > 100) return;
-//            if (newBri < 0 || newBri > 100) return;
+            if (newBri < 0 || newBri > 100) return;
 
             hue = newHue / 360f;
             sat = newSat / 100f;

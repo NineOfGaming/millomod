@@ -44,7 +44,7 @@ public abstract class MChestSearch extends Screen {
 
     @Inject(at = @At("RETURN"), method = "init()V")
     private void addSearchBox(CallbackInfo info) {
-        enabled = Config.getInstance().get("menusearch.enabled");
+        enabled = Config.getInstance().get("menu_search.enabled");
         if (!enabled) return;
 
         isChestScreen = ((ChestSearchAccessor) this).getHandler() instanceof GenericContainerScreenHandler handler && handler.getInventory() instanceof SimpleInventory;

@@ -33,7 +33,7 @@ public class MContainerScreen {
     private void renderTooltip(DrawContext context, int x, int y, CallbackInfo ci, ItemStack stack) {
         // TODO config
 
-        boolean enabled = Config.getInstance().get("previewskin.enabled");
+        boolean enabled = Config.getInstance().get("preview_skin.enabled");
         if (!enabled) return;
 
         Item item = stack.getItem();

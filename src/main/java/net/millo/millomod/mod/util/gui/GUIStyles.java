@@ -19,8 +19,8 @@ public enum GUIStyles {
     }
 
     public static Text getTrueFalse(boolean state) {
-        if (state) return Text.literal("True").setStyle(TRUE.getStyle());
-        return Text.literal("False").setStyle(FALSE.getStyle());
+        if (state) return Text.translatable("config.millo.enabled").setStyle(TRUE.getStyle());
+        return Text.translatable("config.millo.disabled").setStyle(FALSE.getStyle());
     }
 
     public Style getStyle() {

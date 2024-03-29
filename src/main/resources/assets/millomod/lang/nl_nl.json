@@ -1,0 +1,15 @@
+{
+  "millomod.title": "Millo Mod",
+
+  "config.millo.title": "Millo Mod Instellingen",
+  "config.millo.features": "Functies",
+  "config.millo.modify_positions":  "Posities Aanpassen",
+  "config.millo.lagslayer":  "Lagslayer Overlay",
+  "config.millo.lagslayer.tooltip": "Vervangt de actiebalk lagslayer door een aangepast GUI-widget",
+  "config.millo.menu_search":  "Menu Zoeken",
+  "config.millo.menu_search.tooltip": "Schakelt een zoekbalk in menu's in om benoemde items te markeren",
+  "config.millo.auto_command":  "Automatisch Commando",
+  "config.millo.auto_command.tooltip": "Voegt automatisch een @ toe aan het begin van je berichten",
+
+  "key.millo.toggle_auto_command": "Automatisch Commando Wisselen"
+}

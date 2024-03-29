@@ -1,0 +1,13 @@
+{
+  "millomod.title": "Mod Millo",
+
+  "config.millo.title": "Millo Mod Paramètres",
+  "config.millo.lagslayer":  "Superposition Lagslayer",
+  "config.millo.lagslayer.tooltip": "Remplace la barre d'action lagslayer par un widget GUI personnalisé",
+  "config.millo.menu_search":  "Recherche de Menu",
+  "config.millo.menu_search.tooltip": "Active une barre de recherche dans les menus pour mettre en évidence les éléments nommés",
+  "config.millo.auto_command":  "Commande Automatique",
+  "config.millo.auto_command.tooltip": "Insère automatiquement un @ devant vos messages",
+
+  "key.millo.toggle_auto_command": "Activer/Désactiver Commande Automatique"
+}
