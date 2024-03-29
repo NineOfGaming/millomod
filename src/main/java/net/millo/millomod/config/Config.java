@@ -109,7 +109,7 @@ public class Config {
 
 
     public static Config getInstance() {
-        if (INSTANCE == null) INSTANCE = new Config("options");
+        if (INSTANCE == null) INSTANCE = new Config("millomod");
         return INSTANCE;
     }
 

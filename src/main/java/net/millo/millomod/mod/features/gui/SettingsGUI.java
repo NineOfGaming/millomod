@@ -37,6 +37,7 @@ public class SettingsGUI extends GUI {
 
         addBooleanOption(settingsList, "lagslayer.enabled","Lagslayer Overlay", "Replaces the actionbar lagslayer with a custom GUI widget");
         addBooleanOption(settingsList, "menusearch.enabled", "Menu Search", "Enables a searchbar in menus to highlight named items");
+        addBooleanOption(settingsList, "autocommand.enabled", "Auto Command", "Automatically inserts an @ in front of your messages");
 
         addHeader(settingsList, "Unstable Features");
         addBooleanOption(settingsList, "previewskin.enabled","Preview Skin", "Do not use. Will crash your game");

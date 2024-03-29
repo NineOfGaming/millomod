@@ -1,10 +1,7 @@
 package net.millo.millomod.mod.features;
 
 import net.millo.millomod.config.Config;
-import net.millo.millomod.mod.features.impl.LagslayerHUD;
-import net.millo.millomod.mod.features.impl.MenuSearch;
-import net.millo.millomod.mod.features.impl.PacketHandler;
-import net.millo.millomod.mod.features.impl.PreviewSkin;
+import net.millo.millomod.mod.features.impl.*;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.network.listener.PacketListener;
@@ -22,9 +19,12 @@ public class FeatureHandler {
         packetHandler = new PacketHandler();
 
         features.clear();
-        register(new LagslayerHUD());
-        register(new PreviewSkin());
-        register(new MenuSearch());
+        register(
+                new LagslayerHUD(),
+                new PreviewSkin(),
+                new MenuSearch(),
+                new AutoCommand()
+        );
 
         Config config = Config.getInstance();
         defaultConfig(config);
@@ -43,28 +43,17 @@ public class FeatureHandler {
         features.put(feature.getKey(), feature);
     }
 
+    private static void register(Feature ...features) {
+        for (Feature feature : features) {
+            register(feature);
+        }
+    }
+
 
 
 //     Pass through
-//    static ArrayList<String> packets = new ArrayList<>();
     public static <T extends PacketListener> boolean handlePacket(Packet<T> packet) {
         return packetHandler.handlePacket(packet);
-
-//        for (Feature feature : features.values()) {
-//            if (feature.onReceivePacket(packet)) return true;
-//        }
-//
-//        if (packet instanceof GameMessageS2CPacket) {
-//            String message = ((GameMessageS2CPacket) packet).content().getString();
-//            System.out.println("> "+ message);
-//        }
-//
-//        if (!packets.contains(packet.getClass().toString())) {
-//            System.out.println(packet.getClass());
-//            packets.add(packet.getClass().toString());
-//        }
-////        packet instanceof GameMessageS2CPacket  // On receive chat message;
-
     }
 
     public static void renderHUD(DrawContext context, float tickDelta, TextRenderer textRenderer) {
