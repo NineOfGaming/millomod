@@ -1,0 +1,109 @@
+package net.millo.millomod.mod.features.impl;
+
+import net.millo.millomod.config.Config;
+import net.millo.millomod.mod.features.Feature;
+import net.millo.millomod.mod.features.IRenderable;
+import net.millo.millomod.mod.util.MathUtil;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
+
+import java.awt.*;
+import java.util.ArrayList;
+
+public class NotificationTray extends Feature implements IRenderable {
+
+
+    public static void pushNotification(Text message) {
+        notifications.add(new Notification(message, notifications.size() * 10));
+    }
+
+    static ArrayList<Notification> notifications;
+    int x = 50, y = 50;
+    public NotificationTray() {
+        notifications = new ArrayList<>();
+    }
+
+    @Override
+    public void render(DrawContext context, float delta, TextRenderer textRenderer) {
+        IRenderable.super.render(context, delta, textRenderer);
+
+        for (int i = notifications.size()-1; i > 0; i--) {
+            Notification notification = notifications.get(i);
+            float lifetime = notification.getLifeTime(delta);
+
+            float targetY = i * 10;
+            float targetX = lifetime < 60 ? getWidth() : -5;
+
+            if (lifetime > 60 && notification.x < 0f) {
+                notifications.remove(notification);
+            }
+
+            notification.y = MathUtil.lerp(notification.y, targetY, delta / 6f);
+            notification.x = MathUtil.lerp(notification.x, targetX, delta / 6f);
+
+            float x = (getX() + getWidth() - notification.x);
+            float y = (getY() + notification.y);
+
+            context.getMatrices().push();
+            context.getMatrices().translate(x, y, 0f);
+            context.drawText(textRenderer, notification.message, 0, 0, Color.WHITE.hashCode(), true);
+            context.getMatrices().pop();
+        }
+    }
+
+
+    @Override
+    public void onConfigUpdate(Config config) {
+        super.onConfigUpdate(config);
+        updatePosFromConfig(config);
+    }
+
+    public static class Notification {
+        private float lifeTime = 0f;
+        private Text message;
+
+        public float x, y;
+        public Notification(Text message, int y) {
+            this.message = message;
+
+            this.x = 0;
+            this.y = y;
+        }
+
+
+        public float getLifeTime(float delta) {
+            lifeTime += delta;
+            return lifeTime;
+        }
+
+        public void setMessage(Text message) {
+            this.message = message;
+            this.lifeTime = 0f;
+        }
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+    public void setY(int y) {
+        this.y = y;
+    }
+    public int getX() {
+        return x;
+    }
+    public int getY() {
+        return y;
+    }
+    public int getWidth() {
+        return 200;
+    }
+    public int getHeight() {
+        return 50;
+    }
+
+    @Override
+    public String getKey() {
+        return "notification_tray";
+    }
+}

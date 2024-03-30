@@ -23,7 +23,8 @@ public class FeatureHandler {
                 new LagslayerHUD(),
                 new PreviewSkin(),
                 new MenuSearch(),
-                new AutoCommand()
+                new AutoCommand(),
+                new NotificationTray()
         );
 
         Config config = Config.getInstance();

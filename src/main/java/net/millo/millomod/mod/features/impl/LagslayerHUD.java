@@ -18,6 +18,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static net.millo.millomod.mod.util.MathUtil.lerp;
+
 public class LagslayerHUD extends Feature implements IRenderable {
 
     private float cpuUsage = 0f;
@@ -25,14 +27,10 @@ public class LagslayerHUD extends Feature implements IRenderable {
     private float renderedAlpha = 0f;
     private Date updateTime = new Date();
 
-    private int x, y;
+    private int x = 20, y = 20;
     private final Pattern lsRegex = Pattern.compile("^CPU Usage: \\[▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮] \\((\\d+\\.\\d+)%\\)$");
 
 
-    @Override
-    public void defaultConfig(Config config) {
-        super.defaultConfig(config);
-    }
 
     @Override
     public void onConfigUpdate(Config config) {
@@ -114,9 +112,7 @@ public class LagslayerHUD extends Feature implements IRenderable {
 
         context.draw();
     }
-    private float lerp(float a, float b, float f)  {
-        return a * (1f - f) + (b * f);
-    }
+
     @Override
     public void render(DrawContext context, float delta, TextRenderer textRenderer) {
         if (!enabled) return;

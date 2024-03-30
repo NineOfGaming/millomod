@@ -17,5 +17,12 @@ public class ColorsCommand extends Command {
                     return 1;
                 })
         );
+        cd.register(ArgBuilder.literal("col")
+                .executes(ctx -> {
+                    new ColorsGUI().open();
+                    return 1;
+                })
+        );
     }
+
 }

@@ -13,8 +13,8 @@ public interface IRenderable {
 
 
     default void setHudConfig(Config config) {
-        config.setIfNull("hud."+getKey()+".x", 20);
-        config.setIfNull("hud."+getKey()+".y", 20);
+        config.setIfNull("hud."+getKey()+".x", getX());
+        config.setIfNull("hud."+getKey()+".y", getX());
     }
 
     default void updatePosFromConfig(Config config) {

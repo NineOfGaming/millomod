@@ -6,9 +6,11 @@ import net.millo.millomod.config.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
 import net.millo.millomod.mod.features.PacketListener;
+import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
+import net.minecraft.text.Text;
 
 public class AutoCommand extends Feature implements Keybound {
     @Override
@@ -46,8 +48,8 @@ public class AutoCommand extends Feature implements Keybound {
     @Override
     public void triggerKeybind(Config config) {
         while (toggle.wasPressed()) {
-            boolean state = config.get(getKey() + ".enabled");
-            config.set(getKey() + ".enabled", !state);
+            toggleEnabled();
+            NotificationTray.pushNotification(Text.literal("Turned Auto Command ").append(GUIStyles.getTrueFalse(enabled)));
         }
     }
 

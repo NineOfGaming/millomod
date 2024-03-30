@@ -1,5 +1,6 @@
 package net.millo.millomod.mod.util.gui;
 
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
@@ -18,7 +19,7 @@ public enum GUIStyles {
         this.style = style;
     }
 
-    public static Text getTrueFalse(boolean state) {
+    public static MutableText getTrueFalse(boolean state) {
         if (state) return Text.translatable("config.millo.enabled").setStyle(TRUE.getStyle());
         return Text.translatable("config.millo.disabled").setStyle(FALSE.getStyle());
     }

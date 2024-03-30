@@ -20,6 +20,10 @@ public abstract class Feature {
         config.setIfNull(getKey()+".enabled", !disabledByDefault());
         if (this instanceof IRenderable) ((IRenderable) this).setHudConfig(config);
     }
+    public void toggleEnabled() {
+        enabled = !enabled;
+        Config.getInstance().set(getKey()+".enabled", enabled);
+    }
 
     public boolean disabledByDefault() { return false; }
 }

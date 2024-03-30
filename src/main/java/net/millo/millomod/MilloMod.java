@@ -33,8 +33,6 @@ public class MilloMod implements ClientModInitializer {
         // TODO: /dfgive
         // TODO: reference book arguments in GUI
         // TODO: /search
-        // TODO: Notification tray to show changes easier
-        // TODO: Proper keybinding handler
     }
 
 }
