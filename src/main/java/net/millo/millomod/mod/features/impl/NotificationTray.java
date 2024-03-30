@@ -1,12 +1,13 @@
 package net.millo.millomod.mod.features.impl;
 
+import net.millo.millomod.MilloMod;
 import net.millo.millomod.config.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.IRenderable;
-import net.millo.millomod.mod.util.MathUtil;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -26,11 +27,11 @@ public class NotificationTray extends Feature implements IRenderable {
 
     @Override
     public void render(DrawContext context, float delta, TextRenderer textRenderer) {
-        IRenderable.super.render(context, delta, textRenderer);
-
         for (int i = notifications.size()-1; i > 0; i--) {
+            float t = MathHelper.clamp(MilloMod.MC.getLastFrameDuration(), 0f, 1f);
+
             Notification notification = notifications.get(i);
-            float lifetime = notification.getLifeTime(delta);
+            float lifetime = notification.getLifeTime(MilloMod.MC.getLastFrameDuration());
 
             float targetY = i * 10;
             float targetX = lifetime < 60 ? getWidth() : -5;
@@ -39,8 +40,8 @@ public class NotificationTray extends Feature implements IRenderable {
                 notifications.remove(notification);
             }
 
-            notification.y = MathUtil.lerp(notification.y, targetY, delta / 6f);
-            notification.x = MathUtil.lerp(notification.x, targetX, delta / 6f);
+            notification.y = MathHelper.lerp(t, notification.y, targetY);
+            notification.x = MathHelper.lerp(t, notification.x, targetX);
 
             float x = (getX() + getWidth() - notification.x);
             float y = (getY() + notification.y);

@@ -7,6 +7,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -275,8 +276,8 @@ public class ColorPickerElement implements Drawable, Element, Widget, Selectable
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (Objects.equals(focus, "wheel")) {
-            int wheelMouseX = clamp((int) mouseX, wheelX, wheelX + wheelW);
-            int wheelMouseY = clamp((int) mouseY, wheelY, wheelY + wheelH);
+            int wheelMouseX = MathHelper.clamp((int) mouseX, wheelX, wheelX + wheelW);
+            int wheelMouseY = MathHelper.clamp((int) mouseY, wheelY, wheelY + wheelH);
             hue = (float) (wheelMouseX - wheelX) / wheelW;
             sat = 1f - (float) (wheelMouseY - wheelY) / wheelH;
             updateColor();
@@ -314,10 +315,7 @@ public class ColorPickerElement implements Drawable, Element, Widget, Selectable
         return SelectionType.NONE;
     }
 
-    int clamp(int value, int min, int max) {
-        if (value < min) return min;
-        return Math.min(value, max);
-    }
+
 
 
     public void appendNarrations(NarrationMessageBuilder builder) {}

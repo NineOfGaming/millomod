@@ -1,0 +1,20 @@
+{
+  "millomod.title": "Meow Mod",
+
+  "config.millo.title": "Purrfectly Meow-tastic Mod",
+  "config.millo.features": "Meows",
+  "config.millo.enabled": ":3",
+  "config.millo.disabled": ":c",
+  "config.millo.modify_positions":  "Change Paw-sitions",
+  "config.millo.lagslayer":  "The Meow-verlay",
+  "config.millo.lagslayer.tooltip": "Lagslayer has learned Meow!",
+  "config.millo.menu_search":  "Hunting the Elusive Meow",
+  "config.millo.menu_search.tooltip": "Meow meow meow meow meow meow",
+  "config.millo.auto_command":  "Meow-omatic",
+  "config.millo.auto_command.tooltip": "Pawsitively '@meow' instead of 'meow'",
+  "config.millo.notification_tray": "Notify me about meow",
+  "config.millo.notification_tray.tooltip": "Meowza!",
+
+  "key.category.millo": "Meow Mod",
+  "key.millo.toggle_auto_command": "Toggle Meow-omatic"
+}

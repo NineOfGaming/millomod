@@ -1,5 +1,6 @@
 package net.millo.millomod.mod.features.impl;
 
+import net.millo.millomod.MilloMod;
 import net.millo.millomod.config.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.IRenderable;
@@ -11,14 +12,13 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.util.math.ColorHelper;
+import net.minecraft.util.math.MathHelper;
 import org.joml.Matrix4f;
 
 import java.awt.*;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static net.millo.millomod.mod.util.MathUtil.lerp;
 
 public class LagslayerHUD extends Feature implements IRenderable {
 
@@ -116,11 +116,12 @@ public class LagslayerHUD extends Feature implements IRenderable {
     @Override
     public void render(DrawContext context, float delta, TextRenderer textRenderer) {
         if (!enabled) return;
+        float t = MilloMod.MC.getLastFrameDuration();
 
         double time = (new Date().getTime() - updateTime.getTime()) / 1000d;
         float alpha = (float) Math.max(Math.min(1, 5 - time), 0);
-        renderedCpuUsage = lerp(renderedCpuUsage, cpuUsage, delta * 0.15f);
-        renderedAlpha = lerp(renderedAlpha, alpha, delta * 0.15f);
+        renderedCpuUsage = MathHelper.lerp(t, renderedCpuUsage, cpuUsage);
+        renderedAlpha = MathHelper.lerp(t, renderedAlpha, alpha);
 
         int x = getX() + 10;
         int y = getY() + 10;

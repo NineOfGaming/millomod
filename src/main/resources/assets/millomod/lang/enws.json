@@ -2,14 +2,19 @@
   "millomod.title": "Millo Mod",
 
   "config.millo.title": "Millo Mod Wishes",
+  "config.millo.features": "Features",
+  "config.millo.enabled": "Praised",
+  "config.millo.disabled": "Forgotten",
+  "config.millo.modify_positions":  "Modify Positions",
   "config.millo.lagslayer":  "Fogcloak Overlay",
-  "config.millo.enabled": "On",
-  "config.millo.disabled": "Off",
   "config.millo.lagslayer.tooltip": "Replace the fogcloak with a tinkered interface",
   "config.millo.menu_search":  "Menu Discovery",
   "config.millo.menu_search.tooltip": "Enables a discovery tool in menus to reveal named items",
   "config.millo.auto_command":  "Auto Edict",
   "config.millo.auto_command.tooltip": "Inserteth an @ in front of thy decrees automatically",
+  "config.millo.notification_tray": "Notice Planc",
+  "config.millo.notification_tray.tooltip": "Showeth a planc of notice bound to this alteration",
 
+  "key.category.millo": "Millo Mod",
   "key.millo.toggle_auto_command": "Toggle Auto Edict"
 }

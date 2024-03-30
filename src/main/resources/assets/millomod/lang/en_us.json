@@ -12,6 +12,8 @@
   "config.millo.menu_search.tooltip": "Enables a searchbar in menus to highlight named items",
   "config.millo.auto_command":  "Auto Command",
   "config.millo.auto_command.tooltip": "Automatically inserts an @ in front of your messages",
+  "config.millo.notification_tray": "Notification Tray",
+  "config.millo.notification_tray.tooltip": "Display a tray of information related to this mod",
 
   "key.category.millo": "Millo Mod",
   "key.millo.toggle_auto_command": "Toggle Auto Command"

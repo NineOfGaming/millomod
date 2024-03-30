@@ -1,0 +1,20 @@
+{
+  "millomod.title": "Millo Mod",
+
+  "config.millo.title": "Настройки Millo Mod",
+  "config.millo.features": "Функции",
+  "config.millo.enabled": "Вкл",
+  "config.millo.disabled": "Выкл",
+  "config.millo.modify_positions":  "Поменять Позиции",
+  "config.millo.lagslayer":  "Оверлей Lagslayer",
+  "config.millo.lagslayer.tooltip": "Заменяет дисплей прогресса Lagslayer на уникальный виджет",
+  "config.millo.menu_search":  "Поиск в Меню",
+  "config.millo.menu_search.tooltip": "Добавляет строку поиска в Меню для подсвечивания предметов по названиям",
+  "config.millo.auto_command":  "Авто Команды",
+  "config.millo.auto_command.tooltip": "Автоматически добавляет @ в начале ваших сообщений",
+  "config.millo.notification_tray": "Область Уведомлений",
+  "config.millo.notification_tray.tooltip": "Показывает уведомления данного мода",
+
+  "key.category.millo": "Millo Mod",
+  "key.millo.toggle_auto_command": "Вкл/Выкл Авто Команды"
+}

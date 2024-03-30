@@ -38,6 +38,7 @@ public class SettingsGUI extends GUI {
         addBooleanOption(settingsList, "lagslayer.enabled","config.millo.lagslayer", "config.millo.lagslayer.tooltip");
         addBooleanOption(settingsList, "menu_search.enabled", "config.millo.menu_search", "config.millo.menu_search.tooltip");
         addBooleanOption(settingsList, "auto_command.enabled", "config.millo.auto_command", "config.millo.auto_command.tooltip");
+        addBooleanOption(settingsList, "notification_tray.enabled", "config.millo.notification_tray", "config.millo.notification_tray.tooltip");
 
 //        addHeader(settingsList, "Unstable Features");
 //        addBooleanOption(settingsList, "preview_skin.enabled","Preview Skin", "Do not use. Will crash your game");
