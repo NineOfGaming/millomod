@@ -6,6 +6,7 @@ import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.IRenderable;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
@@ -16,6 +17,15 @@ public class NotificationTray extends Feature implements IRenderable {
 
 
     public static void pushNotification(Text message) {
+        notifications.add(new Notification(message, notifications.size() * 10));
+    }
+    public static void pushNotification(Text ...messages) {
+        MutableText message = Text.empty();
+        int i = 0;
+        for (Text text : messages) {
+            message.append(text);
+            if (++i < messages.length) message.append(" ");
+        }
         notifications.add(new Notification(message, notifications.size() * 10));
     }
 
@@ -107,4 +117,5 @@ public class NotificationTray extends Feature implements IRenderable {
     public String getKey() {
         return "notification_tray";
     }
+
 }

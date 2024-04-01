@@ -1,6 +1,9 @@
 {
   "millomod.title": "Millo Mod",
 
+  "millo.info.toggle.on": "Turned %s on",
+  "millo.info.toggle.off": "Turned %s off",
+
   "config.millo.title": "Millo Mod Settings",
   "config.millo.features": "Features",
   "config.millo.enabled": "On",
