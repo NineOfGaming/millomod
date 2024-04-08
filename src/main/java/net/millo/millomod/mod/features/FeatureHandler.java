@@ -2,8 +2,11 @@ package net.millo.millomod.mod.features;
 
 import net.millo.millomod.config.Config;
 import net.millo.millomod.mod.features.impl.*;
+import net.millo.millomod.mod.features.impl.cache.PlotCaching;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.listener.PacketListener;
 import net.minecraft.network.packet.Packet;
 
@@ -24,7 +27,9 @@ public class FeatureHandler {
                 new PreviewSkin(),
                 new MenuSearch(),
                 new AutoCommand(),
-                new NotificationTray()
+                new NotificationTray(),
+                new Search(),
+                new PlotCaching()
         );
 
         Config config = Config.getInstance();
@@ -80,5 +85,17 @@ public class FeatureHandler {
     }
     public static Feature getFeature(String key) {
         return features.get(key);
+    }
+
+    public static void onRender(MatrixStack matrices, VertexConsumerProvider.Immediate vertexConsumers, double cameraX, double cameraY, double cameraZ) {
+        for (Feature feature : getFeatures()) {
+            if (feature instanceof IWorldRenderable) {
+                ((IWorldRenderable) feature).renderWorld(matrices, vertexConsumers, cameraX, cameraY, cameraZ);
+            }
+        }
+    }
+
+    public static void onTick() {
+        getFeatures().forEach(Feature::onTick);
     }
 }

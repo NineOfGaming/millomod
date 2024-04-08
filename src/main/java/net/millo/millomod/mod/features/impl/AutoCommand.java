@@ -18,18 +18,20 @@ public class AutoCommand extends Feature implements Keybound {
         return "auto_command";
     }
 
-    @PacketListener
-    public boolean onChatSend(ChatMessageC2SPacket packet) {
-        if (!enabled) return false;
 
-        String message = packet.chatMessage();
-        if (message.startsWith("@")) return false;
-
-        assert MilloMod.MC.player != null;
-        MilloMod.MC.player.networkHandler.sendChatMessage("@" + message);
-        return true;
-    }
-
+    // Keeping as a reference for later
+//    @PacketListener
+//    public boolean onChatSend(ChatMessageC2SPacket packet) {
+//        if (!enabled) return false;
+//
+//        String message = packet.chatMessage();
+//        if (message.startsWith("@")) return false;
+//
+//        assert MilloMod.MC.player != null;
+//        MilloMod.MC.player.networkHandler.sendChatMessage("@" + message);
+//        return true;
+//    }
+//
 
     KeyBinding toggle;
 
@@ -49,7 +51,11 @@ public class AutoCommand extends Feature implements Keybound {
     public void triggerKeybind(Config config) {
         while (toggle.wasPressed()) {
             toggleEnabled();
-            NotificationTray.pushNotification(Text.literal("Turned Auto Command ").append(GUIStyles.getTrueFalse(enabled)));
+            NotificationTray.pushNotification(
+                    Text.translatable("millo.info.toggle.on"),
+                    Text.translatable("config.millo.auto_command"),
+                    GUIStyles.getTrueFalse(enabled)
+            );
         }
     }
 

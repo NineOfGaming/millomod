@@ -10,7 +10,6 @@ public abstract class Feature {
     public abstract String getKey();
 
 
-    // Does not work yet
     public void onTick() {}
 
     public void onConfigUpdate(Config config) {

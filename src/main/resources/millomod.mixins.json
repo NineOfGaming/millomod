@@ -8,8 +8,10 @@
     "MClientCommonNetworkHandler"
   ],
   "client": [
+    "MBlockEntityRendererDispatcher",
     "MChatScreen",
     "MContainerScreen",
+    "MDebugRenderer",
     "MInGameHUD"
   ],
   "injectors": {
