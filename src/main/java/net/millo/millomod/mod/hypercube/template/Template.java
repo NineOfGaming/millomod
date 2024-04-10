@@ -12,6 +12,7 @@ import java.util.zip.GZIPInputStream;
 
 public class Template {
 
+    public String b64Code;
     public ArrayList<TemplateBlock> blocks;
 
     public static Template parseItem(String codeTemplateData) {
@@ -25,7 +26,9 @@ public class Template {
 
             System.out.println(new String(decompressed));
 
-            return new Gson().fromJson(new String(decompressed), Template.class);
+            Template template = new Gson().fromJson(new String(decompressed), Template.class);
+            template.b64Code = data;
+            return template;
         } catch (IOException e) {
             return null;
         }

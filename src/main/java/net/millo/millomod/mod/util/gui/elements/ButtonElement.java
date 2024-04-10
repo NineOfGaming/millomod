@@ -158,12 +158,12 @@ public class ButtonElement implements ScrollableEntryI, Element, Widget, Selecta
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (!isHovered()) return false;
-        onPress();
+        onPress(mouseX, mouseY, button);
         return true;
     }
 
     @Override
-    public void onPress() {
+    public void onPress(double mouseX, double mouseY, int button) {
         onPress.onPress(this);
     }
 

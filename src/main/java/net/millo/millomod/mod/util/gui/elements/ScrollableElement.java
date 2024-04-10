@@ -47,7 +47,7 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
             for (ScrollableEntryI drawable : drawables) {
                 if (!(drawable instanceof ClickableElementI)) continue;
                 if (!((ClickableElementI) drawable).isHovered()) continue;
-                ((ClickableElementI) drawable).onPress();
+                ((ClickableElementI) drawable).onPress(mouseX, mouseY, button);
             }
         }
 

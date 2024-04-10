@@ -11,7 +11,8 @@ public enum GUIStyles {
     TRUE (Style.EMPTY.withColor(Color.GREEN.hashCode())),
     FALSE (Style.EMPTY.withColor(Color.RED.hashCode())),
     HEADER (Style.EMPTY.withColor(new Color(172, 255, 231).hashCode())),
-    TITLE (Style.EMPTY.withColor(Color.YELLOW.hashCode()));
+    TITLE (Style.EMPTY.withColor(Color.YELLOW.hashCode())),
+    NAME (Style.EMPTY.withColor(new Color(240, 172, 255).hashCode()));
 
 
     private final Style style;
