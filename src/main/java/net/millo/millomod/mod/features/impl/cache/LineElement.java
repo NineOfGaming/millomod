@@ -41,6 +41,7 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
         this.y = 0;
         this.realX = x;
         this.realY = y;
+        this.height = 12;
     }
     public void init(int width, int height) {
         this.width = width;
@@ -111,7 +112,7 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
             int yy = textWidget.getY() + getRealY();
             boolean hovered = mouseX >= xx && mouseX < xx+textWidget.getWidth() && mouseY >= yy && mouseY < yy + textWidget.getHeight();
             if (hovered) {
-                context.fill(x, y, x+textWidget.getWidth(), y + textWidget.getHeight(), Color.cyan.hashCode());
+                context.fill(x, y, x+textWidget.getWidth(), y + textWidget.getHeight(), new Color(255, 255, 255, 20).hashCode());
             }
 
             // Text
@@ -233,7 +234,7 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
         var args = arguments.iterator();
         while (args.hasNext()) {
             ArgumentItem arg = args.next();
-            addComponent(Text.of(arg.name), arg.tooltip);
+            arg.addTo(this);
             if (args.hasNext()) addComponent(Text.literal(", "));
         }
         addComponent(Text.literal(")"));

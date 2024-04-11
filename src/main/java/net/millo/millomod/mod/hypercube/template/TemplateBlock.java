@@ -6,14 +6,12 @@ import com.google.gson.JsonObject;
 import net.millo.millomod.mod.features.impl.cache.ArgumentItem;
 import net.millo.millomod.mod.features.impl.cache.LineElement;
 import net.millo.millomod.mod.util.gui.GUIStyles;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
 
 public class TemplateBlock {
     public String id;
@@ -38,30 +36,94 @@ public class TemplateBlock {
 
 
     enum Blocks {
-        FUNC((block) -> generateCommonLine(block, "function")),
-        PROCESS((block) -> generateCommonLine(block, "process")),
-        START((block) -> generateCommonLine(block, "start")),
-        CALL_FUNC((block) -> generateCommonLine(block, "call")),
+        FUNC((block) -> generatePipelineLine(block, "function")),
+        PROCESS((block) -> generatePipelineLine(block, "process")),
+        START_PROCESS((block) -> generatePipelineLine(block, "start")),
+        CALL_FUNC((block) -> generatePipelineLine(block, "call")),
         IF_VAR((block) -> {
             ArrayList<ArgumentItem> items = block.getArguments();
             LineElement line = new LineElement()
-                    .addComponent(Text.literal("if ("));
+                    .addComponent(Text.of("if ("));
             items.get(0).addTo(line);
+            line.addSpace()
+                    .addComponent(Text.literal(block.action).setStyle(GUIStyles.ACTION.getStyle()))
+                    .addSpace();
+
+            items.remove(0);
+
+            Iterator<ArgumentItem> args = items.iterator();
+            while (args.hasNext()) {
+                ArgumentItem arg = args.next();
+                arg.addTo(line);
+                if (args.hasNext()) line.addComponent(Text.literal(", "));
+            }
+
+            line.addComponent(Text.of(")"));
 
             return line;
-        });
+        }),
+        SET_VAR((block) -> {
+            Map<String, String> actionSymbols = new HashMap<>();
+            actionSymbols.put("=", "+");
+            actionSymbols.put("+=", "+");
+            actionSymbols.put("-=", "+");
+            actionSymbols.put("+", "+");
+            actionSymbols.put("-", "-");
+            actionSymbols.put("x", "x"); // no clue if this is correct
+            actionSymbols.put("/", "+");
 
 
+            ArrayList<ArgumentItem> items = block.getArguments();
+            LineElement line = new LineElement();
+            if (actionSymbols.containsKey(block.action)) {
+                String symbol = actionSymbols.get(block.action);
+                items.get(0).addTo(line);
+                line.addComponent(Text.of(" " + block.action + " "));
+
+                items.remove(0);
+                Iterator<ArgumentItem> args = items.iterator();
+                while (args.hasNext()) {
+                    ArgumentItem arg = args.next();
+                    arg.addTo(line);
+                    if (args.hasNext()) line.addComponent(Text.literal(" " + symbol + " "));
+                }
+
+                return line;
+            }
+
+            return generateCommonLine(block, "set_var");
+        }),
+        PLAYER_ACTION((block) -> generateCommonLine(block, "player")),
+        ENTITY_ACTION((block) -> generateCommonLine(block, "entity")),
+        GAME_ACTION((block) -> generateCommonLine(block, "game")),
+
+        CONTROL((block) -> new LineElement()
+                .addComponent(Text.literal("select").setStyle(GUIStyles.SELECT.getStyle()))
+                .addComponent(Text.of(block.action))
+                .addArguments(block.getArguments())),
+        SELECT_OBJECT((block) -> new LineElement()
+                .addComponent(Text.of(block.action))
+                .addArguments(block.getArguments())),
+
+
+        ;
         final BlockToLine btl;
         Blocks(BlockToLine btl) {
             this.btl = btl;
         }
 
-        private static LineElement generateCommonLine(TemplateBlock block, String keyword) {
+        private static LineElement generatePipelineLine(TemplateBlock block, String keyword) {
             return new LineElement()
-                    .addComponent(Text.literal(keyword))
+                    .addComponent(Text.of(keyword))
                     .addSpace()
                     .addComponent(Text.literal(block.data).setStyle(GUIStyles.NAME.getStyle()))
+                    .addArguments(block.getArguments());
+        }
+        private static LineElement generateCommonLine(TemplateBlock block, String keyword) {
+            return new LineElement()
+                    .addComponent(Text.of(keyword))
+                    .addSpace()
+                    .addComponent(Text.literal(block.action))
                     .addArguments(block.getArguments());
         }
     }
@@ -140,9 +202,11 @@ public class TemplateBlock {
         for (JsonElement itemSlot : items) {
             JsonObject item = itemSlot.getAsJsonObject().getAsJsonObject("item");
             String id = item.get("id").getAsString();
+            if (Objects.equals(id, "hint")) continue; // remove this shit
+
             JsonObject data = item.getAsJsonObject("data");
 
-            argumentItems.add(new ArgumentItem(id, Tooltip.of(Text.empty())));
+            argumentItems.add(new ArgumentItem(id, data));
         }
 
         return argumentItems;

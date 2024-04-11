@@ -38,8 +38,6 @@ public class CacheGUI extends GUI {
 
         ScrollableElement lines = new ScrollableElement(paddingX, paddingY, backgroundWidth, backgroundHeight, Text.literal(""));
 
-        lines.addDrawableChild(new TextElement(Text.literal(""), textRenderer));
-
 //        LineElement line = new LineElement(backgroundWidth, 12, textRenderer);
 //        line.addComponent(Text.literal("Hello! "));
 //        line.addComponent(Text.literal("Woah!! "), Tooltip.of(Text.literal("This is awesome")));
