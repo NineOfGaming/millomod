@@ -98,10 +98,10 @@ public class TemplateBlock {
         GAME_ACTION((block) -> generateCommonLine(block, "game")),
 
         CONTROL((block) -> new LineElement()
-                .addComponent(Text.literal("select").setStyle(GUIStyles.SELECT.getStyle()))
                 .addComponent(Text.of(block.action))
                 .addArguments(block.getArguments())),
         SELECT_OBJECT((block) -> new LineElement()
+                .addComponent(Text.literal("select").setStyle(GUIStyles.SELECT.getStyle()))
                 .addComponent(Text.of(block.action))
                 .addArguments(block.getArguments())),
 
