@@ -35,6 +35,8 @@ public class TemplateBlock {
     }
 
 
+
+    // TODO: Target, like default or victim on player action, and on selects.
     enum Blocks {
         FUNC((block) -> generatePipelineLine(block, "function")),
         PROCESS((block) -> generatePipelineLine(block, "process")),
