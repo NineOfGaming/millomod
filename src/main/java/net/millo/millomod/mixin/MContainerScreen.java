@@ -31,8 +31,6 @@ public class MContainerScreen {
 
     @Inject(method = "drawMouseoverTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTooltip(Lnet/minecraft/client/font/TextRenderer;Ljava/util/List;Ljava/util/Optional;II)V"), locals = LocalCapture.CAPTURE_FAILHARD)
     private void renderTooltip(DrawContext context, int x, int y, CallbackInfo ci, ItemStack stack) {
-        // TODO config
-
         boolean enabled = Config.getInstance().get("preview_skin.enabled");
         if (!enabled) return;
 

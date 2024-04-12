@@ -38,17 +38,17 @@ public class TemplateBlock {
 
     // TODO: Target, like default or victim on player action, and on selects.
     enum Blocks {
-        FUNC((block) -> generatePipelineLine(block, "function")),
-        PROCESS((block) -> generatePipelineLine(block, "process")),
-        START_PROCESS((block) -> generatePipelineLine(block, "start")),
-        CALL_FUNC((block) -> generatePipelineLine(block, "call")),
+        FUNC((block) -> generateFlowLine(block, "function")),
+        PROCESS((block) -> generateFlowLine(block, "process")),
+        START_PROCESS((block) -> generateFlowLine(block, "start")),
+        CALL_FUNC((block) -> generateFlowLine(block, "call")),
         IF_VAR((block) -> {
             ArrayList<ArgumentItem> items = block.getArguments();
             LineElement line = new LineElement()
                     .addComponent(Text.of("if ("));
             items.get(0).addTo(line);
             line.addSpace()
-                    .addComponent(Text.literal(block.action).setStyle(GUIStyles.ACTION.getStyle()))
+                    .addComponent(Text.literal(block.action.equals("=") ? "==" : block.action).setStyle(GUIStyles.ACTION.getStyle()))
                     .addSpace();
 
             items.remove(0);
@@ -65,22 +65,39 @@ public class TemplateBlock {
             return line;
         }),
         SET_VAR((block) -> {
+            ArrayList<ArgumentItem> items = block.getArguments();
+            LineElement line = new LineElement();
+
+            if (items.size() == 1) {
+                if (block.action.equals("+=")) {
+                    items.get(0).addTo(line);
+                    line.addComponent(Text.of("++"));
+                    return line;
+                }
+                if (block.action.equals("-=")) {
+                    items.get(0).addTo(line);
+                    line.addComponent(Text.of("--"));
+                    return line;
+                }
+            }
+
             Map<String, String> actionSymbols = new HashMap<>();
             actionSymbols.put("=", "+");
             actionSymbols.put("+=", "+");
             actionSymbols.put("-=", "+");
             actionSymbols.put("+", "+");
             actionSymbols.put("-", "-");
-            actionSymbols.put("x", "x"); // no clue if this is correct
+            actionSymbols.put("x", "x");
             actionSymbols.put("/", "+");
 
 
-            ArrayList<ArgumentItem> items = block.getArguments();
-            LineElement line = new LineElement();
             if (actionSymbols.containsKey(block.action)) {
                 String symbol = actionSymbols.get(block.action);
+
                 items.get(0).addTo(line);
-                line.addComponent(Text.of(" " + block.action + " "));
+
+                if (symbol.contains("=")) line.addComponent(Text.of(" " + block.action + " "));
+                else line.addComponent(Text.of(" = "));
 
                 items.remove(0);
                 Iterator<ArgumentItem> args = items.iterator();
@@ -114,7 +131,7 @@ public class TemplateBlock {
             this.btl = btl;
         }
 
-        private static LineElement generatePipelineLine(TemplateBlock block, String keyword) {
+        private static LineElement generateFlowLine(TemplateBlock block, String keyword) {
             return new LineElement()
                     .addComponent(Text.of(keyword))
                     .addSpace()
@@ -124,7 +141,7 @@ public class TemplateBlock {
         private static LineElement generateCommonLine(TemplateBlock block, String keyword) {
             return new LineElement()
                     .addComponent(Text.of(keyword))
-                    .addSpace()
+                    .addComponent(Text.of("."))
                     .addComponent(Text.literal(block.action))
                     .addArguments(block.getArguments());
         }
@@ -136,8 +153,8 @@ public class TemplateBlock {
 
 
     public LineElement toLine() {
-        if (Objects.equals(id, "bracket")) {
-            if (Objects.equals(direct, "open")) return new LineElement().addComponent(Text.literal("{").setStyle(Style.EMPTY.withColor(new Color(134, 161, 218).hashCode())));
+        if (id.equals("bracket")) {
+            if (direct.equals("open")) return new LineElement().addComponent(Text.literal("{").setStyle(Style.EMPTY.withColor(new Color(134, 161, 218).hashCode())));
             return new LineElement().addComponent(Text.literal("}").setStyle(Style.EMPTY.withColor(new Color(134, 161, 218).hashCode())));
         }
         try {
@@ -147,31 +164,6 @@ public class TemplateBlock {
             return new LineElement().addComponent(Text.literal(toString()));
         }
     }
-
-    public MutableText toText() {
-        if (Objects.equals(block, "process")) return parse("#block ", "`#data`", "(#args)");
-        if (Objects.equals(block, "func")) return parse("#block ", "`#data`", "(#args)");
-        if (Objects.equals(block, "call_func")) return parse("call `#data`", "(#args)");
-
-        if (Objects.equals(block, "game_action")) return parse("#block.", "#action", "(#args)");
-        if (Objects.equals(block, "entity_action")) return parse("#block.", "#action", "(#args)");
-        if (Objects.equals(block, "player_action")) return parse("#block.", "#action", "(#args)");
-
-        if (Objects.equals(block, "select_obj")) return parse("select.", "#action", "(#args)");
-        if (Objects.equals(block, "control")) return parse("control.", "#action", "(#args)");
-
-        if (Objects.equals(block, "if_var")) return parse("if `#action`", "(#args)");
-        if (Objects.equals(block, "if_player")) return parse("if `#action`", "(#args)");
-
-        if (Objects.equals(id, "bracket")) {
-            if (Objects.equals(direct, "open")) return Text.literal("{");
-            return Text.literal("}");
-        }
-
-
-        return Text.literal(toString());
-    }
-
 
     public MutableText parse(String ...parts) {
         MutableText result = Text.empty();
