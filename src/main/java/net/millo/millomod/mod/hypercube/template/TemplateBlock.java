@@ -36,10 +36,10 @@ public class TemplateBlock {
 
 
     enum Blocks {
-        FUNC((block) -> generatePipelineLine(block, "function")),
-        PROCESS((block) -> generatePipelineLine(block, "process")),
-        START_PROCESS((block) -> generatePipelineLine(block, "start")),
-        CALL_FUNC((block) -> generatePipelineLine(block, "call")),
+        FUNC((block) -> generateFlowLine(block, "function")),
+        PROCESS((block) -> generateFlowLine(block, "process")),
+        START_PROCESS((block) -> generateFlowLine(block, "start")),
+        CALL_FUNC((block) -> generateFlowLine(block, "call")),
         IF_VAR((block) -> {
             ArrayList<ArgumentItem> items = block.getArguments();
             LineElement line = new LineElement()
@@ -129,7 +129,7 @@ public class TemplateBlock {
             this.btl = btl;
         }
 
-        private static LineElement generatePipelineLine(TemplateBlock block, String keyword) {
+        private static LineElement generateFlowLine(TemplateBlock block, String keyword) {
             return new LineElement()
                     .addComponent(Text.of(keyword))
                     .addSpace()
@@ -139,7 +139,7 @@ public class TemplateBlock {
         private static LineElement generateCommonLine(TemplateBlock block, String keyword) {
             return new LineElement()
                     .addComponent(Text.of(keyword))
-                    .addSpace()
+                    .addComponent(Text.of("."))
                     .addComponent(Text.literal(block.action))
                     .addArguments(block.getArguments());
         }
