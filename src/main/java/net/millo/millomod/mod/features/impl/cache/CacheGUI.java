@@ -34,17 +34,6 @@ public class CacheGUI extends GUI {
 
         ScrollableElement lines = new ScrollableElement(paddingX, paddingY, backgroundWidth, backgroundHeight, Text.literal(""));
 
-//        LineElement line = new LineElement(backgroundWidth, 12, textRenderer);
-//        line.addComponent(Text.literal("Hello! "));
-//        line.addComponent(Text.literal("Woah!! "), Tooltip.of(Text.literal("This is awesome")));
-//        line.addComponent(Text.literal("Click me!!! "), button -> {
-//            System.out.println("Clicked!!!");
-//        });
-//        line.addComponent(Text.literal("I didn't know this could happen.."), Tooltip.of(Text.literal("Holy shit")), button -> {
-//            System.out.println("Even this worked??");
-//        });
-//        lines.addDrawableChild(line);
-
         int lineNum = 0;
         indentation = 0;
         for (TemplateBlock i : template.blocks) {
@@ -59,11 +48,6 @@ public class CacheGUI extends GUI {
             line.setLineNum(lineNum);
             line.init(backgroundWidth, 12);
             lines.addDrawableChild(line);
-//            TextElement text = new TextElement(0, 0, backgroundWidth, 12,
-//                    Text.literal("   ".repeat(indentation)).append(i.toText()).setStyle(GUIStyles.TITLE.getStyle()), textRenderer);
-//            text.alignLeft();
-//            lines.addDrawableChild(text);
-
 
             if (Objects.equals(i.id, "bracket") && Objects.equals(i.direct, "open") || Objects.equals(i.block, "func") || Objects.equals(i.block, "process")) {
                 indentation++;

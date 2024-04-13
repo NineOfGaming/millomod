@@ -1,8 +1,6 @@
 package net.millo.millomod.mod.features;
 
 
-import net.millo.millomod.mod.features.Feature;
-import net.millo.millomod.mod.features.PacketListener;
 import net.minecraft.network.packet.Packet;
 
 import java.lang.reflect.Method;

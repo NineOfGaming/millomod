@@ -1,12 +1,10 @@
 package net.millo.millomod.mod.features.impl.cache;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -15,7 +13,6 @@ import net.minecraft.text.Text;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Collectors;
 

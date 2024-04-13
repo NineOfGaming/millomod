@@ -5,8 +5,6 @@ import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
@@ -14,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class ColorPickerElement implements Drawable, Element, Widget, Selectable {
 
     int x, y, width, height;

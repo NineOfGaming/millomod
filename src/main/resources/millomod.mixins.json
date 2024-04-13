@@ -10,6 +10,7 @@
   "client": [
     "MBlockEntityRendererDispatcher",
     "MChatScreen",
+    "MClientPlayerEntity",
     "MContainerScreen",
     "MDebugRenderer",
     "MInGameHUD"

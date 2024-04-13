@@ -5,16 +5,9 @@ import net.millo.millomod.mod.util.gui.ScrollableEntryI;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
-import java.util.Objects;
 
 public class TextFieldElement extends TextFieldWidget implements ScrollableEntryI {
 

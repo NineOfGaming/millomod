@@ -26,7 +26,7 @@ public class RedevCommand extends Command {
         Epsilon
     }
 
-    private static HashMap<ALLOWED_STATES, SaveState> saveStates = new HashMap<>();
+    private static final HashMap<ALLOWED_STATES, SaveState> saveStates = new HashMap<>();
 
     public static int save(ClientPlayerEntity player) {
         return save(player, ALLOWED_STATES.Alpha);

@@ -3,16 +3,16 @@ package net.millo.millomod.mod.util.gui;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 
 import java.awt.*;
 
+@SuppressWarnings("unused")
 public enum GUIStyles {
     // Common
     DEFAULT (Color.white),
     COMMENT (Style.EMPTY.withItalic(true).withColor(Color.gray.hashCode())),
-    LINENUM (Color.darkGray),
+    LINE_NUM(Color.darkGray),
     TRUE (Color.GREEN),
     FALSE (Color.RED),
     HEADER (new Color(0xacffe7)),

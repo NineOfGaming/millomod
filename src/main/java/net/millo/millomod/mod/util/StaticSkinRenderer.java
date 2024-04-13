@@ -1,11 +1,7 @@
 package net.millo.millomod.mod.util;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.gui.widget.PlayerSkinWidget;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.OtherClientPlayerEntity;
-import net.minecraft.client.texture.PlayerSkinProvider;
-import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.world.ClientWorld;
 

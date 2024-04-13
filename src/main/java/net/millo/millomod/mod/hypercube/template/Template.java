@@ -1,7 +1,6 @@
 package net.millo.millomod.mod.hypercube.template;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

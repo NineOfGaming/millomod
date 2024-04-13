@@ -1,8 +1,6 @@
 package net.millo.millomod.mixin;
 
-import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.FeatureHandler;
-import net.minecraft.client.network.ClientCommonNetworkHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.listener.PacketListener;
 import net.minecraft.network.packet.Packet;

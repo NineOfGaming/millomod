@@ -1,7 +1,6 @@
 package net.millo.millomod.mod.features;
 
 import net.millo.millomod.config.Config;
-import net.minecraft.network.packet.Packet;
 
 public abstract class Feature {
 

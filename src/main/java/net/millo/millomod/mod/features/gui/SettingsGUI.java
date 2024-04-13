@@ -61,14 +61,14 @@ public class SettingsGUI extends GUI {
         super.render(context, mouseX, mouseY, delta);
     }
 
-    private void addTitle(ScrollableElement list, String title_key) {
+    private void addTitle(ScrollableElement list, String titleKey) {
         list.addDrawableChild(new TextElement(0, 0, backgroundWidth, 30,
-                Text.translatable(title_key).setStyle(GUIStyles.TITLE.getStyle()), textRenderer)
+                Text.translatable(titleKey).setStyle(GUIStyles.TITLE.getStyle()), textRenderer)
         );
     }
-    private void addHeader(ScrollableElement list, String header_key) {
+    private void addHeader(ScrollableElement list, String headerKey) {
         list.addDrawableChild(new TextElement(0, 0, backgroundWidth, 30,
-                Text.translatable(header_key).setStyle(GUIStyles.HEADER.getStyle()), textRenderer)
+                Text.translatable(headerKey).setStyle(GUIStyles.HEADER.getStyle()), textRenderer)
         );
     }
 

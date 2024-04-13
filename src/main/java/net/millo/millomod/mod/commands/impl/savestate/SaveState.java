@@ -5,9 +5,9 @@ import net.minecraft.util.math.Vec3d;
 
 public class SaveState {
 
-    private Vec3d savedPos;
-    private float savedPitch, savedYaw;
-    private NbtList savedItems;
+    private final Vec3d savedPos;
+    private final float savedPitch, savedYaw;
+    private final NbtList savedItems;
 
     public SaveState(Vec3d pos, float pitch, float yaw, NbtList items) {
         savedPos = pos;

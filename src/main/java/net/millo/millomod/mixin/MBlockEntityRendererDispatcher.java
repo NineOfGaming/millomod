@@ -1,13 +1,11 @@
 package net.millo.millomod.mixin;
 
 
-import com.mojang.blaze3d.systems.VertexSorter;
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.FeatureHandler;
 import net.millo.millomod.mod.features.impl.Search;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import org.spongepowered.asm.mixin.Mixin;

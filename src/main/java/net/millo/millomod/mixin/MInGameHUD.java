@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.awt.*;
 
 @Mixin(net.minecraft.client.gui.hud.InGameHud.class)
 public abstract class MInGameHUD {

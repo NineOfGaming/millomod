@@ -17,6 +17,7 @@ public class Config {
 
     private final File file;
 
+    @SuppressWarnings("FieldCanBeLocal")
     private boolean broken = false;
 
 

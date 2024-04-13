@@ -1,15 +1,12 @@
 package net.millo.millomod.mod.features.impl;
 
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
-import net.millo.millomod.MilloMod;
 import net.millo.millomod.config.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
-import net.millo.millomod.mod.features.PacketListener;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.text.Text;
 
 public class AutoCommand extends Feature implements Keybound {

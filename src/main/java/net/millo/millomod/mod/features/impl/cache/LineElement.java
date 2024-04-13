@@ -16,7 +16,6 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 import java.awt.*;
@@ -88,7 +87,7 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
         textWidgets.add(0, new TextWidget(x, y, textRenderer.getWidth(message), height, message, textRenderer));
     }
     public void setLineNum(int lineNum) {
-        Text message = Text.literal(String.valueOf(lineNum)).setStyle(GUIStyles.LINENUM.getStyle());
+        Text message = Text.literal(String.valueOf(lineNum)).setStyle(GUIStyles.LINE_NUM.getStyle());
         textWidgets.add(0, new TextWidget(x, y, 30, height, message, textRenderer));
         this.hasLineNum = true;
     }

@@ -6,13 +6,13 @@ import com.google.gson.JsonObject;
 import net.millo.millomod.mod.features.impl.cache.ArgumentItem;
 import net.millo.millomod.mod.features.impl.cache.LineElement;
 import net.millo.millomod.mod.util.gui.GUIStyles;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 import java.awt.*;
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class TemplateBlock {
     public String id;
     public String direct;
@@ -222,30 +222,6 @@ public class TemplateBlock {
         }
     }
 
-    public MutableText parse(String ...parts) {
-        MutableText result = Text.empty();
-
-        for (String part : parts) {
-            if (block != null) part = part.replace("#block", block);
-            if (data != null) part = part.replace("#data", data);
-            if (action != null) part = part.replace("#action", action);
-            if (args != null && part.contains("#args")) {
-                String[] split = part.split("#args");
-                result.append(split[0]);
-                result.append(getArgCount());
-                result.append(split[1]);
-                continue;
-            }
-            MutableText text = Text.literal(part);
-            result.append(text);
-        }
-
-        return result;
-    }
-
-    public MutableText getArgCount() {
-        return Text.literal(args.getAsJsonArray("items").size()+"");
-    }
     public ArrayList<ArgumentItem> getArguments() {
         ArrayList<ArgumentItem> argumentItems = new ArrayList<>();
 
