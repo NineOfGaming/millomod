@@ -37,6 +37,8 @@ public class NotificationTray extends Feature implements IRenderable {
 
     @Override
     public void render(DrawContext context, float delta, TextRenderer textRenderer) {
+        if (!enabled) return;
+
         for (int i = notifications.size()-1; i > 0; i--) {
             float t = MathHelper.clamp(MilloMod.MC.getLastFrameDuration(), 0f, 1f);
 

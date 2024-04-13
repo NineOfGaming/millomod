@@ -5,12 +5,15 @@ import net.millo.millomod.config.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
 import net.millo.millomod.mod.features.PacketListener;
+import net.millo.millomod.mod.features.impl.NotificationTray;
 import net.millo.millomod.mod.hypercube.template.Template;
+import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
+import net.minecraft.text.Text;
 
 public class PlotCaching extends Feature implements Keybound {
 
@@ -36,7 +39,17 @@ public class PlotCaching extends Feature implements Keybound {
 
         cachedTemplate = Template.parseItem(codeTemplateData);
 
-        return true;
+        String templateName = cachedTemplate.blocks.get(0).data;
+        if (templateName == null) templateName = cachedTemplate.blocks.get(0).action;
+
+        NotificationTray.pushNotification(
+                Text.of("Cached"),
+                Text.literal(templateName).setStyle(GUIStyles.NAME.getStyle())
+        );
+
+
+//        return true; // return true if you shouldn't obtain the item
+        return false;
     }
 
     @Override

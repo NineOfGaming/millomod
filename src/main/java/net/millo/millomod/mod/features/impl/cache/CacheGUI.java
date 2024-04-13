@@ -1,14 +1,10 @@
 package net.millo.millomod.mod.features.impl.cache;
 
-import net.fabricmc.loader.impl.lib.sat4j.pb.tools.INegator;
 import net.millo.millomod.mod.hypercube.template.Template;
 import net.millo.millomod.mod.hypercube.template.TemplateBlock;
 import net.millo.millomod.mod.util.gui.GUI;
-import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.mod.util.gui.elements.ScrollableElement;
-import net.millo.millomod.mod.util.gui.elements.TextElement;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
 
 import java.util.Objects;
@@ -49,8 +45,10 @@ public class CacheGUI extends GUI {
 //        });
 //        lines.addDrawableChild(line);
 
+        int lineNum = 0;
         indentation = 0;
         for (TemplateBlock i : template.blocks) {
+            lineNum++;
             if (Objects.equals(i.id, "bracket") && Objects.equals(i.direct, "close")) {
                 indentation--;
                 if (indentation < 0) indentation = 0;
@@ -58,6 +56,7 @@ public class CacheGUI extends GUI {
 
             LineElement line = i.toLine();
             line.setIndent(indentation);
+            line.setLineNum(lineNum);
             line.init(backgroundWidth, 12);
             lines.addDrawableChild(line);
 //            TextElement text = new TextElement(0, 0, backgroundWidth, 12,

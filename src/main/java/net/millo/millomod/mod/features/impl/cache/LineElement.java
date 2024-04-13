@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.millo.millomod.mod.util.gui.ClickableElementI;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
+import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.mod.util.gui.ScrollableEntryI;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -15,6 +16,7 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 import java.awt.*;
@@ -35,6 +37,8 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
     ArrayList<TextWidget> textWidgets = new ArrayList<>();
     HashMap<TextWidget, PressAction> pressActionMap = new HashMap<>();
     TextRenderer textRenderer;
+    private boolean hasLineNum = false;
+
     public LineElement() {
         this.textRenderer = CacheGUI.lastOpenedGUI.getTextRenderer();
         this.x = 0;
@@ -52,6 +56,7 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
 
 
     public LineElement addComponent(Text message) {
+        if (message.getString().isEmpty()) return this;
         textWidgets.add(new TextWidget(x, y, textRenderer.getWidth(message), height, message, textRenderer));
         return this;
     }
@@ -82,6 +87,11 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
         Text message = Text.literal("   ".repeat(indentation));
         textWidgets.add(0, new TextWidget(x, y, textRenderer.getWidth(message), height, message, textRenderer));
     }
+    public void setLineNum(int lineNum) {
+        Text message = Text.literal(String.valueOf(lineNum)).setStyle(GUIStyles.LINENUM.getStyle());
+        textWidgets.add(0, new TextWidget(x, y, 30, height, message, textRenderer));
+        this.hasLineNum = true;
+    }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
@@ -95,15 +105,18 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
 
         int x = getX() + fade.getXOffset();
         int y = getY() + fade.getYOffset();
-        int color = new Color(0, 0, 0, (int)(fade.getProgress() * 150)).hashCode();
-        if (isHovered()) color = new Color(12, 11, 9, (int)(fade.getProgress() * 150)).hashCode();
-
-//        context.fill(x, y, x+width, y+height, 0, color);
 
         int xOff = 0;
-
         context.getMatrices().push();
+
+        if (hasLineNum) {
+            context.fill(x + 30, y, x + 31, y + height, 0xff333333);
+        }
+
+        int ind = 0;
         for (TextWidget textWidget : textWidgets) {
+            ind ++;
+
             textWidget.setX(x);
             textWidget.setY(y);
 
@@ -125,6 +138,10 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
 
             xOff += textWidget.getWidth();
             context.getMatrices().translate(textWidget.getWidth(), 0, 0);
+            if (ind == 1 && hasLineNum) {
+                xOff += 10;
+                context.getMatrices().translate(10, 0, 0);
+            }
         }
         context.getMatrices().pop();
     }

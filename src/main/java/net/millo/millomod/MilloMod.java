@@ -30,6 +30,8 @@ public class MilloMod implements ClientModInitializer {
 
         KeybindHandler.load();
 
+        // TODO: tag display
+        // TODO: Side chat
         // TODO: /dfgive
         // TODO: reference book arguments in GUI
         // TODO: /search

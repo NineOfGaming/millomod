@@ -21,6 +21,9 @@ public class TemplateBlock {
     public String data;
     public String action;
     public JsonObject args;
+    public String target;
+    public String attribute;
+    public String subAction;
 
     public String toString() {
         return "TemplateBlock{" +
@@ -31,6 +34,7 @@ public class TemplateBlock {
                 ", data='" + data + '\'' +
                 ", action='" + action + '\'' +
                 ", args='" + args + '\'' +
+                ", target='" + target + '\'' +
                 '}';
     }
 
@@ -38,6 +42,8 @@ public class TemplateBlock {
 
     // TODO: Target, like default or victim on player action, and on selects.
     enum Blocks {
+        ENTITY_EVENT((block) -> generateEventLine(block, "entity_event")),
+        EVENT((block) -> generateEventLine(block, "event")),
         FUNC((block) -> generateFlowLine(block, "function")),
         PROCESS((block) -> generateFlowLine(block, "process")),
         START_PROCESS((block) -> generateFlowLine(block, "start")),
@@ -45,10 +51,10 @@ public class TemplateBlock {
         IF_VAR((block) -> {
             ArrayList<ArgumentItem> items = block.getArguments();
             LineElement line = new LineElement()
-                    .addComponent(Text.of("if ("));
+                    .addComponent(Text.of("if (" + (block.isNot() ? (block.action.equals("=") ? "" : "!") : "")));
             items.get(0).addTo(line);
             line.addSpace()
-                    .addComponent(Text.literal(block.action.equals("=") ? "==" : block.action).setStyle(GUIStyles.ACTION.getStyle()))
+                    .addComponent(Text.literal(block.action.equals("=") ? (block.isNot() ? "!=" : "==") : block.action).setStyle(GUIStyles.ACTION.getStyle()))
                     .addSpace();
 
             items.remove(0);
@@ -64,7 +70,71 @@ public class TemplateBlock {
 
             return line;
         }),
-        SET_VAR((block) -> {
+        IF_PLAYER((block) -> generateConditionLine(block, "player.")),
+        IF_ENTITY((block) -> generateConditionLine(block, "entity.")),
+        IF_GAME((block) -> generateConditionLine(block, "game.")),
+        ELSE((block) -> new LineElement().addComponent(Text.of("else"))),
+        REPEAT((block) -> new LineElement()
+                .addComponent(Text.literal("repeat").setStyle(GUIStyles.VECTOR.getStyle()))
+                .addSpace()
+                .addComponent(Text.of(block.action))
+                .addArguments(block.getArguments())),
+        SET_VAR(Blocks::generateSetVarLine),
+        PLAYER_ACTION((block) -> generateCommonLine(block, "player")),
+        ENTITY_ACTION((block) -> generateCommonLine(block, "entity")),
+        GAME_ACTION((block) -> generateCommonLine(block, "game")),
+
+        CONTROL((block) -> {
+            if (block.action.equals("StopRepeat"))
+                return new LineElement().addComponent(Text.literal("break").setStyle(GUIStyles.CONTROL.getStyle()));
+            if (block.action.equals("Skip"))
+                return new LineElement().addComponent(Text.literal("continue").setStyle(GUIStyles.CONTROL.getStyle()));
+            if (block.action.equals("Return"))
+                return new LineElement().addComponent(Text.literal("return").setStyle(GUIStyles.CONTROL.getStyle()));
+
+            return new LineElement()
+                    .addComponent(Text.literal(block.action).setStyle(GUIStyles.CONTROL.getStyle()))
+                    .addArguments(block.getArguments());
+        }),
+        SELECT_OBJ((block) -> new LineElement()
+                .addComponent(Text.literal("select").setStyle(GUIStyles.SELECT.getStyle()))
+                .addComponent(Text.of("."))
+                .addComponent(Text.of((block.isNot() ? "!" : "") + block.action))
+                .addComponent(Text.of(block.subAction == null ? "" : "." + block.subAction))
+                .addArguments(block.getArguments())),
+
+
+        ;
+        final BlockToLine btl;
+        Blocks(BlockToLine btl) {
+            this.btl = btl;
+        }
+
+        private static LineElement generateEventLine(TemplateBlock block, String keyword) {
+            return new LineElement()
+                    .addComponent(Text.of(keyword))
+                    .addSpace()
+                    .addComponent(Text.literal(block.action).setStyle(GUIStyles.HEADER.getStyle()))
+                    .addArguments(block.getArguments())
+                    .addComponent(Text.of(block.lsCancel() ? ".lsCancel()" : ""));
+        }
+
+        private static LineElement generateFlowLine(TemplateBlock block, String keyword) {
+            return new LineElement()
+                    .addComponent(Text.of(keyword))
+                    .addSpace()
+                    .addComponent(Text.literal(block.data).setStyle(GUIStyles.NAME.getStyle()))
+                    .addArguments(block.getArguments());
+        }
+        private static LineElement generateCommonLine(TemplateBlock block, String keyword) {
+            return new LineElement()
+                    .addComponent(Text.of(keyword))
+                    .addComponent(Text.of("."))
+                    .addComponent(Text.literal(block.action))
+                    .addArguments(block.getArguments());
+        }
+
+        private static LineElement generateSetVarLine(TemplateBlock block) {
             ArrayList<ArgumentItem> items = block.getArguments();
             LineElement line = new LineElement();
 
@@ -88,7 +158,6 @@ public class TemplateBlock {
             actionSymbols.put("+", "+");
             actionSymbols.put("-", "-");
             actionSymbols.put("x", "x");
-            actionSymbols.put("/", "+");
 
 
             if (actionSymbols.containsKey(block.action)) {
@@ -96,7 +165,7 @@ public class TemplateBlock {
 
                 items.get(0).addTo(line);
 
-                if (symbol.contains("=")) line.addComponent(Text.of(" " + block.action + " "));
+                if (block.action.contains("=")) line.addComponent(Text.of(" " + block.action + " "));
                 else line.addComponent(Text.of(" = "));
 
                 items.remove(0);
@@ -111,40 +180,22 @@ public class TemplateBlock {
             }
 
             return generateCommonLine(block, "set_var");
-        }),
-        PLAYER_ACTION((block) -> generateCommonLine(block, "player")),
-        ENTITY_ACTION((block) -> generateCommonLine(block, "entity")),
-        GAME_ACTION((block) -> generateCommonLine(block, "game")),
-
-        CONTROL((block) -> new LineElement()
-                .addComponent(Text.of(block.action))
-                .addArguments(block.getArguments())),
-        SELECT_OBJECT((block) -> new LineElement()
-                .addComponent(Text.literal("select").setStyle(GUIStyles.SELECT.getStyle()))
-                .addComponent(Text.of(block.action))
-                .addArguments(block.getArguments())),
-
-
-        ;
-        final BlockToLine btl;
-        Blocks(BlockToLine btl) {
-            this.btl = btl;
         }
 
-        private static LineElement generateFlowLine(TemplateBlock block, String keyword) {
+        private static LineElement generateConditionLine(TemplateBlock block, String key) {
             return new LineElement()
-                    .addComponent(Text.of(keyword))
-                    .addSpace()
-                    .addComponent(Text.literal(block.data).setStyle(GUIStyles.NAME.getStyle()))
-                    .addArguments(block.getArguments());
+                    .addComponent(Text.of("if ("+(block.isNot() ? "!" : "")+key))
+                    .addComponent(Text.literal(block.action).setStyle(GUIStyles.ACTION.getStyle()))
+                    .addArguments(block.getArguments())
+                    .addComponent(Text.of(")"));
         }
-        private static LineElement generateCommonLine(TemplateBlock block, String keyword) {
-            return new LineElement()
-                    .addComponent(Text.of(keyword))
-                    .addComponent(Text.of("."))
-                    .addComponent(Text.literal(block.action))
-                    .addArguments(block.getArguments());
-        }
+    }
+
+    private boolean isNot() {
+        return attribute != null && attribute.equals("NOT");
+    }
+    private boolean lsCancel() {
+        return attribute != null && attribute.equals("LS-CANCEL");
     }
 
     private interface BlockToLine {
@@ -159,7 +210,13 @@ public class TemplateBlock {
         }
         try {
             Blocks b = Blocks.valueOf(block.toUpperCase());
-            return b.btl.parse(this);
+            LineElement line = b.btl.parse(this);
+            if (target != null) {
+                line.addComponent(Text.of("."))
+                        .addComponent(Text.of(target))
+                        .addComponent(Text.of("()"));
+            }
+            return line;
         } catch (IllegalArgumentException e) {
             return new LineElement().addComponent(Text.literal(toString()));
         }

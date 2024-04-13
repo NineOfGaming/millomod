@@ -10,14 +10,17 @@ import java.awt.*;
 
 public enum GUIStyles {
     // Common
+    DEFAULT (Color.white),
     COMMENT (Style.EMPTY.withItalic(true).withColor(Color.gray.hashCode())),
+    LINENUM (Color.darkGray),
     TRUE (Color.GREEN),
     FALSE (Color.RED),
     HEADER (new Color(0xacffe7)),
     TITLE (Color.YELLOW),
     NAME (new Color(0xf0acff)),
     ACTION(new Color(0xEFB598)),
-    SELECT(new Color(0xd958ea)),
+    SELECT(new Color(0xDB74EC)),
+    CONTROL(new Color(0x6A7696)),
 
     // Scopes
     UNSAVED(Formatting.GRAY),
@@ -40,7 +43,12 @@ public enum GUIStyles {
     VAR(VARIABLE.style),
     LIST(Formatting.DARK_GREEN),
     DICT(new Color(0x55AAFF)),
-
+    VECTOR(new Color(0x2AFFAA)),
+    SOUND(Formatting.BLUE),
+    PARTICLE(new Color(0xAA55FF)),
+    POTION(new Color(0xFF557F)),
+    LOCATION(Formatting.GREEN),
+    COMPONENT(new Color(0x7FD42A))
 
 
     ;
