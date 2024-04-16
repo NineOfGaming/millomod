@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.millo.millomod.mod.commands.Command;
 import net.millo.millomod.mod.commands.ArgBuilder;
+import net.millo.millomod.mod.features.impl.teleport.TeleportHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandRegistryAccess;
@@ -85,13 +86,7 @@ public class RedevCommand extends Command {
             }
         }
 
-        // TODO: Fix
-//        float midY = 52 + Math.round((savedPos.y - 52)/5)*5;
-//        TeleportUtil.teleportToPosition(initialPos)
-//                .thenCompose(ignored -> TeleportUtil.teleportToPosition(new Vec3d(initialPos.x, midY, initialPos.z)))
-//                .thenCompose(ignored -> TeleportUtil.teleportToPosition(new Vec3d(savedPos.x, midY, savedPos.z)))
-//                .thenCompose(ignored -> TeleportUtil.teleportToPosition(new Vec3d(savedPos.x, savedPos.y, savedPos.z)));
-
+        TeleportHandler.teleportTo(savedPos);
     }
 
 
@@ -116,6 +111,11 @@ public class RedevCommand extends Command {
         }
 
         cd.register(builder);
+    }
+
+    @Override
+    public String getKey() {
+        return "redev";
     }
 
 }

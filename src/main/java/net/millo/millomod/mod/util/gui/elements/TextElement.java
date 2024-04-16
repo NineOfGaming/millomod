@@ -9,7 +9,7 @@ import net.minecraft.text.Text;
 
 public class TextElement extends TextWidget implements ScrollableEntryI {
 
-    private int x, y;
+    private int x, y, realX, realY;
     private final ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.RIGHT);
 
     public TextElement(Text message, TextRenderer textRenderer) {
@@ -33,21 +33,26 @@ public class TextElement extends TextWidget implements ScrollableEntryI {
         super.setX(x + fade.getXOffset());
         super.setY(y + fade.getYOffset());
         super.renderWidget(context, mouseX, mouseY, delta);
+
+        this.hovered = mouseX >= this.getRealX() && mouseY >= this.getRealY() && mouseX < this.getRealX() + this.width && mouseY < this.getRealY() + this.height;
+        if (getTooltip() != null) {
+            getTooltip().render(this.isHovered(), this.isFocused(), this.getNavigationFocus());
+        }
     }
 
     public void setRealX(int x) {
-
+        realX = x;
     }
     public void setRealY(int y) {
-
+        realY = y;
     }
     @Override
     public int getRealX() {
-        return 0;
+        return realX;
     }
 
     @Override
     public int getRealY() {
-        return 0;
+        return realY;
     }
 }

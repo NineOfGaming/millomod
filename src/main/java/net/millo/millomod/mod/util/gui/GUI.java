@@ -17,7 +17,7 @@ public abstract class GUI extends Screen {
     protected int backgroundWidth, backgroundHeight;
     protected int paddingX = 40;
     protected int paddingY = 40;
-    private final ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.UP);
+    private ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.UP);
     private GUI parent;
 
     public GUI(Text title) {
@@ -77,5 +77,9 @@ public abstract class GUI extends Screen {
 
     public void setParent(GUI gui) {
         this.parent = gui;
+    }
+
+    public void setFade(ElementFadeIn fade) {
+        this.fade = fade;
     }
 }

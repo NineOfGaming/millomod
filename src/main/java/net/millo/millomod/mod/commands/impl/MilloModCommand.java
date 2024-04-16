@@ -14,13 +14,17 @@ public class MilloModCommand extends Command {
     @Override
     public void register(MinecraftClient instance, CommandDispatcher<FabricClientCommandSource> cd, CommandRegistryAccess context) {
 
-        LiteralCommandNode<FabricClientCommandSource> node = cd.register(ArgBuilder.literal("millomod")
+        cd.register(ArgBuilder.literal("millo")
                 .executes(ctx -> {
                     new MilloGUI().open();
                     return 1;
                 })
         );
-        cd.register(ArgBuilder.literal("millo").redirect(node));
+    }
+
+    @Override
+    public String getKey() {
+        return "millo";
     }
 
 }

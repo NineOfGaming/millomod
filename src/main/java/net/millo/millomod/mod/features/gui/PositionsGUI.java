@@ -11,6 +11,9 @@ import net.minecraft.text.Text;
 
 public class PositionsGUI extends GUI {
     Screen parent;
+
+    // TODO: Snapping
+
     public PositionsGUI(Screen parent) {
         super(Text.literal("Positions"));
         this.parent = parent;

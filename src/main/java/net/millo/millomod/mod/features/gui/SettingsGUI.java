@@ -35,10 +35,10 @@ public class SettingsGUI extends GUI {
 
         addHeader(settingsList, "config.millo.features");
 
-        addBooleanOption(settingsList, "lagslayer.enabled","config.millo.lagslayer", "config.millo.lagslayer.tooltip");
-        addBooleanOption(settingsList, "menu_search.enabled", "config.millo.menu_search", "config.millo.menu_search.tooltip");
-        addBooleanOption(settingsList, "auto_command.enabled", "config.millo.auto_command", "config.millo.auto_command.tooltip");
-        addBooleanOption(settingsList, "notification_tray.enabled", "config.millo.notification_tray", "config.millo.notification_tray.tooltip");
+        addBooleanOption(settingsList, "lagslayer");
+        addBooleanOption(settingsList, "menu_search");
+        addBooleanOption(settingsList, "auto_command");
+        addBooleanOption(settingsList, "notification_tray");
 
 //        addHeader(settingsList, "Unstable Features");
 //        addBooleanOption(settingsList, "preview_skin.enabled","Preview Skin", "Do not use. Will crash your game");
@@ -72,16 +72,16 @@ public class SettingsGUI extends GUI {
         );
     }
 
-    private void addBooleanOption(ScrollableElement list, String key, String name_key, String tooltip_key) {
-        boolean state = config.get(key);
+    private void addBooleanOption(ScrollableElement list, String key) {
+        boolean state = config.get(key+".enabled");
         int x = backgroundWidth / 2 - 100;
 
-        String name = Text.translatable(name_key).getString();
-        String tooltip = Text.translatable(tooltip_key).getString();
+        String name = Text.translatable("millo.feature."+key).getString();
+        String tooltip = Text.translatable("millo.feature."+key+".desc").getString();
 
         ButtonElement b = new ButtonElement(x, 0, 200, 20, Text.literal(name+": ").append(GUIStyles.getTrueFalse(state)), button -> {
-            boolean newState = !(boolean)config.get(key);
-            config.set(key, newState);
+            boolean newState = !(boolean)config.get(key+".enabled");
+            config.set(key+".enabled", newState);
             button.setText(Text.literal(name+": ").append(GUIStyles.getTrueFalse(newState)));
         }, textRenderer);
         b.setTooltip(Text.literal(tooltip));

@@ -25,4 +25,9 @@ public class ColorsCommand extends Command {
         );
     }
 
+    @Override
+    public String getKey() {
+        return "colors";
+    }
+
 }

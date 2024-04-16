@@ -43,4 +43,9 @@ public class SaveCommand extends Command {
                         .executes(ctx -> RedevCommand.save(mc.player, RedevCommand.ALLOWED_STATES.Epsilon)))
                 .executes(ctx -> RedevCommand.save(mc.player)));*/
     }
+
+    @Override
+    public String getKey() {
+        return "save";
+    }
 }

@@ -7,8 +7,7 @@ import net.minecraft.command.CommandRegistryAccess;
 
 public abstract class Command {
 
-
     public abstract void register(MinecraftClient instance, CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess context);
 
-
+    public abstract String getKey();
 }

@@ -18,4 +18,9 @@ public class SettingsCommand extends Command {
                 })
         );
     }
+
+    @Override
+    public String getKey() {
+        return "settings";
+    }
 }
