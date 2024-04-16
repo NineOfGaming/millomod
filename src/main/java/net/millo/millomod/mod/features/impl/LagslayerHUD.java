@@ -4,7 +4,7 @@ import net.millo.millomod.MilloMod;
 import net.millo.millomod.config.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.IRenderable;
-import net.millo.millomod.mod.features.PacketListener;
+import net.millo.millomod.mod.features.HandlePacket;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
@@ -42,7 +42,7 @@ public class LagslayerHUD extends Feature implements IRenderable {
         return "lagslayer";
     }
 
-    @PacketListener
+    @HandlePacket
     public boolean onActionbar(OverlayMessageS2CPacket packet) {
         if (!enabled) return false;
 

@@ -3,6 +3,7 @@ package net.millo.millomod.mod.features;
 import net.millo.millomod.config.Config;
 import net.millo.millomod.mod.features.impl.*;
 import net.millo.millomod.mod.features.impl.cache.PlotCaching;
+import net.millo.millomod.mod.features.impl.teleport.TeleportHandler;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -29,7 +30,9 @@ public class FeatureHandler {
                 new AutoCommand(),
                 new NotificationTray(),
                 new Search(),
-                new PlotCaching()
+                new PlotCaching(),
+                new Tracker(),
+                new TeleportHandler()
         );
 
         Config config = Config.getInstance();
@@ -60,6 +63,9 @@ public class FeatureHandler {
 //     Pass through
     public static <T extends PacketListener> boolean handlePacket(Packet<T> packet) {
         return packetHandler.handlePacket(packet);
+    }
+    public static <T extends PacketListener> boolean onSendPacket(Packet<T> packet) {
+        return packetHandler.onSendPacket(packet);
     }
 
     public static void renderHUD(DrawContext context, float tickDelta, TextRenderer textRenderer) {
@@ -98,4 +104,5 @@ public class FeatureHandler {
     public static void onTick() {
         getFeatures().forEach(Feature::onTick);
     }
+
 }

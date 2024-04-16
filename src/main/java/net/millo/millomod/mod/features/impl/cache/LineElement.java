@@ -2,6 +2,8 @@ package net.millo.millomod.mod.features.impl.cache;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.millo.millomod.MilloMod;
+import net.millo.millomod.mod.features.impl.teleport.TeleportHandler;
 import net.millo.millomod.mod.util.gui.ClickableElementI;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
 import net.millo.millomod.mod.util.gui.GUIStyles;
@@ -17,6 +19,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -86,9 +89,14 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
         Text message = Text.literal("   ".repeat(indentation));
         textWidgets.add(0, new TextWidget(x, y, textRenderer.getWidth(message), height, message, textRenderer));
     }
-    public void setLineNum(int lineNum) {
+    public void setLineNum(int lineNum, Vec3d targetPos) {
         Text message = Text.literal(String.valueOf(lineNum)).setStyle(GUIStyles.LINE_NUM.getStyle());
-        textWidgets.add(0, new TextWidget(x, y, 30, height, message, textRenderer));
+        TextWidget w = new TextWidget(x, y, 30, height, message, textRenderer);
+        textWidgets.add(0, w);
+        pressActionMap.put(w, button -> {
+            MilloMod.MC.setScreen(null);
+            TeleportHandler.teleportTo(targetPos);
+        });
         this.hasLineNum = true;
     }
 

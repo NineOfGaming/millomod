@@ -5,11 +5,12 @@
   "mixins": [
     "ChestSearchAccessor",
     "MChestSearch",
-    "MClientCommonNetworkHandler"
+    "MClientConnection"
   ],
   "client": [
     "MBlockEntityRendererDispatcher",
     "MChatScreen",
+    "MClientCommonNetworkHandler",
     "MClientPlayerEntity",
     "MContainerScreen",
     "MDebugRenderer",

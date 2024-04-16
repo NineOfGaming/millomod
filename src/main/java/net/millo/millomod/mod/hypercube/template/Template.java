@@ -1,6 +1,7 @@
 package net.millo.millomod.mod.hypercube.template;
 
 import com.google.gson.Gson;
+import net.minecraft.util.math.Vec3d;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,6 +12,7 @@ import java.util.zip.GZIPInputStream;
 
 public class Template {
 
+    public Vec3d startPos;
     public String b64Code;
     public ArrayList<TemplateBlock> blocks;
 
@@ -32,7 +34,6 @@ public class Template {
             return null;
         }
     }
-
 
 
     private static byte[] decompress(byte[] compressedData) throws IOException {

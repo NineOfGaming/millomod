@@ -3,7 +3,6 @@ package net.millo.millomod.mod.commands.impl.savestate;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.millo.millomod.mod.util.TeleportUtil;
 import net.millo.millomod.mod.commands.Command;
 import net.millo.millomod.mod.commands.ArgBuilder;
 import net.minecraft.client.MinecraftClient;
@@ -86,11 +85,12 @@ public class RedevCommand extends Command {
             }
         }
 
-        float midY = 52 + Math.round((savedPos.y - 52)/5)*5;
-        TeleportUtil.teleportToPosition(player, initialPos)
-                .thenCompose(ignored -> TeleportUtil.teleportToPosition(player, new Vec3d(initialPos.x, midY, initialPos.z)))
-                .thenCompose(ignored -> TeleportUtil.teleportToPosition(player, new Vec3d(savedPos.x, midY, savedPos.z)))
-                .thenCompose(ignored -> TeleportUtil.teleportToPosition(player, new Vec3d(savedPos.x, savedPos.y, savedPos.z)));
+        // TODO: Fix
+//        float midY = 52 + Math.round((savedPos.y - 52)/5)*5;
+//        TeleportUtil.teleportToPosition(initialPos)
+//                .thenCompose(ignored -> TeleportUtil.teleportToPosition(new Vec3d(initialPos.x, midY, initialPos.z)))
+//                .thenCompose(ignored -> TeleportUtil.teleportToPosition(new Vec3d(savedPos.x, midY, savedPos.z)))
+//                .thenCompose(ignored -> TeleportUtil.teleportToPosition(new Vec3d(savedPos.x, savedPos.y, savedPos.z)));
 
     }
 

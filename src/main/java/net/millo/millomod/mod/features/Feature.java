@@ -12,10 +12,10 @@ public abstract class Feature {
     public void onTick() {}
 
     public void onConfigUpdate(Config config) {
-        enabled = config.get(getKey()+".enabled");
+        enabled = alwaysActive() || (boolean) config.get(getKey()+".enabled");
     }
     public void defaultConfig(Config config) {
-        config.setIfNull(getKey()+".enabled", !disabledByDefault());
+        if (!alwaysActive()) config.setIfNull(getKey()+".enabled", !disabledByDefault());
         if (this instanceof IRenderable) ((IRenderable) this).setHudConfig(config);
     }
     public void toggleEnabled() {
@@ -24,4 +24,5 @@ public abstract class Feature {
     }
 
     public boolean disabledByDefault() { return false; }
+    public boolean alwaysActive() { return false; }
 }
