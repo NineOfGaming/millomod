@@ -28,6 +28,7 @@ public class MilloMod implements ClientModInitializer {
 
         // TODO: tag display
         // TODO: Side chat
+        // TODO: /millomod, credits, settings, general info
         // TODO: /dfgive
         // TODO: reference book arguments in GUI
         // TODO: /search

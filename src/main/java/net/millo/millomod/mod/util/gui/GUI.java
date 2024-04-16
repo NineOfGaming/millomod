@@ -3,6 +3,7 @@ package net.millo.millomod.mod.util.gui;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.millo.millomod.mod.features.gui.MilloGUI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,6 +18,7 @@ public abstract class GUI extends Screen {
     protected int paddingX = 40;
     protected int paddingY = 40;
     private final ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.UP);
+    private GUI parent;
 
     public GUI(Text title) {
         super(title);
@@ -27,6 +29,13 @@ public abstract class GUI extends Screen {
         super.init();
         backgroundWidth = width - paddingX *2;
         backgroundHeight = height - paddingY *2;
+    }
+
+    @Override
+    public void close() {
+        if (parent != null && client != null) {
+            client.setScreen(parent);
+        } else super.close();
     }
 
     public void open() {
@@ -64,5 +73,9 @@ public abstract class GUI extends Screen {
 
     public ElementFadeIn getFade() {
         return fade;
+    }
+
+    public void setParent(GUI gui) {
+        this.parent = gui;
     }
 }
