@@ -1,4 +1,4 @@
-package net.millo.millomod.mixin;
+package net.millo.millomod.mixin.player;
 
 import net.millo.millomod.mod.features.FeatureHandler;
 import net.minecraft.client.network.ClientPlayerEntity;

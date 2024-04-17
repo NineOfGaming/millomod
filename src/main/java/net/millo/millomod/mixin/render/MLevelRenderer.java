@@ -1,4 +1,4 @@
-package net.millo.millomod.mixin;
+package net.millo.millomod.mixin.render;
 
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

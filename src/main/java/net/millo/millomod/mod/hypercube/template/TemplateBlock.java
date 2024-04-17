@@ -130,13 +130,15 @@ public class TemplateBlock {
             return new LineElement()
                     .addComponent(Text.of(keyword))
                     .addComponent(Text.of("."))
-                    .addComponent(Text.literal(block.action))
+                    .addComponent(Text.literal(block.action.trim()))
                     .addArguments(block.getArguments());
         }
 
         private static LineElement generateSetVarLine(TemplateBlock block) {
             ArrayList<ArgumentItem> items = block.getArguments();
             LineElement line = new LineElement();
+
+            if (items.isEmpty()) return generateCommonLine(block, "set_var");
 
             if (items.size() == 1) {
                 if (block.action.equals("+=")) {

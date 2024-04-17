@@ -1,4 +1,4 @@
-package net.millo.millomod.mixin;
+package net.millo.millomod.mixin.network;
 
 
 import net.millo.millomod.mod.features.FeatureHandler;

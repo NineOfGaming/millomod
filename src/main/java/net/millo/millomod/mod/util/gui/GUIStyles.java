@@ -39,6 +39,8 @@ public enum GUIStyles {
 
 
     // Parameter Colors
+    ANY(new Color(0xFFD47F)),
+    TXT(Formatting.AQUA),
     NUM(NUMBER.style),
     VAR(VARIABLE.style),
     LIST(Formatting.DARK_GREEN),

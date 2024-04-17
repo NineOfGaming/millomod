@@ -25,8 +25,6 @@ public class Template {
         try {
             byte[] decompressed = decompress(Base64.getDecoder().decode(data));
 
-            System.out.println(new String(decompressed));
-
             Template template = new Gson().fromJson(new String(decompressed), Template.class);
             template.b64Code = data;
             return template;

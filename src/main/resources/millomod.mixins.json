@@ -3,18 +3,18 @@
   "package": "net.millo.millomod.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ChestSearchAccessor",
-    "MChestSearch",
-    "MClientConnection"
+    "render.ChestSearchAccessor",
+    "render.MChestSearch",
+    "network.MClientConnection"
   ],
   "client": [
-    "MBlockEntityRendererDispatcher",
-    "MChatScreen",
-    "MClientCommonNetworkHandler",
-    "MClientPlayerEntity",
-    "MContainerScreen",
-    "MDebugRenderer",
-    "MInGameHUD"
+    "render.MBlockEntityRendererDispatcher",
+    "render.MChatScreen",
+    "network.MClientCommonNetworkHandler",
+    "player.MClientPlayerEntity",
+    "render.MContainerScreen",
+    "render.MDebugRenderer",
+    "render.MInGameHUD"
   ],
   "injectors": {
     "defaultRequire": 1

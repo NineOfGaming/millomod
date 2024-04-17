@@ -1,4 +1,4 @@
-package net.millo.millomod.mixin;
+package net.millo.millomod.mixin.render;
 
 import net.millo.millomod.config.Config;
 import net.minecraft.client.gui.DrawContext;

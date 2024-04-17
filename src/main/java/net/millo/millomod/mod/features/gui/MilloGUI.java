@@ -64,7 +64,6 @@ public class MilloGUI extends GUI {
             text.setTooltip(Tooltip.of(Text.translatable("millo.feature."+feature.getKey()+".desc")));
             featureList.addDrawableChild(text);
         }
-        addDrawableChild(featureList);
 
         // Commands
         featureList.addDrawableChild(

@@ -37,8 +37,6 @@ public class CacheGUI extends GUI {
     protected void init() {
         super.init();
 
-        System.out.println(template);
-
         if (template == null) {
             addDrawableChild(new TextElement(paddingX, paddingY, backgroundWidth, backgroundHeight,
                     Text.literal("Empty").setStyle(GUIStyles.COMMENT.getStyle()),

@@ -1,4 +1,4 @@
-package net.millo.millomod.mixin;
+package net.millo.millomod.mixin.render;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;

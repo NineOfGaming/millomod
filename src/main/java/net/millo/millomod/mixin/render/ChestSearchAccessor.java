@@ -1,4 +1,4 @@
-package net.millo.millomod.mixin;
+package net.millo.millomod.mixin.render;
 
 
 import net.minecraft.client.gui.screen.ingame.HandledScreen;

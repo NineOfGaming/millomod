@@ -41,5 +41,6 @@
   "config.millo.modify_positions":  "Modify Positions",
 
   "key.category.millo": "Millo Mod",
-  "key.millo.toggle_auto_command": "Toggle Auto Command"
+  "key.millo.toggle_auto_command": "Toggle Auto Command",
+  "key.millo.display_cache": "Cache Line"
 }
