@@ -124,6 +124,10 @@ public class ButtonElement implements ScrollableEntryI, Element, Widget, Selecta
         return realY;
     }
 
+    public void setWidth(int width) {
+        this.width = width;
+        textWidget.setWidth(width);
+    }
 
     public void forEachChild(Consumer<ClickableWidget> consumer) {}
 

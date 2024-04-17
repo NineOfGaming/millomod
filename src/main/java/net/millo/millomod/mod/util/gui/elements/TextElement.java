@@ -10,7 +10,7 @@ import net.minecraft.text.Text;
 public class TextElement extends TextWidget implements ScrollableEntryI {
 
     private int x, y, realX, realY;
-    private final ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.RIGHT);
+    private ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.RIGHT);
 
     public TextElement(Text message, TextRenderer textRenderer) {
         super(message, textRenderer);
@@ -54,5 +54,9 @@ public class TextElement extends TextWidget implements ScrollableEntryI {
     @Override
     public int getRealY() {
         return realY;
+    }
+
+    public void setFade(ElementFadeIn fade) {
+        this.fade = fade;
     }
 }

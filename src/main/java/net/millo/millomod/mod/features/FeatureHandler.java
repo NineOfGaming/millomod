@@ -1,6 +1,6 @@
 package net.millo.millomod.mod.features;
 
-import net.millo.millomod.config.Config;
+import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.impl.*;
 import net.millo.millomod.mod.features.impl.cache.PlotCaching;
 import net.millo.millomod.mod.features.impl.teleport.TeleportHandler;

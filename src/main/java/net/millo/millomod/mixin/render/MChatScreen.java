@@ -1,6 +1,6 @@
 package net.millo.millomod.mixin.render;
 
-import net.millo.millomod.config.Config;
+import net.millo.millomod.system.Config;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;

@@ -1,7 +1,7 @@
 package net.millo.millomod;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.millo.millomod.config.Config;
+import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.FeatureHandler;
 import net.millo.millomod.mod.features.Keybound;

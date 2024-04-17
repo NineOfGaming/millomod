@@ -1,6 +1,6 @@
 package net.millo.millomod.mod.features.gui;
 
-import net.millo.millomod.config.Config;
+import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
 import net.millo.millomod.mod.util.gui.GUI;
 import net.millo.millomod.mod.util.gui.GUIStyles;

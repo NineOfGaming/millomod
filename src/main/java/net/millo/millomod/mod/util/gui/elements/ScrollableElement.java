@@ -1,6 +1,8 @@
 package net.millo.millomod.mod.util.gui.elements;
 
+import net.millo.millomod.mod.features.impl.cache.LineElement;
 import net.millo.millomod.mod.util.gui.ClickableElementI;
+import net.millo.millomod.mod.util.gui.ElementFadeIn;
 import net.millo.millomod.mod.util.gui.ScrollableEntryI;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
@@ -194,4 +196,19 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
         return height;
     }
 
+    public ArrayList<ScrollableEntryI> getDrawables() {
+        return drawables;
+    }
+
+
+    public void setFade(ElementFadeIn fade) {
+        drawables.forEach(i -> {
+            if (i instanceof LineElement) ((LineElement) i).setFade(fade);
+            if (i instanceof ButtonElement) ((ButtonElement) i).setFade(fade);
+        });
+    }
+
+    public void clear() {
+        drawables.clear();
+    }
 }

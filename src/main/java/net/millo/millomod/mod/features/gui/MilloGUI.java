@@ -1,21 +1,17 @@
 package net.millo.millomod.mod.features.gui;
 
-import net.millo.millomod.config.Config;
+import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.commands.Command;
 import net.millo.millomod.mod.commands.CommandHandler;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.FeatureHandler;
-import net.millo.millomod.mod.util.gui.ElementFadeIn;
 import net.millo.millomod.mod.util.gui.GUI;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.mod.util.gui.elements.ButtonElement;
 import net.millo.millomod.mod.util.gui.elements.ScrollableElement;
 import net.millo.millomod.mod.util.gui.elements.TextElement;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
-
-import java.io.IOException;
 
 public class MilloGUI extends GUI {
     Config config;

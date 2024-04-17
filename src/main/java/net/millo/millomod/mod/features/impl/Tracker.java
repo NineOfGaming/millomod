@@ -1,5 +1,6 @@
 package net.millo.millomod.mod.features.impl;
 
+import net.millo.millomod.mod.Callback;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.HandlePacket;
 import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
@@ -8,11 +9,28 @@ import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Tracker extends Feature {
 
     private static double x, z;
     private static double plotX, plotZ;
     private static Sequence step = Sequence.WAIT_FOR_CLEAR;
+    private static int plotId = 0;
+    private static boolean requestPlotId = false;
+    private static ArrayList<Callback> plotIdCallbacks = new ArrayList<>();
+
+
+
+
+    public enum Mode {
+        PLAY, DEV, BUILD, SPAWN
+    }
+
+
+    public static Mode mode = Mode.SPAWN;
 
     public static boolean isInArea(Vec3d pos) {
         double x = pos.getX();
@@ -23,16 +41,6 @@ public class Tracker extends Feature {
 
         return inX && inZ;
     }
-
-
-    public enum Mode {
-        PLAY, DEV, BUILD, SPAWN
-    }
-
-
-    public static Mode mode = Mode.SPAWN;
-
-
     private static void toDev() {
         setMode(Mode.DEV);
         plotX = x + 9.5;
@@ -41,6 +49,7 @@ public class Tracker extends Feature {
     private static void setMode(Mode mode) {
         Tracker.mode = mode;
         step = Sequence.WAIT_FOR_CLEAR;
+        requestPlotId = true;
     }
 
     public static Vec3d getPos() {
@@ -71,15 +80,35 @@ public class Tracker extends Feature {
 
     @HandlePacket
     public boolean gameMessage(GameMessageS2CPacket message) {
+        String content = message.content().getString();
         if (step == Sequence.WAIT_FOR_MESSAGE) {
-            String content = message.content().getString();
             if (content.equals("» You are now in dev mode.")) toDev();
             if (content.equals("» You are now in build mode.")) setMode(Mode.BUILD);
             if (content.startsWith("» Joined game: ")) setMode(Mode.PLAY);
         }
+        // example: `                                       \nYou are currently coding on:\n\n→ 🌊 MENACES [41800]\n→ Owner: BupBoi_ \n→ Server: Node 2\n                                       `
+        if (requestPlotId && content.startsWith("                          ")) {
+            String regex = "\\[\\d+\\]\\n";
+            Matcher matcher = Pattern.compile(regex).matcher(content);
+            if (matcher.find()) {
+                String plotIdString = matcher.group().trim().replace("[", "").replace("]", "");
+                plotId = Integer.parseInt(plotIdString);
+                requestPlotId = false;
+                plotIdCallbacks.forEach(Callback::run);
+                plotIdCallbacks.clear();
+                return true;
+            }
+        }
         return false;
     }
 
+    public static void requestPlotId(Callback callback) {
+        requestPlotId = true;
+        plotIdCallbacks.add(callback);
+    }
+    public static int getPlotId() {
+        return plotId;
+    }
 
     @Override
     public boolean alwaysActive() {

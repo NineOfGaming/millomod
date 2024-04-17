@@ -2,7 +2,7 @@ package net.millo.millomod.mixin.render;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import net.millo.millomod.config.Config;
+import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.util.StaticSkinRenderer;
 import net.minecraft.block.AbstractSkullBlock;
 import net.minecraft.block.Block;

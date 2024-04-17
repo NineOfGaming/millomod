@@ -40,7 +40,7 @@ public class PacketHandler {
         for (Method method : subscriberMethods) {
             try {
                 boolean result = (boolean) method.invoke(methodReferenceReceive.get(method), packet);
-                if (result) re = true;
+                re = re || result;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -55,7 +55,7 @@ public class PacketHandler {
         for (Method method : subscriberMethods) {
             try {
                 boolean result = (boolean) method.invoke(methodReferenceSend.get(method), packet);
-                if (result) re = true;
+                re = re || result;
             } catch (Exception e) {
                 e.printStackTrace();
             }

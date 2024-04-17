@@ -56,4 +56,8 @@ public class TextFieldElement extends TextFieldWidget implements ScrollableEntry
     public int getRealY() {
         return 0;
     }
+
+    public void setFade(ElementFadeIn fade) {
+        this.fade = fade;
+    }
 }

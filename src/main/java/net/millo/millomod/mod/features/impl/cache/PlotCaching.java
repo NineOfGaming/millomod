@@ -2,13 +2,15 @@ package net.millo.millomod.mod.features.impl.cache;
 
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.millo.millomod.MilloMod;
-import net.millo.millomod.config.Config;
+import net.millo.millomod.mod.features.impl.Tracker;
+import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
 import net.millo.millomod.mod.features.HandlePacket;
 import net.millo.millomod.mod.features.impl.NotificationTray;
 import net.millo.millomod.mod.hypercube.template.Template;
 import net.millo.millomod.mod.util.gui.GUIStyles;
+import net.millo.millomod.system.FileManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.client.MinecraftClient;
@@ -60,12 +62,11 @@ public class PlotCaching extends Feature implements Keybound {
         cachedTemplate = Template.parseItem(codeTemplateData);
         cachedTemplate.startPos = clickedLoc;
 
-        String templateName = cachedTemplate.blocks.get(0).data;
-        if (templateName == null) templateName = cachedTemplate.blocks.get(0).action;
+        FileManager.writeTemplate(cachedTemplate);
 
         NotificationTray.pushNotification(
                 Text.of("Cached"),
-                Text.literal(templateName).setStyle(GUIStyles.NAME.getStyle())
+                Text.literal(cachedTemplate.getName()).setStyle(GUIStyles.NAME.getStyle())
         );
 
         cacheGUI.loadTemplate(cachedTemplate);

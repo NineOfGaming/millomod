@@ -1,6 +1,6 @@
 package net.millo.millomod.mod.features;
 
-import net.millo.millomod.config.Config;
+import net.millo.millomod.system.Config;
 
 public interface Keybound {
 

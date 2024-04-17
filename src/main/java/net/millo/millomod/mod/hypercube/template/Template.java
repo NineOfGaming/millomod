@@ -1,6 +1,7 @@
 package net.millo.millomod.mod.hypercube.template;
 
 import com.google.gson.Gson;
+import net.millo.millomod.mod.features.impl.Tracker;
 import net.minecraft.util.math.Vec3d;
 
 import java.io.ByteArrayInputStream;
@@ -14,6 +15,7 @@ public class Template {
 
     public Vec3d startPos;
     public String b64Code;
+    public int plotId;
     public ArrayList<TemplateBlock> blocks;
 
     public static Template parseItem(String codeTemplateData) {
@@ -27,6 +29,7 @@ public class Template {
 
             Template template = new Gson().fromJson(new String(decompressed), Template.class);
             template.b64Code = data;
+            template.plotId = Tracker.getPlotId();
             return template;
         } catch (IOException e) {
             return null;
@@ -50,4 +53,10 @@ public class Template {
     }
 
 
+    public String getName() {
+        String name = blocks.get(0).data;
+        if (name == null) name = blocks.get(0).action;
+        if (name.isEmpty()) name = blocks.get(0).block +" : " + startPos;
+        return name;
+    }
 }

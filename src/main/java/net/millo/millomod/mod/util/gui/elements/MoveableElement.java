@@ -1,6 +1,6 @@
 package net.millo.millomod.mod.util.gui.elements;
 
-import net.millo.millomod.config.Config;
+import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.IRenderable;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
 import net.minecraft.client.font.TextRenderer;

@@ -1,6 +1,6 @@
 package net.millo.millomod.mod.features;
 
-import net.millo.millomod.config.Config;
+import net.millo.millomod.system.Config;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 

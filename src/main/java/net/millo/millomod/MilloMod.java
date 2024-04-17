@@ -2,7 +2,7 @@ package net.millo.millomod;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.millo.millomod.config.Config;
+import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.commands.CommandHandler;
 import net.millo.millomod.mod.features.FeatureHandler;
 import net.minecraft.client.MinecraftClient;

@@ -1,4 +1,4 @@
-package net.millo.millomod.config;
+package net.millo.millomod.system;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.millo.millomod.mod.features.FeatureHandler;
