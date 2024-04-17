@@ -9,10 +9,11 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
+import java.util.ArrayList;
+
 public class PositionsGUI extends GUI {
     Screen parent;
 
-    // TODO: Snapping
 
     public PositionsGUI(Screen parent) {
         super(Text.literal("Positions"));
@@ -31,11 +32,16 @@ public class PositionsGUI extends GUI {
         }
     }
 
+    ArrayList<MoveableElement> allMoveables = new ArrayList<>();
     private void addMovable(IRenderable feature) {
-        MoveableElement m = new MoveableElement(feature, feature.getKey(), textRenderer);
+        MoveableElement m = new MoveableElement(feature, feature.getKey(), textRenderer, this);
+        allMoveables.add(m);
         addDrawableChild(m);
     }
 
+    public ArrayList<MoveableElement> getMoveables() {
+        return allMoveables;
+    }
 
     @Override
     public void close() {

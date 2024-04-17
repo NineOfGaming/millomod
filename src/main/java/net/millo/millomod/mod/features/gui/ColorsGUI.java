@@ -21,7 +21,6 @@ import java.util.Iterator;
 
 public class ColorsGUI extends GUI {
 
-    // TODO: add a close button
 
     private ColorPickerElement colorPicker;
     private static ArrayList<Color> recentColors = new ArrayList<>();

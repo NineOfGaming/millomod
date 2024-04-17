@@ -40,7 +40,6 @@ public class TemplateBlock {
 
 
 
-    // TODO: Target, like default or victim on player action, and on selects.
     enum Blocks {
         ENTITY_EVENT((block) -> generateEventLine(block, "entity_event")),
         EVENT((block) -> generateEventLine(block, "event")),
