@@ -17,9 +17,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
+import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
@@ -69,6 +71,8 @@ public class PlotCaching extends Feature implements Keybound {
                 Text.literal(cachedTemplate.getName()).setStyle(GUIStyles.NAME.getStyle())
         );
 
+        if (MilloMod.MC.getNetworkHandler() != null)
+            MilloMod.MC.getNetworkHandler().sendPacket(new CreativeInventoryActionC2SPacket(slot.getSlot(), ItemStack.EMPTY));
         cacheGUI.loadTemplate(cachedTemplate);
         return true;
     }
@@ -98,7 +102,7 @@ public class PlotCaching extends Feature implements Keybound {
     @Override
     public void triggerKeybind(Config config) {
         while (displayKey.wasPressed()) {
-            cacheGUI = new CacheGUI(cachedTemplate);
+            cacheGUI = new CacheGUI();
             cacheGUI.open();
 
             MinecraftClient mc = MilloMod.MC;
@@ -124,6 +128,7 @@ public class PlotCaching extends Feature implements Keybound {
             clickedLoc = blockPos.toCenterPos();
             cacheNextItem = 10;
 
+            if (mc.interactionManager == null) return;
             boolean sneaking = player.isSneaking();
 
             if (!sneaking) mc.getNetworkHandler().sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY));

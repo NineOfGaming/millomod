@@ -3,6 +3,7 @@ package net.millo.millomod.mod.features.impl.cache;
 import net.millo.millomod.mod.features.impl.Tracker;
 import net.millo.millomod.mod.hypercube.template.Template;
 import net.millo.millomod.mod.hypercube.template.TemplateBlock;
+import net.millo.millomod.mod.util.MathUtil;
 import net.millo.millomod.mod.util.gui.GUI;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.mod.util.gui.elements.ButtonElement;
@@ -22,7 +23,7 @@ import java.util.function.Consumer;
 
 public class CacheGUI extends GUI {
     public static CacheGUI lastOpenedGUI;
-    private Template template;
+    private static Template template;
     private boolean hierarchyOpen = true;
     private double hierarchyX = paddingX;
 
@@ -41,16 +42,12 @@ public class CacheGUI extends GUI {
         super(Text.of("Cache"));
         lastOpenedGUI = this;
     }
-    public CacheGUI(Template template) {
-        this();
-        this.template = template;
-    }
 
     public void loadTemplate(Template template){
-        this.template = template;
+        CacheGUI.template = template;
         clearChildren();
         init();
-        lines.setFade(getFade());
+        if (lines != null) lines.setFade(getFade());
         templates.setFade(getFade());
         searchBar.setFade(getFade());
         hierarchyButton.setFade(getFade());
@@ -64,7 +61,7 @@ public class CacheGUI extends GUI {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         double desiredHierarchyX = hierarchyOpen ? width / 5d : paddingX;
-        hierarchyX = MathHelper.lerp(delta, hierarchyX, desiredHierarchyX);
+        hierarchyX = MathUtil.clampLerp(hierarchyX, desiredHierarchyX, delta);
 
         if (lines != null) {
             lines.setX((int) hierarchyX);
@@ -128,7 +125,7 @@ public class CacheGUI extends GUI {
         searchBar.setChangedListener(s -> updateTemplateList());
         addDrawableChild(searchBar);
 
-        templates = new ScrollableElement(paddingX, paddingY + toolbarSize + 16, 50, backgroundHeight - toolbarSize, Text.literal(""));
+        templates = new ScrollableElement(paddingX, paddingY + toolbarSize + 16, 50, backgroundHeight - toolbarSize - 20, Text.literal(""));
         methodNames = (ArrayList<String>) FileManager.getTemplatesFromPlot(plotId);
         updateTemplateList();
 
@@ -178,15 +175,24 @@ public class CacheGUI extends GUI {
                 continue;
             }
 
-            templates.addDrawableChild(new ButtonElement(0, 0, 50, 16, Text.of(methodName), (button) -> {
-
+            ButtonElement b = new ButtonElement(0, 0, 50, 16, Text.of(methodName), (button) -> {
                 Template template = FileManager.readTemplate(plotId, methodName);
                 this.loadTemplate(template);
+            }, textRenderer);
 
-                System.out.println(methodName);
-            }, textRenderer));
+            b.setFade(getFade());
+            templates.addDrawableChild(b);
         }
     }
 
-
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (modifiers == 2 && keyCode == 70) {
+            searchBar.setEditable(true);
+            searchBar.setSelectionStart(0);
+            searchBar.setSelectionEnd(searchBar.getText().length());
+            this.setFocused(searchBar);
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
 }

@@ -1,6 +1,7 @@
 package net.millo.millomod.mod.features.impl;
 
 import net.millo.millomod.MilloMod;
+import net.millo.millomod.mod.util.MathUtil;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.IRenderable;
@@ -52,8 +53,8 @@ public class NotificationTray extends Feature implements IRenderable {
                 notifications.remove(notification);
             }
 
-            notification.y = MathHelper.lerp(t, notification.y, targetY);
-            notification.x = MathHelper.lerp(t, notification.x, targetX);
+            notification.y = MathHelper.lerp(delta, notification.y, targetY);
+            notification.x = MathUtil.clampLerp(notification.x, targetX, delta);
 
             float x = (getX() + getWidth() - notification.x);
             float y = (getY() + notification.y);

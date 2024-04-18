@@ -1,6 +1,7 @@
 package net.millo.millomod.mod.util.gui.elements;
 
 import net.millo.millomod.mod.features.impl.cache.LineElement;
+import net.millo.millomod.mod.util.MathUtil;
 import net.millo.millomod.mod.util.gui.ClickableElementI;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
 import net.millo.millomod.mod.util.gui.ScrollableEntryI;
@@ -19,11 +20,10 @@ import java.util.ArrayList;
 public class ScrollableElement extends ClickableWidget implements Drawable, Element {
 
     private static final int SCROLLER_WIDTH = 4;
-    private double scrollY;
+    private double scrollY, targetScrollY;
     private boolean scrollbarDragged;
 
     private final ArrayList<ScrollableEntryI> drawables = new ArrayList<>();
-
 
 
     // Message is for narrator
@@ -76,7 +76,7 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
             } else {
                 int i = this.getScrollbarThumbHeight();
                 double d = Math.max(1, this.getMaxScrollY() / (this.height - i));
-                this.setScrollY(this.scrollY + deltaY * d);
+                this.setScrollY(this.targetScrollY + deltaY * d);
             }
 
             return true;
@@ -89,19 +89,20 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
         if (!this.visible) {
             return false;
         } else {
-            this.setScrollY(this.scrollY - verticalAmount * this.getDeltaYPerScroll());
+            this.setScrollY(this.targetScrollY - verticalAmount * this.getDeltaYPerScroll());
             return true;
         }
     }
 
     private double getDeltaYPerScroll() {
-        return 18;
+        return 36;
     }
 
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         if (this.visible) {
+            scrollY = MathUtil.clampLerp(scrollY, targetScrollY, delta);
 
 //            this.drawBox(context);
             context.enableScissor(this.getX() + 1, this.getY() + 1, this.getX() + this.width - 1, this.getY() + this.height - 1);
@@ -126,7 +127,11 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
         for (ScrollableEntryI drawable : drawables) {
             drawable.setRealX(drawable.getX() + j);
             drawable.setRealY(drawable.getY() + dy);
-            drawable.render(context, mouseX, mouseY, delta);
+
+            if (isWithinBounds(drawable.getRealX(), drawable.getRealY()) ||
+                    isWithinBounds(drawable.getRealX(), drawable.getRealY() + drawable.getHeight())) {
+                drawable.render(context, mouseX, mouseY, delta);
+            }
 
             context.getMatrices().translate(0, drawable.getHeight(), 0.0);
             dy += drawable.getHeight();
@@ -153,7 +158,7 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
         int k = Math.max(this.getY(), (int)this.scrollY * (this.height - i) / this.getMaxScrollY() + this.getY());
 //        context.drawGuiTexture(SCROLLER_TEXTURE, j, k, 8, i);
 
-        int color = new Color(81, 91, 101, 150).hashCode();
+        int color = new Color(65, 73, 80, 190).hashCode();
         context.fill(j-SCROLLER_WIDTH, k, j, k+i, 0, color);
 
 
@@ -164,8 +169,8 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
         return (double)bottom - this.scrollY >= (double)this.getY() && (double)top - this.scrollY <= (double)(this.getY() + this.height);
     }
 
-    protected boolean isWithinBounds(double mouseX, double mouseY) {
-        return mouseX >= (double)this.getX() && mouseX < (double)(this.getX() + this.width) && mouseY >= (double)this.getY() && mouseY < (double)(this.getY() + this.height);
+    protected boolean isWithinBounds(double x, double y) {
+        return x >= (double)this.getX() && x < (double)(this.getX() + this.width) && y >= (double)this.getY() && y < (double)(this.getY() + this.height);
     }
     protected boolean overflows() {
         return this.getContentsHeight() > this.getHeight();
@@ -175,7 +180,7 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
     }
 
     protected void setScrollY(double scrollY) {
-        this.scrollY = MathHelper.clamp(scrollY, 0.0, this.getMaxScrollY());
+        this.targetScrollY = MathHelper.clamp(scrollY, 0.0, this.getMaxScrollY());
     }
 
     protected int getMaxScrollY() {

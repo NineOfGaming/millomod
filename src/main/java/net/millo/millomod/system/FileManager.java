@@ -83,7 +83,7 @@ public class FileManager {
 
     public static List<String> getTemplatesFromPlot(int plotId) {
         return Arrays.stream(Objects.requireNonNull(
-                getTemplatePath().resolve(String.valueOf(plotId)).toFile().listFiles()))
+                getTemplatePlotPath(plotId).toFile().listFiles()))
                 .map(File::getName)
                 .collect(Collectors.toList());
     }

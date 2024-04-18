@@ -1,6 +1,7 @@
 package net.millo.millomod.mod.features.impl;
 
 import net.millo.millomod.MilloMod;
+import net.millo.millomod.mod.util.MathUtil;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.IRenderable;

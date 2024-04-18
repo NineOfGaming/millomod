@@ -1,5 +1,6 @@
 package net.millo.millomod.mod.features.gui;
 
+import net.millo.millomod.MilloMod;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.commands.Command;
 import net.millo.millomod.mod.commands.CommandHandler;
@@ -28,8 +29,10 @@ public class MilloGUI extends GUI {
         int y = paddingY;
         addDrawableChild(new TextElement(x, y + 10, backgroundWidth, 16,
                 Text.literal("Millo Mod").setStyle(GUIStyles.NAME.getStyle()), textRenderer));
+        addDrawableChild(new TextElement(x, y + 26, backgroundWidth, 16,
+                Text.literal("v"+ MilloMod.MOD_VERSION).setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
         addDrawableChild(new TextElement(x, y + 40, backgroundWidth, 16,
-                Text.literal("ye fr...").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
+                Text.literal("woah updates!!").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
 
         addDrawableChild(new TextElement(x, y + 58, backgroundWidth, 16,
                 Text.literal("Credits:").setStyle(GUIStyles.LINE.getStyle()), textRenderer));
@@ -37,9 +40,11 @@ public class MilloGUI extends GUI {
                 Text.literal("Millo5 - I um.. me").setStyle(GUIStyles.UNSAVED.getStyle()), textRenderer));
         addDrawableChild(new TextElement(x, y + 78, backgroundWidth, 16,
                 Text.literal("GeorgeRNG - I stole his code. [Code Client]").setStyle(GUIStyles.UNSAVED.getStyle()), textRenderer));
+        addDrawableChild(new TextElement(x, y + 88, backgroundWidth, 16,
+                Text.literal("xtreemes - The Guinea Pig").setStyle(GUIStyles.UNSAVED.getStyle()), textRenderer));
 
 
-        addDrawableChild(new ButtonElement(x + backgroundWidth/2 - 50, y + 96, 100, 16, Text.of("Settings"), (button) -> {
+        addDrawableChild(new ButtonElement(x + backgroundWidth/2 - 50, y + 106, 100, 16, Text.of("Settings"), (button) -> {
             GUI gui = new SettingsGUI();
             gui.setParent(this);
             gui.setFade(this.getFade());

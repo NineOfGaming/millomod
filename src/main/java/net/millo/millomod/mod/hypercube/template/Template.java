@@ -56,7 +56,7 @@ public class Template {
     public String getName() {
         String name = blocks.get(0).data;
         if (name == null) name = blocks.get(0).action;
-        if (name.isEmpty()) name = blocks.get(0).block +" : " + startPos;
+        if (name.isEmpty()) name = blocks.get(0).block +" " + startPos;
         return name;
     }
 }
