@@ -35,8 +35,11 @@ public class CacheGUI extends GUI {
 
     private ArrayList<String> methodNames = new ArrayList<>();
 
-
     private int plotId;
+
+    // TODO: Click on callfunction / startprocess to open that
+    // TODO: Scan entire plot
+    // TODO: Add the ability to REMOVE cached functions
 
     public CacheGUI() {
         super(Text.of("Cache"));

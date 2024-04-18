@@ -39,6 +39,7 @@ public class SettingsGUI extends GUI {
         addBooleanOption(settingsList, "menu_search");
         addBooleanOption(settingsList, "auto_command");
         addBooleanOption(settingsList, "notification_tray");
+        addBooleanOption(settingsList, "show_tags");
 
 //        addHeader(settingsList, "Unstable Features");
 //        addBooleanOption(settingsList, "preview_skin.enabled","Preview Skin", "Do not use. Will crash your game");

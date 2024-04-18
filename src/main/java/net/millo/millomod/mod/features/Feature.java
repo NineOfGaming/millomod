@@ -25,4 +25,8 @@ public abstract class Feature {
 
     public boolean disabledByDefault() { return false; }
     public boolean alwaysActive() { return false; }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
 }

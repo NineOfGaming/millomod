@@ -24,15 +24,16 @@ public class FeatureHandler {
 
         features.clear();
         register(
-                new LagslayerHUD(),
-                new PreviewSkin(),
-                new MenuSearch(),
-                new AutoCommand(),
-                new NotificationTray(),
-                new Search(),
-                new PlotCaching(),
-                new Tracker(),
-                new TeleportHandler()
+                new LagslayerHUD(), //@
+                new PreviewSkin(), //-
+                new MenuSearch(), //@
+                new AutoCommand(), //@
+                new NotificationTray(), //@
+                new Search(), //-
+                new PlotCaching(), // ?
+                new Tracker(), //+
+                new TeleportHandler(), //+
+                new ShowTags() //@
         );
 
         Config config = Config.getInstance();

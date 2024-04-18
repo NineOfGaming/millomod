@@ -180,6 +180,17 @@ public class TemplateBlock {
                 return line;
             }
 
+            if (block.action != null) {
+                // Unique cases
+                // "CreateList" -> "$1 = [$#]"
+                // "AppendValue" -> "$1.append($#)"
+                // "AppendList" -> "$1.extend($#)"
+                // "GetListValue" -> "$1 = $2[$3]"
+                // "PopListValue" -> "$1 = $2.pop($3)"
+                // "SetListValue" -> "$1[$2] = $3"
+                // "ListLength" -> "$1 = $2.length()"
+            }
+
             return generateCommonLine(block, "set_var");
         }
 
