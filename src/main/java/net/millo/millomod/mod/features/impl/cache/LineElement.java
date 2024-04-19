@@ -240,7 +240,10 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
     @Override
     public void onPress(double mouseX, double mouseY, int button) {
         int xOff = 0;
+        int ind = 0;
         for (TextWidget textWidget : textWidgets) {
+            ind ++;
+
             int xx = textWidget.getX() + xOff + getRealX();
             int yy = textWidget.getY() + getRealY();
             boolean hovered = mouseX >= xx && mouseX < xx+textWidget.getWidth() && mouseY >= yy && mouseY < yy + textWidget.getHeight();
@@ -250,6 +253,9 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
             }
 
             xOff += textWidget.getWidth();
+            if (ind == 1 && hasLineNum) {
+                xOff += 10;
+            }
         }
     }
 

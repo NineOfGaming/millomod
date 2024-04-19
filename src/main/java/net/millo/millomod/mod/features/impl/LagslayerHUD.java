@@ -11,6 +11,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Matrix4f;
@@ -26,10 +27,14 @@ public class LagslayerHUD extends Feature implements IRenderable {
     private float renderedCpuUsage = 0f;
     private float renderedAlpha = 0f;
     private Date updateTime = new Date();
+    private final Identifier wumpusId;
 
     private int x = 20, y = 20;
     private final Pattern lsRegex = Pattern.compile("^CPU Usage: \\[▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮] \\((\\d+\\.\\d+)%\\)$");
 
+    public LagslayerHUD() {
+        wumpusId = new Identifier(MilloMod.MOD_ID, "textures/gui/wumpus.png");
+    }
 
 
     @Override
@@ -126,11 +131,14 @@ public class LagslayerHUD extends Feature implements IRenderable {
         int x = getX() + 10;
         int y = getY() + 10;
 
-        int backgroundColor = new Color(0.25f, 0.25f, 0.25f, renderedAlpha).hashCode();
+        // TODO: Add different modes; Wumpus (more cpu == faster, too high == dead), Ring, Text
+
+        int backgroundColor = new Color(0.25f, 0.25f, 0.25f, MathHelper.clamp(renderedAlpha, 0, 1)).hashCode();
         Color color = Color.getHSBColor(Math.max(0f, (100f - renderedCpuUsage) / 360f), 1f, 1f);
-        int foregroundColor = new Color(color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f, renderedAlpha).hashCode();
+        int foregroundColor = new Color(color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f, MathHelper.clamp(renderedAlpha, 0, 1)).hashCode();
 
         if (alpha > 0) {
+//            context.drawGuiTexture(wumpusId, x, y, getWidth(), getHeight());
             renderDonut(context, delta, x, y, 4.9f, 9.9f, 20, backgroundColor);
             renderDonut(context, delta, x, y, 5, 10, 20, foregroundColor, 0.75f - (Math.round(renderedCpuUsage) / 100f), 0.75f);
 

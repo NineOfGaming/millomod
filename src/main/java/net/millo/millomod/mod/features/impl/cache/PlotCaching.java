@@ -2,7 +2,7 @@ package net.millo.millomod.mod.features.impl.cache;
 
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.millo.millomod.MilloMod;
-import net.millo.millomod.mod.features.impl.Tracker;
+import net.millo.millomod.mod.util.GlobalUtil;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
@@ -101,7 +101,8 @@ public class PlotCaching extends Feature implements Keybound {
 
     @Override
     public void triggerKeybind(Config config) {
-        while (displayKey.wasPressed()) {
+        if (MilloMod.MC.currentScreen == null && GlobalUtil.isKeyPressed(displayKey)) {
+
             cacheGUI = new CacheGUI();
             cacheGUI.open();
 

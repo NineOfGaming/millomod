@@ -32,10 +32,10 @@ public class ButtonElement implements ScrollableEntryI, Element, Widget, Selecta
     private Tooltip tooltip;
 
     PressAction onPress;
-    ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.RIGHT);
+    protected ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.RIGHT);
 
-    TextWidget textWidget;
-    TextRenderer textRenderer;
+    protected TextWidget textWidget;
+    protected TextRenderer textRenderer;
     public ButtonElement(int x, int y, int width, int height, PressAction onPress) {
         this.x = x;
         this.y = y;

@@ -3,7 +3,7 @@ package net.millo.millomod.mod.util.gui;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.millo.millomod.mod.features.gui.MilloGUI;
+import net.millo.millomod.mod.util.gui.elements.ContextElement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -61,6 +61,7 @@ public abstract class GUI extends Screen {
 
         if (fade.getProgress() >= 1f) {
             super.render(context, mouseX, mouseY, delta);
+            if (contextMenu != null) contextMenu.render(context, mouseX, mouseY, delta);
         } else {
             renderBackground(context, mouseX, mouseY, delta);
         }
@@ -68,6 +69,11 @@ public abstract class GUI extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (contextMenu != null && contextMenu.inBounds(mouseX, mouseY)) {
+            return contextMenu.mouseClicked(mouseX, mouseY, button);
+        } else {
+            contextMenu = null;
+        }
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -81,5 +87,13 @@ public abstract class GUI extends Screen {
 
     public void setFade(ElementFadeIn fade) {
         this.fade = fade;
+    }
+
+
+    ContextElement contextMenu = null;
+    public void openContext(double mouseX, double mouseY, ContextElement contextElement) {
+        contextMenu = contextElement;
+        contextMenu.setX((int) mouseX);
+        contextMenu.setY((int) mouseY);
     }
 }

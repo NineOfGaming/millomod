@@ -53,6 +53,12 @@ public class Template {
     }
 
 
+    public String getFileName() {
+        return getName() + "." + getMethodName();
+    }
+    public String getMethodName() {
+        return blocks.get(0).block;
+    }
     public String getName() {
         String name = blocks.get(0).data;
         if (name == null) name = blocks.get(0).action;

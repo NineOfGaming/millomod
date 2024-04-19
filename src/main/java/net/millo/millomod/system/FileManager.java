@@ -53,13 +53,22 @@ public class FileManager {
         inf.addProperty("code", template.b64Code);
 
         try {
-            File file = getTemplateFile(template.plotId, template.getName());
+            File file = getTemplateFile(template.plotId, template.getFileName());
             Files.deleteIfExists(file.toPath());
             Files.createFile(file.toPath());
             if (!file.exists()) file.createNewFile();
             Files.write(file.toPath(), inf.toString().getBytes(), StandardOpenOption.WRITE);
         } catch (IOException e) {
             System.out.println("Couldn't save template: " + e);
+        }
+    }
+
+    public static void deleteTemplateFile(int plotId, String fileName) {
+        File file = getTemplateFile(plotId, fileName);
+        try {
+            Files.deleteIfExists(file.toPath());
+        } catch (IOException e) {
+            System.out.println("Failed to delete: " + e);
         }
     }
 

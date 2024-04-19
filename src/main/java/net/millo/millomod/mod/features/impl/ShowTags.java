@@ -1,14 +1,12 @@
 package net.millo.millomod.mod.features.impl;
 
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
-import net.fabricmc.loader.api.FabricLoader;
-import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
+import net.millo.millomod.mod.util.GlobalUtil;
 import net.millo.millomod.system.Config;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import org.apache.commons.lang3.reflect.FieldUtils;
 
 public class ShowTags extends Feature implements Keybound {
 
@@ -20,13 +18,7 @@ public class ShowTags extends Feature implements Keybound {
     }
 
     public boolean isPressed() {
-        try {
-            String cname = FabricLoader.getInstance().isDevelopmentEnvironment() ? "boundKey" : "field_1655";
-            int keycode = ((InputUtil.Key) FieldUtils.getField(KeyBinding.class, cname, true).get(showKey)).getCode();
-            return InputUtil.isKeyPressed(MilloMod.MC.getWindow().getHandle(), keycode);
-        } catch (IllegalAccessException e) {
-            return false;
-        }
+        return GlobalUtil.isKeyDown(showKey);
     }
 
     @Override

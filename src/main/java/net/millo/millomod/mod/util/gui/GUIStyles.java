@@ -50,6 +50,8 @@ public enum GUIStyles {
     PARTICLE(new Color(0xAA55FF)),
     POTION(new Color(0xFF557F)),
     LOCATION(Formatting.GREEN),
+    LOC(LOCATION.style),
+    VEC(VECTOR.style),
     COMPONENT(new Color(0x7FD42A))
 
 

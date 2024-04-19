@@ -13,13 +13,11 @@ import net.millo.millomod.mod.util.gui.elements.TextFieldElement;
 import net.millo.millomod.system.FileManager;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.*;
 
 public class CacheGUI extends GUI {
     public static CacheGUI lastOpenedGUI;
@@ -37,24 +35,40 @@ public class CacheGUI extends GUI {
 
     private int plotId;
 
-    // TODO: Click on callfunction / startprocess to open that
+    // + TODO: Click on callfunction / startprocess to open that  // (+ Forward / Backward navigation)
     // TODO: Scan entire plot
-    // TODO: Add the ability to REMOVE cached functions
+    // -- TODO: Add the ability to REMOVE cached functions
+    // TODO: Search for actions
+    // TODO: ^ Search for usages of method
+    // + TODO: Add colours depending on what method type to the methods list
+    // + TODO: Only update `lines` when changing method
+    // TODO: Folders.
+    //
 
     public CacheGUI() {
         super(Text.of("Cache"));
         lastOpenedGUI = this;
     }
 
-    public void loadTemplate(Template template){
+    public void loadTemplate(@NotNull Template template){
+        if (CacheGUI.template != null) {
+            if (template.getFileName().equals(CacheGUI.template.getFileName())) return;
+            historyStack.push(CacheGUI.template.getFileName());
+            futureStack.clear();
+        }
+        loadTemplateLines(template);
+    }
+
+    private void loadTemplateLines(Template template) {
+        boolean reload = CacheGUI.template == null;
         CacheGUI.template = template;
-        clearChildren();
-        init();
-        if (lines != null) lines.setFade(getFade());
-        templates.setFade(getFade());
-        searchBar.setFade(getFade());
-        hierarchyButton.setFade(getFade());
-        plotIdText.setFade(getFade());
+        if (reload) {
+            clearChildren();
+            init();
+            return;
+        }
+        addLinesFromTemplate(20);
+        lines.setFade(getFade());
     }
 
     public TextRenderer getTextRenderer() {
@@ -98,7 +112,7 @@ public class CacheGUI extends GUI {
         // Toolbar
         int toolbarSize = 20;
         hierarchyButton = new ButtonElement(
-                paddingX, paddingY, toolbarSize, toolbarSize, Text.of(">"),
+                paddingX, paddingY, toolbarSize, toolbarSize, Text.of("<"),
                 (button) -> {
                     if (hierarchyOpen) button.setText(Text.of(">"));
                     else button.setText(Text.of("<"));
@@ -106,7 +120,6 @@ public class CacheGUI extends GUI {
                 },
                 textRenderer);
         addDrawableChild(hierarchyButton);
-
 
 
         // template exists
@@ -120,9 +133,7 @@ public class CacheGUI extends GUI {
                 textRenderer);
         addDrawableChild(plotIdText);
 
-
-
-        // list of plot templates
+        // list of plot templates (hierarchy)
         searchBar = new TextFieldElement(textRenderer, paddingX + 4, paddingY + toolbarSize, 50, 16, Text.of(""));
         searchBar.setPlaceholder(Text.literal("Search...").setStyle(GUIStyles.COMMENT.getStyle()));
         searchBar.setChangedListener(s -> updateTemplateList());
@@ -138,8 +149,44 @@ public class CacheGUI extends GUI {
             return;
         }
 
-        // The lines of code
+        addLinesFromTemplate(toolbarSize);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 3) historyBack();
+        if (button == 4) historyForward();
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private void historyBack() {
+        Template template = null;
+        while (template == null && !historyStack.isEmpty()) {
+            template = FileManager.readTemplate(plotId, historyStack.pop());
+        }
+        if (template == null) return;
+        if (CacheGUI.template != null) futureStack.push(CacheGUI.template.getFileName());
+        loadTemplateLines(template);
+    }
+    private void historyForward() {
+        Template template = null;
+        while (template == null && !futureStack.isEmpty()) {
+            template = FileManager.readTemplate(plotId, futureStack.pop());
+        }
+        if (template == null) return;
+        if (CacheGUI.template != null) historyStack.push(CacheGUI.template.getFileName());
+        loadTemplateLines(template);
+    }
+
+    private static final Stack<String> historyStack = new Stack<>();
+    private static final Stack<String> futureStack = new Stack<>();
+
+    private void addLinesFromTemplate(int toolbarSize) {
+
+        if (lines != null) remove(lines);
         lines = new ScrollableElement(paddingX, paddingY + toolbarSize, backgroundWidth, backgroundHeight - toolbarSize, Text.literal(""));
+
+        if (template == null) return;
 
         int worldProgress = 0; // keeps track of how many in world blocks have gone by
         int lineNum = 0;
@@ -166,7 +213,6 @@ public class CacheGUI extends GUI {
             worldProgress += 2;
         }
 
-
         addDrawableChild(lines);
     }
 
@@ -178,9 +224,9 @@ public class CacheGUI extends GUI {
                 continue;
             }
 
-            ButtonElement b = new ButtonElement(0, 0, 50, 16, Text.of(methodName), (button) -> {
+            MethodElement b = new MethodElement(16, plotId, methodName, (button) -> {
                 Template template = FileManager.readTemplate(plotId, methodName);
-                this.loadTemplate(template);
+                loadTemplate(template);
             }, textRenderer);
 
             b.setFade(getFade());
@@ -197,5 +243,11 @@ public class CacheGUI extends GUI {
             this.setFocused(searchBar);
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    public void findMethod(String methodName) {
+        methodName = methodName.replaceAll("(?<=\\.)(start|call)_(?=(func|process))", "");
+        Template template = FileManager.readTemplate(plotId, methodName);
+        if (template != null) loadTemplate(template);
     }
 }

@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.millo.millomod.mod.features.impl.cache.ArgumentItem;
+import net.millo.millomod.mod.features.impl.cache.CacheGUI;
 import net.millo.millomod.mod.features.impl.cache.LineElement;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.minecraft.text.Style;
@@ -122,7 +123,10 @@ public class TemplateBlock {
             return new LineElement()
                     .addComponent(Text.of(keyword))
                     .addSpace()
-                    .addComponent(Text.literal(block.data).setStyle(GUIStyles.NAME.getStyle()))
+                    .addComponent(Text.literal(block.data).setStyle(GUIStyles.NAME.getStyle()), (button) -> {
+                        var gui = CacheGUI.lastOpenedGUI;
+                        gui.findMethod(block.data+"."+block.block);
+                    })
                     .addArguments(block.getArguments());
         }
         private static LineElement generateCommonLine(TemplateBlock block, String keyword) {
@@ -233,6 +237,7 @@ public class TemplateBlock {
             return new LineElement().addComponent(Text.literal(toString()));
         }
     }
+
 
     public ArrayList<ArgumentItem> getArguments() {
         ArrayList<ArgumentItem> argumentItems = new ArrayList<>();
