@@ -11,6 +11,7 @@ import java.awt.*;
 public enum GUIStyles {
     // Common
     DEFAULT (Color.white),
+    SCARY(Color.red),
     COMMENT (Style.EMPTY.withItalic(true).withColor(Color.gray.hashCode())),
     LINE_NUM(Color.darkGray),
     TRUE (Color.GREEN),

@@ -32,6 +32,8 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
+import java.util.regex.Pattern;
+
 public class PlotCaching extends Feature implements Keybound {
 
     Template cachedTemplate;
@@ -122,7 +124,7 @@ public class PlotCaching extends Feature implements Keybound {
 
             var blockPos = rayHit.getBlockPos();
             Block block = mc.world.getBlockState(blockPos).getBlock();
-            if (!"minecraft:diamond_block minecraft:emerald_block minecraft:lapis_block minecraft:gold_block".contains(Registries.BLOCK.getId(block).toString())) {
+            if (!Pattern.compile("minecraft:(diamond|emerald|lapis|gold)_block").matcher(Registries.BLOCK.getId(block).toString()).matches()){
                 blockPos = blockPos.add(1, 0, 0);
             }
 

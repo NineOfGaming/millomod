@@ -30,8 +30,8 @@ public class ContextElement implements Element, Widget, Selectable, ClickableEle
 
     ArrayList<ButtonElement> buttons = new ArrayList<>();
 
-    public ContextElement add(String message, ButtonElement.PressAction onPress, TextRenderer textRenderer) {
-        var button = new ButtonElement(0, 16 * buttons.size(), width, 16, Text.of(message), onPress, textRenderer);
+    public ContextElement add(Text message, ButtonElement.PressAction onPress, TextRenderer textRenderer) {
+        var button = new ButtonElement(0, 16 * buttons.size(), width, 16, message, onPress, textRenderer);
         button.fade.setProgress(5f);
         buttons.add(button);
         updateHeight();
@@ -43,10 +43,17 @@ public class ContextElement implements Element, Widget, Selectable, ClickableEle
     }
 
     @Override
-    public void onPress(double mouseX, double mouseY, int mouseButton) {
-        for (ButtonElement button : buttons) {
-            if (button.isHovered()) button.onPress(mouseX, mouseY, mouseButton);
+    public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
+        if (mouseButton == 0) {
+            for (ButtonElement button : buttons) {
+                if (button.isHovered()) button.onPress(mouseX, mouseY, mouseButton);
+            }
         }
+        return Element.super.mouseReleased(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    public void onPress(double mouseX, double mouseY, int mouseButton) {
     }
 
     @Override

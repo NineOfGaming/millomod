@@ -68,11 +68,19 @@ public abstract class GUI extends Screen {
     }
 
     @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (contextMenu != null && contextMenu.inBounds(mouseX, mouseY))
+            return contextMenu.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (contextMenu != null && contextMenu.inBounds(mouseX, mouseY)) {
-            return contextMenu.mouseClicked(mouseX, mouseY, button);
-        } else {
-            contextMenu = null;
+        if (contextMenu != null) {
+            if (!contextMenu.inBounds(mouseX, mouseY)) {
+                closeContext();
+            }
+            return false;
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
@@ -95,5 +103,8 @@ public abstract class GUI extends Screen {
         contextMenu = contextElement;
         contextMenu.setX((int) mouseX);
         contextMenu.setY((int) mouseY);
+    }
+    public void closeContext() {
+        contextMenu = null;
     }
 }

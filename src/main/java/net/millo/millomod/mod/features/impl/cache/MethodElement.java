@@ -1,7 +1,9 @@
 package net.millo.millomod.mod.features.impl.cache;
 
+import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.mod.util.gui.elements.ButtonElement;
 import net.millo.millomod.mod.util.gui.elements.ContextElement;
+import net.millo.millomod.system.FileManager;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
@@ -57,8 +59,11 @@ public class MethodElement extends ButtonElement {
         if (button == 1) {
             CacheGUI.lastOpenedGUI.openContext(mouseX, mouseY,
                     new ContextElement(100)
-                            .add("Delete", (b) -> {}, textRenderer)
-                            .add("Second option", (b) -> {}, textRenderer)
+                            .add(Text.literal("Delete").setStyle(GUIStyles.SCARY.getStyle()), (b) -> {
+                                FileManager.deleteTemplateFile(plotId, filename);
+                                CacheGUI.lastOpenedGUI.reload();
+                                CacheGUI.lastOpenedGUI.closeContext();
+                            }, textRenderer)
             );
         }
     }

@@ -34,6 +34,8 @@ public class CacheGUI extends GUI {
     private ArrayList<String> methodNames = new ArrayList<>();
 
     private int plotId;
+    int toolbarSize = 20;
+
 
     // + TODO: Click on callfunction / startprocess to open that  // (+ Forward / Backward navigation)
     // TODO: Scan entire plot
@@ -50,6 +52,7 @@ public class CacheGUI extends GUI {
         lastOpenedGUI = this;
     }
 
+    private boolean pendingTemplateListUpdate = false;
     public void loadTemplate(@NotNull Template template){
         if (CacheGUI.template != null) {
             if (template.getFileName().equals(CacheGUI.template.getFileName())) return;
@@ -57,6 +60,7 @@ public class CacheGUI extends GUI {
             futureStack.clear();
         }
         loadTemplateLines(template);
+        pendingTemplateListUpdate = true;   // pending to prevent concurrency error
     }
 
     private void loadTemplateLines(Template template) {
@@ -67,7 +71,7 @@ public class CacheGUI extends GUI {
             init();
             return;
         }
-        addLinesFromTemplate(20);
+        addLinesFromTemplate();
         lines.setFade(getFade());
     }
 
@@ -105,12 +109,19 @@ public class CacheGUI extends GUI {
         super.render(context, mouseX, mouseY, delta);
     }
 
+    @Override
+    public void tick() {
+        if (pendingTemplateListUpdate) {
+            pendingTemplateListUpdate = false;
+            updateTemplateList();
+        }
+    }
+
     protected void init() {
         super.init();
         plotId = Tracker.getPlotId();
 
         // Toolbar
-        int toolbarSize = 20;
         hierarchyButton = new ButtonElement(
                 paddingX, paddingY, toolbarSize, toolbarSize, Text.of("<"),
                 (button) -> {
@@ -124,9 +135,7 @@ public class CacheGUI extends GUI {
 
         // template exists
         if (template == null) {
-            addDrawableChild(new TextElement(paddingX, paddingY+ toolbarSize, backgroundWidth, backgroundHeight - toolbarSize,
-                    Text.literal("Empty").setStyle(GUIStyles.COMMENT.getStyle()),
-                    textRenderer));
+            addEmpty();
         }
         plotIdText = new TextElement(paddingX, paddingY, 0, 20,
                 Text.literal("Plot: "+plotId).setStyle(GUIStyles.HEADER.getStyle()),
@@ -140,7 +149,7 @@ public class CacheGUI extends GUI {
         addDrawableChild(searchBar);
 
         templates = new ScrollableElement(paddingX, paddingY + toolbarSize + 16, 50, backgroundHeight - toolbarSize - 20, Text.literal(""));
-        methodNames = (ArrayList<String>) FileManager.getTemplatesFromPlot(plotId);
+        updateMethodNamesList();
         updateTemplateList();
 
         addDrawableChild(templates);
@@ -149,7 +158,7 @@ public class CacheGUI extends GUI {
             return;
         }
 
-        addLinesFromTemplate(toolbarSize);
+        addLinesFromTemplate();
     }
 
     @Override
@@ -181,7 +190,7 @@ public class CacheGUI extends GUI {
     private static final Stack<String> historyStack = new Stack<>();
     private static final Stack<String> futureStack = new Stack<>();
 
-    private void addLinesFromTemplate(int toolbarSize) {
+    private void addLinesFromTemplate() {
 
         if (lines != null) remove(lines);
         lines = new ScrollableElement(paddingX, paddingY + toolbarSize, backgroundWidth, backgroundHeight - toolbarSize, Text.literal(""));
@@ -216,6 +225,10 @@ public class CacheGUI extends GUI {
         addDrawableChild(lines);
     }
 
+
+    private void updateMethodNamesList() {
+        methodNames = (ArrayList<String>) FileManager.getTemplatesFromPlot(plotId);
+    }
     private void updateTemplateList() {
         templates.clear();
         String[] match = searchBar.getText().trim().toLowerCase().split(" ");
@@ -249,5 +262,20 @@ public class CacheGUI extends GUI {
         methodName = methodName.replaceAll("(?<=\\.)(start|call)_(?=(func|process))", "");
         Template template = FileManager.readTemplate(plotId, methodName);
         if (template != null) loadTemplate(template);
+    }
+
+    public void reload() {
+        updateMethodNamesList();
+        updateTemplateList();
+        remove(lines);
+        lines = null;
+        template = null;
+        addEmpty();
+    }
+
+    private void addEmpty() {
+        addDrawableChild(new TextElement(paddingX, paddingY + toolbarSize, backgroundWidth, backgroundHeight - toolbarSize,
+                Text.literal("Empty").setStyle(GUIStyles.COMMENT.getStyle()),
+                textRenderer));
     }
 }
