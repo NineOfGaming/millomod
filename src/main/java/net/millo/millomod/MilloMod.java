@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class MilloMod implements ClientModInitializer {
 
     public static final String MOD_ID = "millomod";
-    public static final String MOD_VERSION = "1.4.1";
+    public static final String MOD_VERSION = "1.4.2";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public static MinecraftClient MC = MinecraftClient.getInstance();

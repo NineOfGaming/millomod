@@ -22,6 +22,7 @@ public class FeatureHandler {
     public static void load() {
         packetHandler = new PacketHandler();
 
+        // (@) configurable, (-) always off, (+) always on, (?) other/keybinding
         features.clear();
         register(
                 new LagslayerHUD(), //@

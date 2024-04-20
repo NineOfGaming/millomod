@@ -2,6 +2,7 @@ package net.millo.millomod.mod.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.millo.millomod.mod.commands.impl.CacheCommand;
 import net.millo.millomod.mod.commands.impl.ColorsCommand;
 import net.millo.millomod.mod.commands.impl.MilloModCommand;
 import net.millo.millomod.mod.commands.impl.SettingsCommand;
@@ -27,7 +28,8 @@ public class CommandHandler {
                 new RedevCommand(),
                 new SaveCommand(),
                 new ColorsCommand(),
-                new MilloModCommand()
+                new MilloModCommand(),
+                new CacheCommand()
         );
     }
 

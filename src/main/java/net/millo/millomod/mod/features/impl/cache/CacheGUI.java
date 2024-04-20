@@ -38,12 +38,12 @@ public class CacheGUI extends GUI {
 
 
     // + TODO: Click on callfunction / startprocess to open that  // (+ Forward / Backward navigation)
-    // TODO: Scan entire plot
-    // -- TODO: Add the ability to REMOVE cached functions
-    // TODO: Search for actions
-    // TODO: ^ Search for usages of method
+    // + TODO: Add the ability to REMOVE cached functions
     // + TODO: Add colours depending on what method type to the methods list
     // + TODO: Only update `lines` when changing method
+    // -- TODO: Scan entire plot
+    // TODO: Search for actions
+    // TODO: ^ Search for usages of method
     // TODO: Folders.
     //
 
@@ -119,7 +119,7 @@ public class CacheGUI extends GUI {
 
     protected void init() {
         super.init();
-        plotId = Tracker.getPlotId();
+        plotId = Tracker.getPlot().getPlotId();
 
         // Toolbar
         hierarchyButton = new ButtonElement(

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 public class NotificationTray extends Feature implements IRenderable {
 
-
     public static void pushNotification(Text message) {
         notifications.add(new Notification(message, notifications.size() * 10));
     }
@@ -53,8 +52,8 @@ public class NotificationTray extends Feature implements IRenderable {
                 notifications.remove(notification);
             }
 
-            notification.y = MathHelper.lerp(delta, notification.y, targetY);
-            notification.x = MathUtil.clampLerp(notification.x, targetX, delta);
+            notification.y = MathHelper.lerp(t, notification.y, targetY);
+            notification.x = MathUtil.clampLerp(notification.x, targetX, t);
 
             float x = (getX() + getWidth() - notification.x);
             float y = (getY() + notification.y);

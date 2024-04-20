@@ -7,6 +7,8 @@ import net.minecraft.util.math.Vec3d;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
@@ -29,7 +31,7 @@ public class Template {
 
             Template template = new Gson().fromJson(new String(decompressed), Template.class);
             template.b64Code = data;
-            template.plotId = Tracker.getPlotId();
+            template.plotId = Tracker.getPlot().getPlotId();
             return template;
         } catch (IOException e) {
             return null;
@@ -54,7 +56,7 @@ public class Template {
 
 
     public String getFileName() {
-        return getName() + "." + getMethodName();
+        return getName().replaceAll("[<>:\"/\\|?*]", "") + "." + getMethodName();
     }
     public String getMethodName() {
         return blocks.get(0).block;

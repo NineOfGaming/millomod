@@ -1,8 +1,10 @@
 package net.millo.millomod.mod.features.impl;
 
+import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.Callback;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.HandlePacket;
+import net.millo.millomod.mod.hypercube.Plot;
 import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
@@ -16,13 +18,15 @@ import java.util.regex.Pattern;
 public class Tracker extends Feature {
 
     private static double x, z;
-    private static double plotX, plotZ;
     private static Sequence step = Sequence.WAIT_FOR_CLEAR;
-    private static int plotId = 0;
     private static boolean requestPlotId = false;
     private static ArrayList<Callback> plotIdCallbacks = new ArrayList<>();
+    private static Plot plot;
 
 
+    public Tracker() {
+        plot = Plot.spawn();
+    }
 
 
     public enum Mode {
@@ -32,19 +36,10 @@ public class Tracker extends Feature {
 
     public static Mode mode = Mode.SPAWN;
 
-    public static boolean isInArea(Vec3d pos) {
-        double x = pos.getX();
-        double z = pos.getZ();
 
-        boolean inX = x >= plotX && x <= plotX + 301;
-        boolean inZ = z >= plotX && z <= plotX + 301;
-
-        return inX && inZ;
-    }
     private static void toDev() {
         setMode(Mode.DEV);
-        plotX = x + 9.5;
-        plotZ = z - 10.5;
+        plot = new Plot((int) (x + 9.5), (int) (z - 10.5));
     }
     private static void setMode(Mode mode) {
         Tracker.mode = mode;
@@ -52,8 +47,8 @@ public class Tracker extends Feature {
         requestPlotId = true;
     }
 
-    public static Vec3d getPos() {
-        return new Vec3d(plotX, 0, plotZ);
+    public static Plot getPlot() {
+        return plot;
     }
 
     @HandlePacket
@@ -78,6 +73,19 @@ public class Tracker extends Feature {
         return false;
     }
 
+
+    private int requestPlotIdDelay = 0;
+    @Override
+    public void onTick() {
+        if (requestPlotId) {
+            if (requestPlotIdDelay > 0) requestPlotIdDelay--;
+            else if (MilloMod.MC.getNetworkHandler() != null) {
+                requestPlotIdDelay = 20;
+                MilloMod.MC.getNetworkHandler().sendCommand("locate");
+            }
+        }
+    }
+
     @HandlePacket
     public boolean gameMessage(GameMessageS2CPacket message) {
         String content = message.content().getString();
@@ -92,10 +100,17 @@ public class Tracker extends Feature {
             Matcher matcher = Pattern.compile(regex).matcher(content);
             if (matcher.find()) {
                 String plotIdString = matcher.group().trim().replace("[", "").replace("]", "");
-                plotId = Integer.parseInt(plotIdString);
+                plot.setId(Integer.parseInt(plotIdString));
                 requestPlotId = false;
                 plotIdCallbacks.forEach(Callback::run);
                 plotIdCallbacks.clear();
+                return true;
+            }
+            regex = "spawn\\n";
+            matcher = Pattern.compile(regex).matcher(content);
+            if (matcher.find()) {
+                plot = Plot.spawn();
+                requestPlotId = false;
                 return true;
             }
         }
@@ -106,9 +121,7 @@ public class Tracker extends Feature {
         requestPlotId = true;
         plotIdCallbacks.add(callback);
     }
-    public static int getPlotId() {
-        return plotId;
-    }
+
 
     @Override
     public boolean alwaysActive() {

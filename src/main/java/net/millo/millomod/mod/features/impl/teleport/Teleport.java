@@ -19,7 +19,9 @@ public class Teleport {
     public Vec3d target;
     private ItemStack locationItem;
     private int buffer, lastTickPackets = 1, thisTickPackets, attempts;
-    private boolean doNotSuppress = false, haltForTp = false;
+    private boolean doNotSuppress = false;
+    private boolean haltForTp = false;
+    private int locationItemDelay = 0;
 
     public Teleport(Vec3d target, Callback callback) {
         this.callback = callback;
@@ -38,6 +40,7 @@ public class Teleport {
             active = false;
             callback.run();
         } else {
+            locationItemDelay = 5;
             haltForTp = false;
         }
         return true;
@@ -49,6 +52,10 @@ public class Teleport {
     }
 
     public void onTick() {
+        if (locationItemDelay > 0) {
+            locationItemDelay--;
+            return;
+        }
         if (haltForTp) return;
 
         attempts ++;
@@ -68,7 +75,7 @@ public class Teleport {
         }
 
         if (attempts == 4 && MilloMod.MC.getNetworkHandler() != null) {
-            locationItem = new LocationItem(Tracker.getPos().relativize(target))
+            locationItem = new LocationItem(Tracker.getPlot().getPos().relativize(target))
                     .setRotation(player.getPitch(), player.getYaw())
                     .toStack();
 
@@ -89,8 +96,8 @@ public class Teleport {
 
         active = true;
 
-        if (Tracker.isInArea(target)) {
-            locationItem = new LocationItem(Tracker.getPos().relativize(target))
+        if (Tracker.getPlot().isInArea(target)) {
+            locationItem = new LocationItem(Tracker.getPlot().getPos().relativize(target))
                     .setRotation(player.getPitch(), player.getYaw())
                     .toStack();
 
@@ -143,6 +150,9 @@ public class Teleport {
     }
 
 
+    public void abort() {
+        active = false;
+    }
     public boolean aborting() {
         return !active;
     }

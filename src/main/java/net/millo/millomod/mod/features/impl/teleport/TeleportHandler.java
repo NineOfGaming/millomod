@@ -17,6 +17,10 @@ public class TeleportHandler extends Feature {
         INSTANCE = this;
     }
 
+    public static void abort() {
+        INSTANCE.teleport.abort();
+    }
+
 
     @HandlePacket
     public boolean positionLook(PlayerPositionLookS2CPacket pos) {
