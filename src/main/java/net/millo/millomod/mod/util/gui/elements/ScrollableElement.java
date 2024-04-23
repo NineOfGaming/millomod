@@ -46,6 +46,10 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
 
         if (withinBounds) {
             for (ScrollableEntryI drawable : drawables) {
+                if (drawable instanceof Element element) {
+                    element.mouseClicked(mouseX, mouseY, button);
+                }
+
                 if (!(drawable instanceof ClickableElementI)) continue;
                 if (!((ClickableElementI) drawable).isHovered()) continue;
                 ((ClickableElementI) drawable).onPress(mouseX, mouseY, button);
@@ -64,6 +68,11 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
             this.scrollbarDragged = false;
         }
 
+        for (ScrollableEntryI drawable : drawables) {
+            if (drawable instanceof Element element) {
+                element.mouseReleased(mouseX, mouseY, button);
+            }
+        }
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
@@ -80,9 +89,13 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
             }
 
             return true;
-        } else {
-            return false;
         }
+        for (ScrollableEntryI drawable : drawables) {
+            if (drawable instanceof Element element) {
+                element.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+            }
+        }
+        return false;
     }
 
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {

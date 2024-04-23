@@ -187,11 +187,17 @@ public class PlotCaching extends Feature implements Keybound {
 
         boolean sneaking = player.isSneaking();
 
+        ItemStack item = player.getMainHandStack();
+
+        player.getInventory().setStack(player.getInventory().selectedSlot, ItemStack.EMPTY);
+        net.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().selectedSlot, ItemStack.EMPTY));
         if (!sneaking) net.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY));
         interact.interactBlock(player, Hand.MAIN_HAND, new BlockHitResult(
                 clickedLoc, Direction.UP, position, false
         ));
         if (!sneaking) net.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY));
+        net.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().selectedSlot, item));
+        player.getInventory().setStack(player.getInventory().selectedSlot, item);
     }
 
 

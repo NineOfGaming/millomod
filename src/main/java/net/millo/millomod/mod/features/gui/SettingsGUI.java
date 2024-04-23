@@ -1,5 +1,6 @@
 package net.millo.millomod.mod.features.gui;
 
+import net.millo.millomod.mod.util.gui.elements.IntegerElement;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
 import net.millo.millomod.mod.util.gui.GUI;
@@ -40,12 +41,16 @@ public class SettingsGUI extends GUI {
         addBooleanOption(settingsList, "auto_command");
         addBooleanOption(settingsList, "notification_tray");
         addBooleanOption(settingsList, "show_tags");
+        addBooleanOption(settingsList, "auto_chat_local");
+        addIntegerOption(settingsList, "fs_toggle.speed", 0, 1000);
 
 //        addHeader(settingsList, "Unstable Features");
 //        addBooleanOption(settingsList, "preview_skin.enabled","Preview Skin", "Do not use. Will crash your game");
 
         addDrawableChild(settingsList);
     }
+
+
 
     @Override
     public void close() {
@@ -90,5 +95,17 @@ public class SettingsGUI extends GUI {
         list.addDrawableChild(b);
     }
 
+    private void addIntegerOption(ScrollableElement list, String key, int min, int max) {
+        int current = config.get(key);
+
+        String name = Text.translatable("millo.feature."+key).getString();
+        String tooltip = Text.translatable("millo.feature."+key+".desc").getString();
+
+        int x = backgroundWidth / 2 - 100;
+
+        IntegerElement b = new IntegerElement(x, 0, min, max, Text.literal(name), current, (change) -> config.set(key, change), textRenderer);
+
+        list.addDrawableChild(b);
+    }
 
 }

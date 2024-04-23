@@ -34,7 +34,9 @@ public class FeatureHandler {
                 new PlotCaching(), // ?
                 new Tracker(), //+
                 new TeleportHandler(), //+
-                new ShowTags() //@
+                new ShowTags(), //@
+                new FSToggle(), // ?
+                new AutoChatLocal() //@
         );
 
         Config config = Config.getInstance();

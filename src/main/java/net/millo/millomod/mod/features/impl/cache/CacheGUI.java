@@ -37,15 +37,9 @@ public class CacheGUI extends GUI {
     int toolbarSize = 20;
 
 
-    // + TODO: Click on callfunction / startprocess to open that  // (+ Forward / Backward navigation)
-    // + TODO: Add the ability to REMOVE cached functions
-    // + TODO: Add colours depending on what method type to the methods list
-    // + TODO: Only update `lines` when changing method
-    // -- TODO: Scan entire plot
     // TODO: Search for actions
     // TODO: ^ Search for usages of method
     // TODO: Folders.
-    //
 
     public CacheGUI() {
         super(Text.of("Cache"));

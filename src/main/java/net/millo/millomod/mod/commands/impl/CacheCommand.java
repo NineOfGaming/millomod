@@ -33,6 +33,6 @@ public class CacheCommand extends Command {
 
     @Override
     public String getKey() {
-        return null;
+        return "cache";
     }
 }

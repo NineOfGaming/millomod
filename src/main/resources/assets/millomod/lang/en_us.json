@@ -1,8 +1,6 @@
 {
   "millomod.title": "Millo Mod",
 
-  "millo.info.toggle.on": "Turned %s on",
-  "millo.info.toggle.off": "Turned %s off",
 
   "millo.feature.auto_command": "Auto Command",
   "millo.feature.auto_command.desc": "Automatically inserts an @ in front of your messages",
@@ -17,11 +15,17 @@
   "millo.feature.search": "Code Search",
   "millo.feature.search.desc": "Search through code area for specific actions",
   "millo.feature.tracker": "Tracker",
-  "millo.feature.tracker.desc": "",
+  "millo.feature.tracker.desc": "Tracks where on the server you are",
   "millo.feature.plot_caching": "Plot Caching",
-  "millo.feature.plot_caching.desc": "",
+  "millo.feature.plot_caching.desc": "See code in a GUI",
   "millo.feature.teleport_handler": "Teleporting [Code Client]",
   "millo.feature.teleport_handler.desc": "",
+  "millo.feature.show_tags": "Show Tags",
+  "millo.feature.show_tags.desc": "Shows item tags on items in the tooltip",
+  "millo.feature.auto_chat_local": "Auto Chat Local",
+  "millo.feature.auto_chat_local.desc": "Runs /c l automatically",
+  "millo.feature.fs_toggle": "Auto Chat Local",
+  "millo.feature.fs_toggle.desc": "Toggles between two flight speeds on a keybind",
 
   "millo.command.settings": "settings",
   "millo.command.settings.desc": "Opens the Millo Mod settings menu",
@@ -33,6 +37,8 @@
   "millo.command.colors.desc": "[/col] Opens a custom color wheel for creating colors",
   "millo.command.millo": "millo",
   "millo.command.millo.desc": "Shows a list of all features",
+  "millo.command.cache": "cache",
+  "millo.command.cache.desc": "Opens the cache menu, has an optional <plot> argument which scans the entire plot. Use with caution.",
 
   "config.millo.title": "Millo Mod Settings",
   "config.millo.features": "Features",
@@ -43,5 +49,6 @@
   "key.category.millo": "Millo Mod",
   "key.millo.toggle_auto_command": "Toggle Auto Command",
   "key.millo.display_cache": "Cache Line / Menu",
-  "key.millo.show_tags": "Show Tags"
+  "key.millo.show_tags": "Show Tags",
+  "key.millo.fs_toggle": "Toggle Flight Speed"
 }
