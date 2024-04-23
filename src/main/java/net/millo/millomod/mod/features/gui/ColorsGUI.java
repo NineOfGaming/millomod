@@ -1,5 +1,6 @@
 package net.millo.millomod.mod.features.gui;
 
+import net.millo.millomod.SoundHandler;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
 import net.millo.millomod.mod.util.gui.GUI;
 import net.millo.millomod.mod.util.gui.GUIStyles;
@@ -74,6 +75,7 @@ public class ColorsGUI extends GUI {
     @NotNull
     private ButtonElement getCopyButton(int x, int y) {
         ButtonElement copyButton = new ButtonElement(x+60, y + 110, 50, 16, Text.literal("Copy"), (button) -> {
+            SoundHandler.playClick();
             Color color = ColorPickerElement.getSelectedColor();
             String hexString = String.format("<#%02x%02x%02x>", color.getRed(), color.getGreen(), color.getBlue());
             if (hasShiftDown()) hexString = "&" + String.join("&", String.format("x%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()).split(""));
@@ -176,6 +178,8 @@ public class ColorsGUI extends GUI {
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (!isHovered()) return false;
+
+            SoundHandler.playClick();
             if (button == 1) {
                 colorsGUI.removeRecentColor(color);
                 return true;

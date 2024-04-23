@@ -31,6 +31,7 @@ public class MilloMod implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register(CommandHandler::load);
 
         KeybindHandler.load();
+        SoundHandler.load();
 
 
         // Idle clicker game while bored
@@ -42,6 +43,7 @@ public class MilloMod implements ClientModInitializer {
         // TODO: socket server, for item-give, maybe more
 
         // TODO: Paywall
+
 
     }
 

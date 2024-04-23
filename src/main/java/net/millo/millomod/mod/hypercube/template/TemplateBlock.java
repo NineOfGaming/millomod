@@ -3,6 +3,7 @@ package net.millo.millomod.mod.hypercube.template;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.millo.millomod.SoundHandler;
 import net.millo.millomod.mod.features.impl.cache.ArgumentItem;
 import net.millo.millomod.mod.features.impl.cache.CacheGUI;
 import net.millo.millomod.mod.features.impl.cache.LineElement;
@@ -124,6 +125,7 @@ public class TemplateBlock {
                     .addComponent(Text.of(keyword))
                     .addSpace()
                     .addComponent(Text.literal(block.data).setStyle(GUIStyles.NAME.getStyle()), (button) -> {
+                        SoundHandler.playClick();
                         var gui = CacheGUI.lastOpenedGUI;
                         gui.findMethod(block.data+"."+block.block);
                     })

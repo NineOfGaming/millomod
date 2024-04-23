@@ -1,5 +1,6 @@
 package net.millo.millomod.mod.features.impl.cache;
 
+import net.millo.millomod.SoundHandler;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.mod.util.gui.elements.ButtonElement;
 import net.millo.millomod.mod.util.gui.elements.ContextElement;
@@ -58,12 +59,16 @@ public class MethodElement extends ButtonElement {
         if (button == 0) super.onPress(mouseX, mouseY, button);
         if (button == 1) {
             CacheGUI.lastOpenedGUI.openContext(mouseX, mouseY,
-                    new ContextElement(100)
+                    new ContextElement(100, textRenderer)
                             .add(Text.literal("Delete").setStyle(GUIStyles.SCARY.getStyle()), (b) -> {
+                                SoundHandler.playClick();
                                 FileManager.deleteTemplateFile(plotId, filename);
                                 CacheGUI.lastOpenedGUI.reload();
                                 CacheGUI.lastOpenedGUI.closeContext();
-                            }, textRenderer)
+                            })
+                            .add(Text.literal("Refactor"), (b) -> {
+                                SoundHandler.playClick();
+                            })
             );
         }
     }

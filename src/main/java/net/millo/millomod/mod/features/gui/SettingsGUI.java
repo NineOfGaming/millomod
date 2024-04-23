@@ -1,5 +1,6 @@
 package net.millo.millomod.mod.features.gui;
 
+import net.millo.millomod.SoundHandler;
 import net.millo.millomod.mod.util.gui.elements.IntegerElement;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
@@ -40,9 +41,8 @@ public class SettingsGUI extends GUI {
         addBooleanOption(settingsList, "menu_search");
         addBooleanOption(settingsList, "auto_command");
         addBooleanOption(settingsList, "notification_tray");
-        addBooleanOption(settingsList, "show_tags");
         addBooleanOption(settingsList, "auto_chat_local");
-        addIntegerOption(settingsList, "fs_toggle.speed", 0, 1000);
+//        addIntegerOption(settingsList, "fs_toggle.speed", 0, 1000);
 
 //        addHeader(settingsList, "Unstable Features");
 //        addBooleanOption(settingsList, "preview_skin.enabled","Preview Skin", "Do not use. Will crash your game");
@@ -86,6 +86,7 @@ public class SettingsGUI extends GUI {
         String tooltip = Text.translatable("millo.feature."+key+".desc").getString();
 
         ButtonElement b = new ButtonElement(x, 0, 200, 20, Text.literal(name+": ").append(GUIStyles.getTrueFalse(state)), button -> {
+            SoundHandler.playClick();
             boolean newState = !(boolean)config.get(key+".enabled");
             config.set(key+".enabled", newState);
             button.setText(Text.literal(name+": ").append(GUIStyles.getTrueFalse(newState)));

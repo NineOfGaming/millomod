@@ -1,5 +1,6 @@
 package net.millo.millomod.mod.features.impl.cache;
 
+import net.millo.millomod.SoundHandler;
 import net.millo.millomod.mod.features.impl.Tracker;
 import net.millo.millomod.mod.hypercube.template.Template;
 import net.millo.millomod.mod.hypercube.template.TemplateBlock;
@@ -119,6 +120,7 @@ public class CacheGUI extends GUI {
         hierarchyButton = new ButtonElement(
                 paddingX, paddingY, toolbarSize, toolbarSize, Text.of("<"),
                 (button) -> {
+                    SoundHandler.playSound("");
                     if (hierarchyOpen) button.setText(Text.of(">"));
                     else button.setText(Text.of("<"));
                     hierarchyOpen = !hierarchyOpen;
@@ -169,6 +171,7 @@ public class CacheGUI extends GUI {
         }
         if (template == null) return;
         if (CacheGUI.template != null) futureStack.push(CacheGUI.template.getFileName());
+        SoundHandler.playSound("minecraft:block.azalea_leaves.hit", 2, 2);
         loadTemplateLines(template);
     }
     private void historyForward() {
@@ -178,6 +181,7 @@ public class CacheGUI extends GUI {
         }
         if (template == null) return;
         if (CacheGUI.template != null) historyStack.push(CacheGUI.template.getFileName());
+        SoundHandler.playSound("minecraft:block.azalea_leaves.hit", 2, 2);
         loadTemplateLines(template);
     }
 
@@ -232,6 +236,7 @@ public class CacheGUI extends GUI {
             }
 
             MethodElement b = new MethodElement(16, plotId, methodName, (button) -> {
+                SoundHandler.playClick();
                 Template template = FileManager.readTemplate(plotId, methodName);
                 loadTemplate(template);
             }, textRenderer);

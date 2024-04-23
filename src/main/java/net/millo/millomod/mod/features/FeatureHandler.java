@@ -81,7 +81,9 @@ public class FeatureHandler {
     }
 
     public static void configUpdate(Config config) {
-        features.forEach((key, feature) -> feature.onConfigUpdate(config));
+        features.forEach((key, feature) -> {
+            feature.onConfigUpdate(config);
+        });
     }
     private static void defaultConfig(Config config) {
         features.forEach((key, feature) -> feature.defaultConfig(config));

@@ -25,8 +25,10 @@ public class FSToggle extends Feature implements Keybound {
 
     @Override
     public void defaultConfig(Config config) {
+        super.defaultConfig(config);
         config.set("fs_toggle.speed", 300);
     }
+
 
     @Override
     public void loadKeybinds() {

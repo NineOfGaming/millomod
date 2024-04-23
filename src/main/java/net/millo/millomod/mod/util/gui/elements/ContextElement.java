@@ -19,9 +19,11 @@ public class ContextElement implements Element, Widget, Selectable, ClickableEle
 
     private final ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.UP);
 
-    public ContextElement(int width) {
+    TextRenderer textRenderer;
+    public ContextElement(int width, TextRenderer textRenderer) {
         this.width = width;
         height = 0;
+        this.textRenderer = textRenderer;
     }
 
     private void updateHeight() {
@@ -30,7 +32,7 @@ public class ContextElement implements Element, Widget, Selectable, ClickableEle
 
     ArrayList<ButtonElement> buttons = new ArrayList<>();
 
-    public ContextElement add(Text message, ButtonElement.PressAction onPress, TextRenderer textRenderer) {
+    public ContextElement add(Text message, ButtonElement.PressAction onPress) {
         var button = new ButtonElement(0, 16 * buttons.size(), width, 16, message, onPress, textRenderer);
         button.fade.setProgress(5f);
         buttons.add(button);
