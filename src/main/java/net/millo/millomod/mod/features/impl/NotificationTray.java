@@ -2,6 +2,7 @@ package net.millo.millomod.mod.features.impl;
 
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.util.MathUtil;
+import net.millo.millomod.mod.util.RenderInfo;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.IRenderable;
@@ -36,8 +37,10 @@ public class NotificationTray extends Feature implements IRenderable {
     }
 
     @Override
-    public void render(DrawContext context, float delta, TextRenderer textRenderer) {
+    public void render(RenderInfo info) {
         if (!enabled) return;
+        DrawContext context = info.context();
+        TextRenderer textRenderer = info.textRenderer();
 
         for (int i = notifications.size()-1; i > 0; i--) {
             float t = MathHelper.clamp(MilloMod.MC.getLastFrameDuration(), 0f, 1f);

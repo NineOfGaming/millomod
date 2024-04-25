@@ -1,5 +1,7 @@
 package net.millo.millomod.mod.features;
 
+import net.millo.millomod.mod.features.impl.switcher.ModeSwitcher;
+import net.millo.millomod.mod.util.RenderInfo;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.impl.*;
 import net.millo.millomod.mod.features.impl.cache.PlotCaching;
@@ -36,7 +38,8 @@ public class FeatureHandler {
                 new TeleportHandler(), //+
                 new ShowTags(), //@
                 new FSToggle(), // ?
-                new AutoChatLocal() //@
+                new AutoChatLocal(), //@
+                new ModeSwitcher()
         );
 
         Config config = Config.getInstance();
@@ -72,10 +75,10 @@ public class FeatureHandler {
         return packetHandler.onSendPacket(packet);
     }
 
-    public static void renderHUD(DrawContext context, float tickDelta, TextRenderer textRenderer) {
+    public static void renderHUD(RenderInfo info) {
         for (Feature feature : getFeatures()) {
             if (feature instanceof IRenderable) {
-                ((IRenderable) feature).render(context, tickDelta, textRenderer);
+                ((IRenderable) feature).render(info);
             }
         }
     }

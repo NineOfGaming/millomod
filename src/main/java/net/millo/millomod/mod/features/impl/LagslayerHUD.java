@@ -2,6 +2,7 @@ package net.millo.millomod.mod.features.impl;
 
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.util.MathUtil;
+import net.millo.millomod.mod.util.RenderInfo;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.IRenderable;
@@ -119,9 +120,12 @@ public class LagslayerHUD extends Feature implements IRenderable {
     }
 
     @Override
-    public void render(DrawContext context, float delta, TextRenderer textRenderer) {
+    public void render(RenderInfo info) {
         if (!enabled) return;
-        float t = MilloMod.MC.getLastFrameDuration();
+        float t = info.delta();
+        DrawContext context = info.context();
+        float delta = info.tickDelta();
+        TextRenderer textRenderer = info.textRenderer();
 
         double time = (new Date().getTime() - updateTime.getTime()) / 1000d;
         float alpha = (float) Math.max(Math.min(1, 5 - time), 0);

@@ -1,5 +1,6 @@
 package net.millo.millomod.mod.features;
 
+import net.millo.millomod.mod.util.RenderInfo;
 import net.millo.millomod.system.Config;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -7,8 +8,7 @@ import net.minecraft.client.gui.DrawContext;
 public interface IRenderable {
 
     // Something
-    default void render(DrawContext context, float delta, TextRenderer textRenderer) {}
-    default void renderContainer(DrawContext context, float delta, TextRenderer textRenderer) {}
+    default void render(RenderInfo info) {}
 
 
 
