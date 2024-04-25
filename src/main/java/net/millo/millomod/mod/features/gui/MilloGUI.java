@@ -57,7 +57,7 @@ public class MilloGUI extends GUI {
 
         // Features
         featureList.addDrawableChild(
-                new TextElement(0, 0, 150, 16, Text.literal("Features").setStyle(GUIStyles.HEADER.getStyle()),textRenderer)
+                new TextElement(0, 0, 150, 16, Text.translatable("config.millo.features").setStyle(GUIStyles.HEADER.getStyle()),textRenderer)
         );
         for (Feature feature : FeatureHandler.getFeatures()) {
             TextElement text = new TextElement(0, 0, 150, 12,
@@ -68,7 +68,7 @@ public class MilloGUI extends GUI {
 
         // Commands
         featureList.addDrawableChild(
-                new TextElement(0, 0, 150, 16, Text.literal("Commands").setStyle(GUIStyles.HEADER.getStyle()),textRenderer)
+                new TextElement(0, 0, 150, 16, Text.translatable("config.millo.commands").setStyle(GUIStyles.HEADER.getStyle()),textRenderer)
         );
         for (Command command : CommandHandler.getCommands()) {
             TextElement text = new TextElement(0, 0, 150, 12,

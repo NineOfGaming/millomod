@@ -36,7 +36,6 @@ public class MilloMod implements ClientModInitializer {
 
         // Idle clicker game while bored
 
-        // TODO: Add CS:GO to savestates (quick menu)
         // TODO: Side chat
         // TODO: reference book arguments in GUI
         // TODO: /search
