@@ -14,6 +14,7 @@ import net.millo.millomod.mod.features.impl.NotificationTray;
 import net.millo.millomod.mod.hypercube.template.Template;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.system.FileManager;
+import net.millo.millomod.system.Utility;
 import net.minecraft.block.Block;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.SignText;
@@ -183,20 +184,28 @@ public class PlotCaching extends Feature implements Keybound {
         if (net == null || interact == null || player == null) return;
 
         clickedLoc = position.toCenterPos();
-        cacheNextItem = 10;
+        cacheNextItem = 40;
 
         boolean sneaking = player.isSneaking();
 
         ItemStack item = player.getMainHandStack();
 
+//        player.getInventory().setStack(player.getInventory().selectedSlot, ItemStack.EMPTY);
+//        net.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().selectedSlot, ItemStack.EMPTY));
+//        if (!sneaking) net.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY));
+//        interact.interactBlock(player, Hand.MAIN_HAND, new BlockHitResult(
+//                clickedLoc, Direction.UP, position, false
+//        ));
+//        if (!sneaking) net.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY));
+//        net.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().selectedSlot, item));
+//        player.getInventory().setStack(player.getInventory().selectedSlot, item);
+
         player.getInventory().setStack(player.getInventory().selectedSlot, ItemStack.EMPTY);
-        net.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().selectedSlot, ItemStack.EMPTY));
-        if (!sneaking) net.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY));
-        interact.interactBlock(player, Hand.MAIN_HAND, new BlockHitResult(
-                clickedLoc, Direction.UP, position, false
-        ));
-        if (!sneaking) net.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY));
-        net.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().selectedSlot, item));
+        Utility.sendHandItem(ItemStack.EMPTY);
+        if (!sneaking) Utility.sendSneak(true);
+        Utility.rightClickPos(position);
+        if (!sneaking) Utility.sendSneak(false);
+        Utility.sendHandItem(item);
         player.getInventory().setStack(player.getInventory().selectedSlot, item);
     }
 

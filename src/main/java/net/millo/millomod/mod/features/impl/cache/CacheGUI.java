@@ -48,7 +48,8 @@ public class CacheGUI extends GUI {
     }
 
     private boolean pendingTemplateListUpdate = false;
-    public void loadTemplate(@NotNull Template template){
+    public void loadTemplate(Template template){
+        if (template == null) return;
         if (CacheGUI.template != null) {
             if (template.getFileName().equals(CacheGUI.template.getFileName())) return;
             historyStack.push(CacheGUI.template.getFileName());

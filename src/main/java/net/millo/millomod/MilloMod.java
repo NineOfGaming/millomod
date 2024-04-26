@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class MilloMod implements ClientModInitializer {
 
     public static final String MOD_ID = "millomod";
-    public static final String MOD_VERSION = "1.4.2";
+    public static final String MOD_VERSION = "1.4.3";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public static MinecraftClient MC = MinecraftClient.getInstance();
@@ -36,6 +36,8 @@ public class MilloMod implements ClientModInitializer {
 
         // Idle clicker game while bored
 
+
+        // TODO: Add a `ticks -> 0m 0s` option for numbers (endersaltz)
         // TODO: Side chat
         // TODO: reference book arguments in GUI
         // TODO: /search

@@ -32,7 +32,7 @@ public class MilloGUI extends GUI {
         addDrawableChild(new TextElement(x, y + 26, backgroundWidth, 16,
                 Text.literal("v"+ MilloMod.MOD_VERSION).setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
         addDrawableChild(new TextElement(x, y + 40, backgroundWidth, 16,
-                Text.literal("woah updates!!").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
+                Text.literal("quik thingsssss :33").setStyle(GUIStyles.COMMENT.getStyle()), textRenderer));
 
         addDrawableChild(new TextElement(x, y + 58, backgroundWidth, 16,
                 Text.literal("Credits:").setStyle(GUIStyles.LINE.getStyle()), textRenderer));
@@ -42,9 +42,11 @@ public class MilloGUI extends GUI {
                 Text.literal("GeorgeRNG - I stole his code. [Code Client]").setStyle(GUIStyles.UNSAVED.getStyle()), textRenderer));
         addDrawableChild(new TextElement(x, y + 88, backgroundWidth, 16,
                 Text.literal("xtreemes - The Guinea Pig").setStyle(GUIStyles.UNSAVED.getStyle()), textRenderer));
+        addDrawableChild(new TextElement(x, y + 98, backgroundWidth, 16,
+                Text.literal("endersaltz - idees").setStyle(GUIStyles.UNSAVED.getStyle()), textRenderer));
 
 
-        addDrawableChild(new ButtonElement(x + backgroundWidth/2 - 50, y + 106, 100, 16, Text.of("Settings"), (button) -> {
+        addDrawableChild(new ButtonElement(x + backgroundWidth/2 - 50, y + 116, 100, 16, Text.of("Settings"), (button) -> {
             GUI gui = new SettingsGUI();
             gui.setParent(this);
             gui.setFade(this.getFade());
@@ -52,7 +54,7 @@ public class MilloGUI extends GUI {
         }, textRenderer));
 
 
-        ScrollableElement featureList = new ScrollableElement(x + backgroundWidth/2 - 80, y + 124, 160, backgroundHeight - y - 124,
+        ScrollableElement featureList = new ScrollableElement(x + backgroundWidth/2 - 80, y + 134, 160, backgroundHeight - y - 134,
                 Text.of("Feature List"));
 
         // Features

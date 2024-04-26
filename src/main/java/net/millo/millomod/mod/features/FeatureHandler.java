@@ -39,7 +39,8 @@ public class FeatureHandler {
                 new ShowTags(), //@
                 new FSToggle(), // ?
                 new AutoChatLocal(), //@
-                new ModeSwitcher()
+                new ModeSwitcher(), // ?
+                new NotSwitcher()
         );
 
         Config config = Config.getInstance();

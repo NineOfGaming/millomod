@@ -4,9 +4,11 @@ import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.Callback;
 import net.millo.millomod.mod.features.Feature;
+import net.millo.millomod.mod.features.FeatureHandler;
 import net.millo.millomod.mod.features.IRenderable;
 import net.millo.millomod.mod.features.Keybound;
 import net.millo.millomod.mod.util.RenderInfo;
+import net.millo.millomod.system.Utility;
 import net.millo.millomod.system.Config;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -24,40 +26,87 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
     KeyBinding openKey;
 
     ArrayList<Option> options = new ArrayList<>();
-    public ModeSwitcher() {
-        options.add(new Option(Text.of("Dev"), () -> MilloMod.MC.getNetworkHandler().sendCommand("dev")));
-        options.add(new Option(Text.of("Play"), () -> MilloMod.MC.getNetworkHandler().sendCommand("play")));
+    private int page = 0;
+    private float shown = 0f;
 
-//        options.add(new Option(Text.of("Alpha")));
-//        options.add(new Option(Text.of("Beta")));
-//        options.add(new Option(Text.of("Gamma")));
 
-        options.add(new Option(Text.of("Build"), () -> MilloMod.MC.getNetworkHandler().sendCommand("build")));
+    private ArrayList<Option> addCommandOption(ArrayList<Option> list, String text, String command) {
+        list.add(new Option(Text.of(text), () -> Utility.sendCommand(command)));
+        return list;
     }
+
+    public ArrayList<Option> getPage(int page) {
+        this.page = (4 + page) % 4;
+        ArrayList<Option> result = new ArrayList<>();
+
+        if (this.page == 0) {
+            addCommandOption(result, "Dev", "dev");
+            addCommandOption(result, "Play", "play");
+            addCommandOption(result, "Build", "build");
+        }
+
+        if (this.page == 1) {
+            addCommandOption(result, "Not", "not");
+            addCommandOption(result, "Cancel", "cancel");
+            addCommandOption(result, "Refer", "reference");
+            addCommandOption(result, "B.F.S.", "bracket");
+            addCommandOption(result, "G. Val", "val");
+            addCommandOption(result, "Values", "values");
+        }
+
+        if (this.page == 2) {
+            addCommandOption(result, "Spawn", "s");
+            addCommandOption(result, "Node 1", "server node1");
+            addCommandOption(result, "Node 2", "server node2");
+            addCommandOption(result, "Node 3", "server node3");
+            addCommandOption(result, "Node 4", "server node4");
+            addCommandOption(result, "Node 5", "server node5");
+            addCommandOption(result, "Node 6", "server node6");
+            addCommandOption(result, "Node 7", "server node7");
+            addCommandOption(result, "Beta", "server beta");
+        }
+
+        if (this.page == 3) {
+            addCommandOption(result, "C l", "c l");
+            addCommandOption(result, "C g", "c g");
+            addCommandOption(result, "C n", "c n");
+            addCommandOption(result, "C dnd", "c dnd");
+            result.add(new Option(Text.of("Auto @"), () -> FeatureHandler.getFeature("auto_command").toggleEnabled()));
+        }
+
+
+        return result;
+    }
+
+    public ModeSwitcher() {
+        options = getPage(0);
+    }
+
 
     @Override
     public void render(RenderInfo info) {
-        if (!openKey.isPressed()) return;
+        shown = MathHelper.lerp(info.delta(), shown, openKey.isPressed() ? 1f : 0f);
+        if (shown < 0.01f) return;
+
         DrawContext context = info.context();
         TextRenderer textRenderer = info.textRenderer();
         int centerX = info.width()/2;
         int centerY = info.height()/2;
 
 
-
         for (int i = 0; i < options.size(); i++) {
-            double angle = Math.toRadians(i * (360d / options.size()) - 90);
-            int x = centerX + (int) (Math.cos(angle) * 80);
-            int y = centerY + (int) (Math.sin(angle) * 80);
+            double angle = Math.toRadians(i * (360d / options.size()) - 90) - (1f - shown) * 0.8d;
+            int x = centerX + (int) (Math.cos(angle) * 80 * shown);
+            int y = centerY + (int) (Math.sin(angle) * 80 * shown);
 
             Option option = options.get(i);
-            option.draw(context, x, y, textRenderer, info.delta());
+            option.draw(context, x, y, textRenderer, info.delta(), shown);
         }
 
-//        context.fill(x, y, x+20, y+20, Color.PINK.hashCode());
     }
 
 
+    private boolean mouseDown = false;
     boolean cameraLocked = false;
     @Override
     public void onTick() {
@@ -76,8 +125,23 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
             return;
         }
 
+        if (!cameraLocked) {
+            page = 0;
+            options = getPage(0);
+        }
+
         cameraLocked = true;
         MilloMod.MC.mouse.unlockCursor();
+
+        if (!mouseDown) {
+            if (MilloMod.MC.mouse.wasLeftButtonClicked()) {
+                options = getPage(page + 1);
+            }
+            if (MilloMod.MC.mouse.wasRightButtonClicked()) {
+                options = getPage(page - 1);
+            }
+        }
+        mouseDown = MilloMod.MC.mouse.wasLeftButtonClicked() || MilloMod.MC.mouse.wasRightButtonClicked();
 
         double mouseX = MilloMod.MC.mouse.getX();
         double mouseY = MilloMod.MC.mouse.getY();
@@ -129,13 +193,14 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
             return selected;
         }
 
-        public void draw(DrawContext context, int x, int y, TextRenderer textRenderer, float delta) {
+        public void draw(DrawContext context, int x, int y, TextRenderer textRenderer, float delta, float shown) {
             hover = MathHelper.lerp(delta, hover, isSelected() ? 1f : 0f);
 
             if (selected) drawMouseLine(context, x, y);
 
             context.getMatrices().push();
             context.getMatrices().translate(x, y, 0);
+            context.getMatrices().scale(shown, shown, 0);
             context.getMatrices().scale(hover*0.2f+1f, hover*0.2f+1f, 1);
 
             int color = new Color(0f, 0f, 0f, 0.2f + hover * 0.3f).hashCode();
