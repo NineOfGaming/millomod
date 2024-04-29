@@ -17,7 +17,6 @@ import net.millo.millomod.system.Utility;
 import net.millo.millomod.system.Config;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
@@ -65,11 +64,9 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
         this.page = (4 + page) % 4;
         ArrayList<Option> result = new ArrayList<>();
 
-        if (Tracker.getPlot().isSpawn()) {
-
-
-            return result;
-        }
+//        if (Tracker.getPlot().isSpawn()) {
+//            return result;
+//        }
         if (this.page == 0) {
             addCommandOption(result, "Dev", "dev");
             addCommandOption(result, "Play", "play");
@@ -166,7 +163,7 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
     boolean cameraLocked = false;
     @Override
     public void onTick() {
-        if (!GlobalUtil.isKeyDown(openKey) && MilloMod.MC.currentScreen == null) {
+        if (!GlobalUtil.isKeyDown(openKey) || MilloMod.MC.currentScreen != null) {
             if (cameraLocked) {
                 MilloMod.MC.mouse.lockCursor();
                 cameraLocked = false;
