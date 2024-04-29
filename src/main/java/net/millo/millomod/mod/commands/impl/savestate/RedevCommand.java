@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.millo.millomod.mod.commands.Command;
 import net.millo.millomod.mod.commands.ArgBuilder;
-import net.millo.millomod.mod.features.impl.teleport.TeleportHandler;
+import net.millo.millomod.mod.features.impl.util.teleport.TeleportHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandRegistryAccess;

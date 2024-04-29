@@ -1,4 +1,4 @@
-package net.millo.millomod.mod.features.impl.cache;
+package net.millo.millomod.mod.features.impl.coding.cache;
 
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;

@@ -1,13 +1,17 @@
 package net.millo.millomod.mod.features;
 
+import net.millo.millomod.mod.features.impl.coding.*;
+import net.millo.millomod.mod.features.impl.global.AutoCommand;
+import net.millo.millomod.mod.features.impl.global.FSToggle;
+import net.millo.millomod.mod.features.impl.global.MenuSearch;
+import net.millo.millomod.mod.features.impl.global.PreviewSkin;
 import net.millo.millomod.mod.features.impl.switcher.ModeSwitcher;
+import net.millo.millomod.mod.features.impl.util.NotificationTray;
+import net.millo.millomod.mod.features.impl.util.Tracker;
 import net.millo.millomod.mod.util.RenderInfo;
 import net.millo.millomod.system.Config;
-import net.millo.millomod.mod.features.impl.*;
-import net.millo.millomod.mod.features.impl.cache.PlotCaching;
-import net.millo.millomod.mod.features.impl.teleport.TeleportHandler;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
+import net.millo.millomod.mod.features.impl.coding.cache.PlotCaching;
+import net.millo.millomod.mod.features.impl.util.teleport.TeleportHandler;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.listener.PacketListener;
@@ -38,9 +42,9 @@ public class FeatureHandler {
                 new TeleportHandler(), //+
                 new ShowTags(), //@
                 new FSToggle(), // ?
-                new AutoChatLocal(), //@
                 new ModeSwitcher(), // ?
-                new NotSwitcher()
+                new NotSwitcher(),
+                new CodeClientPlotFix()
         );
 
         Config config = Config.getInstance();
@@ -115,4 +119,9 @@ public class FeatureHandler {
         getFeatures().forEach(Feature::onTick);
     }
 
+    public static boolean scrollInHotBar(double scrollAmount) {
+        boolean re = false;
+        for (Feature feature : getFeatures()) re = re || feature.scrollInHotbar(scrollAmount);
+        return re;
+    }
 }

@@ -41,7 +41,6 @@ public class SettingsGUI extends GUI {
         addBooleanOption(settingsList, "menu_search");
         addBooleanOption(settingsList, "auto_command");
         addBooleanOption(settingsList, "notification_tray");
-        addBooleanOption(settingsList, "auto_chat_local");
 //        addIntegerOption(settingsList, "fs_toggle.speed", 0, 1000);
 
 //        addHeader(settingsList, "Unstable Features");

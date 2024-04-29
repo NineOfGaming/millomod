@@ -1,10 +1,8 @@
 package net.millo.millomod.mixin.render;
 
 import net.millo.millomod.mod.features.FeatureHandler;
-import net.millo.millomod.mod.features.impl.ShowTags;
+import net.millo.millomod.mod.features.impl.coding.ShowTags;
 import net.millo.millomod.mod.util.gui.GUIStyles;
-import net.millo.millomod.system.Config;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -17,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 

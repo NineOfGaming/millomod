@@ -29,4 +29,6 @@ public abstract class Feature {
     public boolean isEnabled() {
         return enabled;
     }
+
+    public boolean scrollInHotbar(double amount) { return false; }
 }

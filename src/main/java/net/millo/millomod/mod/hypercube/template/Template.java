@@ -1,14 +1,12 @@
 package net.millo.millomod.mod.hypercube.template;
 
 import com.google.gson.Gson;
-import net.millo.millomod.mod.features.impl.Tracker;
+import net.millo.millomod.mod.features.impl.util.Tracker;
 import net.minecraft.util.math.Vec3d;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;

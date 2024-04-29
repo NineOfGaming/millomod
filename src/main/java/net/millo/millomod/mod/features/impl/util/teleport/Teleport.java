@@ -1,8 +1,8 @@
-package net.millo.millomod.mod.features.impl.teleport;
+package net.millo.millomod.mod.features.impl.util.teleport;
 
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.Callback;
-import net.millo.millomod.mod.features.impl.Tracker;
+import net.millo.millomod.mod.features.impl.util.Tracker;
 import net.millo.millomod.mod.util.LocationItem;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;

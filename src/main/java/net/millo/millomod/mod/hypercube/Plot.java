@@ -1,7 +1,6 @@
 package net.millo.millomod.mod.hypercube;
 
 import net.millo.millomod.MilloMod;
-import net.millo.millomod.mod.features.impl.Tracker;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
@@ -12,7 +11,6 @@ import net.minecraft.util.math.Vec3d;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 public class Plot {
 

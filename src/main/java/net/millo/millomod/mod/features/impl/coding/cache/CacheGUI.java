@@ -1,7 +1,7 @@
-package net.millo.millomod.mod.features.impl.cache;
+package net.millo.millomod.mod.features.impl.coding.cache;
 
 import net.millo.millomod.SoundHandler;
-import net.millo.millomod.mod.features.impl.Tracker;
+import net.millo.millomod.mod.features.impl.util.Tracker;
 import net.millo.millomod.mod.hypercube.template.Template;
 import net.millo.millomod.mod.hypercube.template.TemplateBlock;
 import net.millo.millomod.mod.util.MathUtil;
@@ -14,9 +14,7 @@ import net.millo.millomod.mod.util.gui.elements.TextFieldElement;
 import net.millo.millomod.system.FileManager;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 

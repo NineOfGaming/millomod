@@ -1,54 +1,49 @@
-package net.millo.millomod.mod.features.impl.cache;
+package net.millo.millomod.mod.features.impl.coding.cache;
 
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.millo.millomod.MilloMod;
-import net.millo.millomod.mod.Callback;
-import net.millo.millomod.mod.features.impl.Tracker;
-import net.millo.millomod.mod.features.impl.teleport.TeleportHandler;
+import net.millo.millomod.mod.features.impl.util.Tracker;
+import net.millo.millomod.mod.features.impl.util.teleport.TeleportHandler;
 import net.millo.millomod.mod.util.GlobalUtil;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
 import net.millo.millomod.mod.features.HandlePacket;
-import net.millo.millomod.mod.features.impl.NotificationTray;
+import net.millo.millomod.mod.features.impl.util.NotificationTray;
 import net.millo.millomod.mod.hypercube.template.Template;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.system.FileManager;
 import net.millo.millomod.system.Utility;
 import net.minecraft.block.Block;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.block.entity.SignText;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
 public class PlotCaching extends Feature implements Keybound {
 
     Template cachedTemplate;
-    private KeyBinding displayKey;
+    private KeyBinding key;
     private int cacheNextItem = 0;
     @Nullable CacheGUI cacheGUI;
     private Vec3d clickedLoc;
@@ -70,7 +65,7 @@ public class PlotCaching extends Feature implements Keybound {
                     return true;
                 }
             }
-            return content.equals("Note: You can view your past 5 created templates with /templatehistory!");
+            return content.trim().equals("Note: You can view your past 5 created templates with /templatehistory!");
         }
         return false;
     }
@@ -112,7 +107,7 @@ public class PlotCaching extends Feature implements Keybound {
 
     @Override
     public void loadKeybinds() {
-        displayKey = KeyBindingRegistryImpl.registerKeyBinding(
+        key = KeyBindingRegistryImpl.registerKeyBinding(
                 new KeyBinding(
                         "key.millo.display_cache",
                         InputUtil.Type.KEYSYM,
@@ -122,10 +117,17 @@ public class PlotCaching extends Feature implements Keybound {
         );
     }
 
+    @Override
+    public void triggerKeybind(Config config) {}
+
 
     int cacheTries = 0;
     @Override
     public void onTick() {
+        if (GlobalUtil.isKeyPressed(key)) {
+            trigger();
+        }
+
         if (cacheNextItem > 0) {
             cacheNextItem--;
             if (cacheNextItem == 0) {
@@ -146,34 +148,34 @@ public class PlotCaching extends Feature implements Keybound {
     }
 
 
-    @Override
-    public void triggerKeybind(Config config) {
-        if (MilloMod.MC.currentScreen == null && !doingFullScan && GlobalUtil.isKeyPressed(displayKey)) {
-            cacheGUI = new CacheGUI();
-            cacheGUI.open();
 
-            MinecraftClient mc = MilloMod.MC;
-            ClientPlayerEntity player = mc.player;
+    public void trigger() {
+        if (MilloMod.MC.currentScreen != null || doingFullScan) return;
 
-            if (mc.getNetworkHandler() == null || player == null || mc.world == null) return;
+        cacheGUI = new CacheGUI();
+        cacheGUI.open();
 
-            BlockHitResult rayHit = mc.world.raycast(new RaycastContext(player.getEyePos(),
-                    player.getEyePos().add(player.getRotationVector().multiply(5d)),
-                    RaycastContext.ShapeType.OUTLINE,
-                    RaycastContext.FluidHandling.NONE,
-                    ShapeContext.absent()
-            ));
+        MinecraftClient mc = MilloMod.MC;
+        ClientPlayerEntity player = mc.player;
 
-            if (rayHit.getType() == HitResult.Type.MISS) return;
+        if (mc.getNetworkHandler() == null || player == null || mc.world == null) return;
 
-            var blockPos = rayHit.getBlockPos();
-            Block block = mc.world.getBlockState(blockPos).getBlock();
-            if (!Pattern.compile("minecraft:(diamond|emerald|lapis|gold)_block").matcher(Registries.BLOCK.getId(block).toString()).matches()){
-                blockPos = blockPos.add(1, 0, 0);
-            }
+        BlockHitResult rayHit = mc.world.raycast(new RaycastContext(player.getEyePos(),
+                player.getEyePos().add(player.getRotationVector().multiply(5d)),
+                RaycastContext.ShapeType.OUTLINE,
+                RaycastContext.FluidHandling.NONE,
+                ShapeContext.absent()
+        ));
 
-            cacheMethodFromPosition(blockPos);
+        if (rayHit.getType() == HitResult.Type.MISS) return;
+
+        var blockPos = rayHit.getBlockPos();
+        Block block = mc.world.getBlockState(blockPos).getBlock();
+        if (!Pattern.compile("minecraft:(diamond|emerald|lapis|gold)_block").matcher(Registries.BLOCK.getId(block).toString()).matches()){
+            blockPos = blockPos.add(1, 0, 0);
         }
+
+        cacheMethodFromPosition(blockPos);
     }
 
     public void cacheMethodFromPosition(BlockPos position) {

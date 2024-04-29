@@ -4,9 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.millo.millomod.SoundHandler;
-import net.millo.millomod.mod.features.impl.cache.ArgumentItem;
-import net.millo.millomod.mod.features.impl.cache.CacheGUI;
-import net.millo.millomod.mod.features.impl.cache.LineElement;
+import net.millo.millomod.mod.features.impl.coding.cache.ArgumentItem;
+import net.millo.millomod.mod.features.impl.coding.cache.CacheGUI;
+import net.millo.millomod.mod.features.impl.coding.cache.LineElement;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -51,8 +51,11 @@ public class TemplateBlock {
         CALL_FUNC((block) -> generateFlowLine(block, "call")),
         IF_VAR((block) -> {
             ArrayList<ArgumentItem> items = block.getArguments();
+            if (items.isEmpty()) return generateConditionLine(block, "");
+
             LineElement line = new LineElement()
                     .addComponent(Text.of("if (" + (block.isNot() ? (block.action.equals("=") ? "" : "!") : "")));
+
             items.get(0).addTo(line);
             line.addSpace()
                     .addComponent(Text.literal(block.action.equals("=") ? (block.isNot() ? "!=" : "==") : block.action).setStyle(GUIStyles.ACTION.getStyle()))

@@ -1,8 +1,7 @@
 package net.millo.millomod.mod.util.gui.elements;
 
-import net.millo.millomod.mod.features.impl.cache.LineElement;
+import net.millo.millomod.mod.features.impl.coding.cache.LineElement;
 import net.millo.millomod.mod.util.MathUtil;
-import net.millo.millomod.mod.util.gui.ClickableElementI;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
 import net.millo.millomod.mod.util.gui.ScrollableEntryI;
 import net.minecraft.client.gui.DrawContext;

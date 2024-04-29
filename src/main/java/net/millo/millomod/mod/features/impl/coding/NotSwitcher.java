@@ -1,4 +1,4 @@
-package net.millo.millomod.mod.features.impl;
+package net.millo.millomod.mod.features.impl.coding;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;

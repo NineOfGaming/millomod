@@ -1,4 +1,4 @@
-package net.millo.millomod.mod.features.impl.cache;
+package net.millo.millomod.mod.features.impl.coding.cache;
 
 import net.millo.millomod.SoundHandler;
 import net.millo.millomod.mod.util.gui.GUIStyles;

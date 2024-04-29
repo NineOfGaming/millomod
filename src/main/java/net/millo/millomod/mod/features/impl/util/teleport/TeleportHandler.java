@@ -1,4 +1,4 @@
-package net.millo.millomod.mod.features.impl.teleport;
+package net.millo.millomod.mod.features.impl.util.teleport;
 
 import net.millo.millomod.mod.Callback;
 import net.millo.millomod.mod.features.Feature;

@@ -1,23 +1,31 @@
 package net.millo.millomod.mod.features.impl.switcher;
 
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
+import net.millo.millomod.KeybindHandler;
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.Callback;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.FeatureHandler;
 import net.millo.millomod.mod.features.IRenderable;
 import net.millo.millomod.mod.features.Keybound;
+import net.millo.millomod.mod.features.impl.util.NotificationTray;
+import net.millo.millomod.mod.features.impl.util.Tracker;
+import net.millo.millomod.mod.util.GlobalUtil;
 import net.millo.millomod.mod.util.RenderInfo;
+import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.system.Utility;
 import net.millo.millomod.system.Config;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 
 public class ModeSwitcher extends Feature implements Keybound, IRenderable {
@@ -28,6 +36,10 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
     ArrayList<Option> options = new ArrayList<>();
     private int page = 0;
     private float shown = 0f;
+    private float rotateBump = 0f;
+
+
+    // TODO: if player is in spawn, show "favourites" on first page instead
 
 
     private ArrayList<Option> addCommandOption(ArrayList<Option> list, String text, String command) {
@@ -35,10 +47,29 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
         return list;
     }
 
+    @Override
+    public boolean scrollInHotbar(double amount) {
+        if (shown > 0.1f) {
+            setPage((int) (page - amount));
+            rotateBump = (float) (1.2f * MathHelper.clamp(amount, -1f, 1f));
+            return true;
+        }
+        return false;
+    }
+
+    public void setPage(int page) {
+        options = getPage(page);
+    }
+
     public ArrayList<Option> getPage(int page) {
         this.page = (4 + page) % 4;
         ArrayList<Option> result = new ArrayList<>();
 
+        if (Tracker.getPlot().isSpawn()) {
+
+
+            return result;
+        }
         if (this.page == 0) {
             addCommandOption(result, "Dev", "dev");
             addCommandOption(result, "Play", "play");
@@ -71,7 +102,14 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
             addCommandOption(result, "C g", "c g");
             addCommandOption(result, "C n", "c n");
             addCommandOption(result, "C dnd", "c dnd");
-            result.add(new Option(Text.of("Auto @"), () -> FeatureHandler.getFeature("auto_command").toggleEnabled()));
+            result.add(new Option(Text.of("Auto @"), () -> {
+                FeatureHandler.getFeature("auto_command").toggleEnabled();
+                NotificationTray.pushNotification(
+                        Text.literal("Toggled"),
+                        Text.translatable("config.millo.auto_command"),
+                        GUIStyles.getTrueFalse(enabled)
+                );
+            }));
         }
 
 
@@ -87,6 +125,7 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
     public void render(RenderInfo info) {
         shown = MathHelper.lerp(info.delta(), shown, openKey.isPressed() ? 1f : 0f);
         if (shown < 0.01f) return;
+        rotateBump = MathHelper.lerp(info.delta(), rotateBump, 0f);
 
         DrawContext context = info.context();
         TextRenderer textRenderer = info.textRenderer();
@@ -95,22 +134,39 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
 
 
         for (int i = 0; i < options.size(); i++) {
-            double angle = Math.toRadians(i * (360d / options.size()) - 90) - (1f - shown) * 0.8d;
+            double angle = Math.toRadians(i * (360d / options.size()) - 90) - (1f - shown) * 0.8d + rotateBump;
             int x = centerX + (int) (Math.cos(angle) * 80 * shown);
             int y = centerY + (int) (Math.sin(angle) * 80 * shown);
 
             Option option = options.get(i);
             option.draw(context, x, y, textRenderer, info.delta(), shown);
+
         }
+
+
+        int totalPages = 4;
+        int w = ((totalPages) * 5) / 2 - 1;
+        context.getMatrices().push();
+        context.getMatrices().translate(centerX, centerY + 10, 0);
+        context.getMatrices().scale(shown, shown, 0);
+
+        for (int i = 0; i < totalPages; i++) {
+            if (i == page) {
+                context.fill(i * 5 - w -1, -1, i*5+3 - w, 3, Color.white.hashCode());
+            } else {
+                context.fill(i * 5 - w, 0, i*5+2 - w, 2, Color.gray.hashCode());
+            }
+        }
+
+        context.getMatrices().pop();
 
     }
 
 
-    private boolean mouseDown = false;
     boolean cameraLocked = false;
     @Override
     public void onTick() {
-        if (!openKey.isPressed()) {
+        if (!GlobalUtil.isKeyDown(openKey) && MilloMod.MC.currentScreen == null) {
             if (cameraLocked) {
                 MilloMod.MC.mouse.lockCursor();
                 cameraLocked = false;
@@ -132,16 +188,6 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
 
         cameraLocked = true;
         MilloMod.MC.mouse.unlockCursor();
-
-        if (!mouseDown) {
-            if (MilloMod.MC.mouse.wasLeftButtonClicked()) {
-                options = getPage(page + 1);
-            }
-            if (MilloMod.MC.mouse.wasRightButtonClicked()) {
-                options = getPage(page - 1);
-            }
-        }
-        mouseDown = MilloMod.MC.mouse.wasLeftButtonClicked() || MilloMod.MC.mouse.wasRightButtonClicked();
 
         double mouseX = MilloMod.MC.mouse.getX();
         double mouseY = MilloMod.MC.mouse.getY();
@@ -194,7 +240,7 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
         }
 
         public void draw(DrawContext context, int x, int y, TextRenderer textRenderer, float delta, float shown) {
-            hover = MathHelper.lerp(delta, hover, isSelected() ? 1f : 0f);
+            hover = MathHelper.clampedLerp(hover, isSelected() ? 1f : 0f, delta);
 
             if (selected) drawMouseLine(context, x, y);
 
@@ -258,6 +304,10 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
     }
 
     public void triggerKeybind(Config config) {
+        while (GlobalUtil.isKeyPressed(openKey)) {
+            page = 0;
+            options = getPage(page);
+        }
     }
 
     public void setX(int x) {

@@ -3,7 +3,7 @@ package net.millo.millomod.mixin.render;
 
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.FeatureHandler;
-import net.millo.millomod.mod.features.impl.Search;
+import net.millo.millomod.mod.features.impl.coding.Search;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.client.render.*;

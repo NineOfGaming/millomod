@@ -1,16 +1,14 @@
-package net.millo.millomod.mod.features.impl;
+package net.millo.millomod.mod.features.impl.util;
 
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.Callback;
 import net.millo.millomod.mod.features.Feature;
-import net.millo.millomod.mod.features.FeatureHandler;
 import net.millo.millomod.mod.features.HandlePacket;
 import net.millo.millomod.mod.hypercube.Plot;
 import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -46,7 +44,6 @@ public class Tracker extends Feature {
         Tracker.mode = mode;
         step = Sequence.WAIT_FOR_CLEAR;
         requestPlotId = true;
-        if (mode != Mode.SPAWN) ((AutoChatLocal) FeatureHandler.getFeature("auto_chat_local")).trigger();
     }
 
     public static Plot getPlot() {

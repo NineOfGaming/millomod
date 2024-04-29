@@ -1,6 +1,7 @@
-package net.millo.millomod.mod.features.impl;
+package net.millo.millomod.mod.features.impl.global;
 
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
+import net.millo.millomod.mod.features.impl.util.NotificationTray;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
@@ -49,7 +50,7 @@ public class AutoCommand extends Feature implements Keybound {
         while (toggle.wasPressed()) {
             toggleEnabled();
             NotificationTray.pushNotification(
-                    Text.translatable("millo.info.toggle.on"),
+                    Text.literal("Toggled"),
                     Text.translatable("config.millo.auto_command"),
                     GUIStyles.getTrueFalse(enabled)
             );

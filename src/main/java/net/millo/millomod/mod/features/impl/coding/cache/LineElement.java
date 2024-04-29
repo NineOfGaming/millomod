@@ -1,9 +1,9 @@
-package net.millo.millomod.mod.features.impl.cache;
+package net.millo.millomod.mod.features.impl.coding.cache;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.millo.millomod.MilloMod;
-import net.millo.millomod.mod.features.impl.teleport.TeleportHandler;
+import net.millo.millomod.mod.features.impl.util.teleport.TeleportHandler;
 import net.millo.millomod.mod.util.gui.ClickableElementI;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
 import net.millo.millomod.mod.util.gui.GUIStyles;

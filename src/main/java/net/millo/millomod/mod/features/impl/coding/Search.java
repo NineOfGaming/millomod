@@ -1,4 +1,4 @@
-package net.millo.millomod.mod.features.impl;
+package net.millo.millomod.mod.features.impl.coding;
 
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.Feature;

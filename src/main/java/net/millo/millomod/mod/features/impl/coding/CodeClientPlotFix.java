@@ -1,31 +1,26 @@
-package net.millo.millomod.mod.features.impl;
+package net.millo.millomod.mod.features.impl.coding;
 
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
+import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
-import net.millo.millomod.mod.util.GlobalUtil;
 import net.millo.millomod.system.Config;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
-public class ShowTags extends Feature implements Keybound {
+public class CodeClientPlotFix extends Feature implements Keybound {
 
-    private KeyBinding showKey;
-
+    KeyBinding key;
     @Override
     public String getKey() {
-        return "show_tags";
-    }
-
-    public boolean isPressed() {
-        return GlobalUtil.isKeyDown(showKey);
+        return "cc_plot_fix";
     }
 
     @Override
     public void loadKeybinds() {
-        showKey = KeyBindingRegistryImpl.registerKeyBinding(
+        key = KeyBindingRegistryImpl.registerKeyBinding(
                 new KeyBinding(
-                        "key.millo.show_tags",
+                        "key.millo.cc_plot_fix",
                         InputUtil.Type.KEYSYM,
                         -1,
                         "key.category.millo"
@@ -33,6 +28,12 @@ public class ShowTags extends Feature implements Keybound {
         );
     }
 
+
     @Override
-    public void triggerKeybind(Config config) {}
+    public void triggerKeybind(Config config) {
+        if (MilloMod.MC.getNetworkHandler() == null) return;
+        while (key.wasPressed()) {
+            MilloMod.MC.getNetworkHandler().sendCommand("worldplot massive");
+        }
+    }
 }

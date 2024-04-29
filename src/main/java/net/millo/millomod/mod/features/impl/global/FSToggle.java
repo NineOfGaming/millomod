@@ -1,4 +1,4 @@
-package net.millo.millomod.mod.features.impl;
+package net.millo.millomod.mod.features.impl.global;
 
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.millo.millomod.MilloMod;

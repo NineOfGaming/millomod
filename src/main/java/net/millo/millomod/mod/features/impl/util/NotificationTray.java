@@ -1,4 +1,4 @@
-package net.millo.millomod.mod.features.impl;
+package net.millo.millomod.mod.features.impl.util;
 
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.util.MathUtil;
@@ -16,6 +16,13 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class NotificationTray extends Feature implements IRenderable {
+
+
+    // TODO: add /dfgive give messages
+    // TODO: add auto command from modeswitcher
+    // TODO: Common messages in chat ( enter dev / play )
+    // TODO: Optionally plot ads / boosts
+    // TODO:
 
     public static void pushNotification(Text message) {
         notifications.add(new Notification(message, notifications.size() * 10));

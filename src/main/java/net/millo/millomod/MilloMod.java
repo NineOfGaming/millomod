@@ -37,6 +37,7 @@ public class MilloMod implements ClientModInitializer {
         // Idle clicker game while bored
 
 
+        // TODO: Auto % brackets
         // TODO: Add a `ticks -> 0m 0s` option for numbers (endersaltz)
         // TODO: Side chat
         // TODO: reference book arguments in GUI
