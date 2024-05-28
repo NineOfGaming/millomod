@@ -39,6 +39,14 @@ public class CacheGUI extends GUI {
     // TODO: Search for actions
     // TODO: ^ Search for usages of method
     // TODO: Folders.
+    //      -   Make this a setting in the cache menu, enabled will split on .'s
+
+    // TODO: Fix scrollbar when searching
+    // TODO: Add a "help" segment (how to tp, and the keybinding)
+    // TODO: In the context menu on methods, add a "get string" to get the method name
+    // TODO: In the context menu on methods, add a "get template" to get the template item
+
+    // TODO: (SOMEHOW) Allow the opening of different PLOTS in the cache menu
 
     public CacheGUI() {
         super(Text.of("Cache"));

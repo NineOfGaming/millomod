@@ -2,31 +2,96 @@ package net.millo.millomod.mixin.render;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import net.millo.millomod.system.Config;
+import net.millo.millomod.mod.features.FeatureHandler;
+import net.millo.millomod.mod.features.impl.coding.argumentinsert.ArgumentInsert;
 import net.millo.millomod.mod.util.StaticSkinRenderer;
+import net.millo.millomod.mod.util.gui.elements.TextFieldElement;
+import net.millo.millomod.system.Config;
 import net.minecraft.block.AbstractSkullBlock;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.text.Text;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.Objects;
 import java.util.UUID;
 
 @Mixin(HandledScreen.class)
-public class MContainerScreen {
+public abstract class MContainerScreen<T extends ScreenHandler> extends Screen {
+
+    protected MContainerScreen(Text title) {
+        super(title);
+    }
+
+    @Shadow public abstract T getScreenHandler();
+
+    @Shadow @Final protected T handler;
+    @Shadow protected int y;
+    @Shadow protected int x;
+    @Shadow protected int backgroundWidth;
+    @Shadow protected int playerInventoryTitleX;
+
+    @Shadow public abstract boolean keyPressed(int keyCode, int scanCode, int modifiers);
+
+    @Unique
+    ArgumentInsert insertFeature;
+    @Unique
+    private boolean textFieldShown = false;
+
+    @Inject(method = "init", at = @At("RETURN"))
+    private void init(CallbackInfo ci) {
+        insertFeature = (ArgumentInsert) FeatureHandler.getFeature(ArgumentInsert.class);
+        insertFeature.setHandlerPosRef(x, y);
+    }
+
+    @Unique
+    private static TextFieldWidget argumentTextField;
+
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void tick(CallbackInfo ci) {
+        if (!textFieldShown && insertFeature.showTextField()) {
+            textFieldShown = true;
+            // add it
+            int BOX_WIDTH = 200;
+            argumentTextField = new TextFieldElement(MinecraftClient.getInstance().textRenderer,
+                    x + handler.slots.get(insertFeature.getSlot()).x + 24,
+                    y + handler.slots.get(insertFeature.getSlot()).y,
+                    BOX_WIDTH,
+                    16,
+                    Text.literal(""));
+            argumentTextField.setPlaceholder(Text.literal("Enter Value.."));
+            argumentTextField.setChangedListener((s) -> insertFeature.setValue(s));
+            argumentTextField.setMaxLength(10000);
+            addSelectableChild(argumentTextField);
+            focusOn(argumentTextField);
+        }
+        if (textFieldShown && !insertFeature.showTextField()) {
+            // remove it
+            remove(argumentTextField);
+            argumentTextField = null;
+            textFieldShown = false;
+        }
+    }
 
 
     @Inject(method = "drawMouseoverTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTooltip(Lnet/minecraft/client/font/TextRenderer;Ljava/util/List;Ljava/util/Optional;II)V"), locals = LocalCapture.CAPTURE_FAILHARD)
@@ -41,6 +106,45 @@ public class MContainerScreen {
                 previewHeadSkin(context, stack);
             }
         }
+    }
+    @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
+    private void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+        insertFeature.mouseClicked(mouseX, mouseY, button, cir);
+    }
+
+    @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
+    private void keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+        insertFeature.keyPressed(keyCode, scanCode, modifiers, cir);
+    }
+
+    @Inject(method = "close", at = @At("HEAD"))
+    private void close(CallbackInfo ci) {
+        insertFeature.onClose();
+    }
+
+    @Inject(method = "render", at = @At("RETURN"))
+    private void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        renderTextField(context, mouseX, mouseY, delta);
+
+        if (insertFeature.getSlot() == -1) return;
+        if (insertFeature.getSlot() > this.handler.slots.size()) return;
+
+        Slot slot = this.handler.slots.get(insertFeature.getSlot());
+
+        context.getMatrices().push();
+        context.getMatrices().translate(this.x, this.y, 0.0F);
+        insertFeature.render(context, mouseX, mouseY, delta, slot, ci);
+        context.getMatrices().pop();
+    }
+
+    @Unique
+    private void renderTextField(DrawContext context, int mouseX, int mouseY, float delta) {
+        if (!textFieldShown) return;
+
+        context.getMatrices().push();
+        context.getMatrices().translate(0f, 0f, 500f);
+        argumentTextField.render(context, mouseX, mouseY, delta);
+        context.getMatrices().pop();
     }
 
     @Unique

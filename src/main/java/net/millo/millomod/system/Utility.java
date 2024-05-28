@@ -36,4 +36,8 @@ public class Utility {
         );
     }
 
+    public static void sendOffhandItem(ItemStack itemStack) {
+        MilloMod.MC.getNetworkHandler().sendPacket(new CreativeInventoryActionC2SPacket(45, itemStack));
+        MilloMod.MC.player.getInventory().setStack(45, itemStack);
+    }
 }

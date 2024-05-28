@@ -1,6 +1,7 @@
 package net.millo.millomod.mod.features;
 
 import net.millo.millomod.mod.features.impl.coding.*;
+import net.millo.millomod.mod.features.impl.coding.argumentinsert.ArgumentInsert;
 import net.millo.millomod.mod.features.impl.global.AutoCommand;
 import net.millo.millomod.mod.features.impl.global.FSToggle;
 import net.millo.millomod.mod.features.impl.global.MenuSearch;
@@ -40,11 +41,12 @@ public class FeatureHandler {
                 new PlotCaching(), // ?
                 new Tracker(), //+
                 new TeleportHandler(), //+
-                new ShowTags(), //@
+                new ShowTags(), // ?
                 new FSToggle(), // ?
                 new ModeSwitcher(), // ?
                 new NotSwitcher(),
-                new CodeClientPlotFix()
+                new CodeClientPlotFix(),
+                new ArgumentInsert()
         );
 
         Config config = Config.getInstance();
@@ -106,6 +108,13 @@ public class FeatureHandler {
     public static Feature getFeature(String key) {
         return features.get(key);
     }
+    public static <T extends Feature> Feature getFeature(Class<T> clazz) {
+        return features.values().stream()
+                .filter(clazz::isInstance)
+                .findFirst()
+                .orElse(null);
+    }
+
 
     public static void onRender(MatrixStack matrices, VertexConsumerProvider.Immediate vertexConsumers, double cameraX, double cameraY, double cameraZ) {
         for (Feature feature : getFeatures()) {

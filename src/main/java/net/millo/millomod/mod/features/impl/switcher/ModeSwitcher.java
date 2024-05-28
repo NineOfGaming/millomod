@@ -137,7 +137,6 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
 
             Option option = options.get(i);
             option.draw(context, x, y, textRenderer, info.delta(), shown);
-
         }
 
 
