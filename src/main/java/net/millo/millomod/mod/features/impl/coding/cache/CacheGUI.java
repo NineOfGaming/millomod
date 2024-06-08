@@ -17,6 +17,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class CacheGUI extends GUI {
     public static CacheGUI lastOpenedGUI;
@@ -57,7 +58,7 @@ public class CacheGUI extends GUI {
     public void loadTemplate(Template template){
         if (template == null) return;
         if (CacheGUI.template != null) {
-            if (template.getFileName().equals(CacheGUI.template.getFileName())) return;
+//            if (template.getFileName().equals(CacheGUI.template.getFileName())) return; // uncomment maybe idk never?
             historyStack.push(CacheGUI.template.getFileName());
             futureStack.clear();
         }
@@ -235,22 +236,90 @@ public class CacheGUI extends GUI {
         methodNames = (ArrayList<String>) FileManager.getTemplatesFromPlot(plotId);
     }
     private void updateTemplateList() {
+        // Updates the hierarchy
+
+        // Clear all existing templates shown in hierarchy
         templates.clear();
+
+        // Initialize map of folders
+        HashMap<String, MethodFolder> rootFolders = new HashMap<>();
+        ArrayList<ButtonElement> rootMethods = new ArrayList<>();
+
+        var pattern = Pattern.compile(".+(?=\\.\\w)");
+
+        // Extract search filter
         String[] match = searchBar.getText().trim().toLowerCase().split(" ");
         for (String methodName : methodNames) {
+            // Exclude methods that do not fit filter
             if (!Arrays.stream(match).allMatch(i -> methodName.toLowerCase().contains(i)) && !searchBar.getText().trim().isEmpty()) {
                 continue;
             }
 
-            MethodElement b = new MethodElement(16, plotId, methodName, (button) -> {
+            // Create the element button
+            ButtonElement elementToAdd = new MethodElement(16, plotId, methodName, (button) -> {
                 SoundHandler.playClick();
                 Template template = FileManager.readTemplate(plotId, methodName);
-                loadTemplate(template);
+                loadTemplateLines(template);
             }, textRenderer);
+            elementToAdd.setFade(getFade());
 
-            b.setFade(getFade());
-            templates.addDrawableChild(b);
+
+            // Find folder tree for current method
+            var matcher = pattern.matcher(methodName.replaceAll("\\.(event|func|process|entity_event)$", ""));
+            if (matcher.find()) {
+                String folderNamespace = matcher.group();
+                List<String> folderNames = new ArrayList<>(List.of(folderNamespace.split("\\.")));
+//                Collections.reverse(folderNames);
+
+                System.out.println(folderNames);
+
+                String rootFolderName = folderNames.get(0);
+                MethodFolder folder = null;
+                if (rootFolders.containsKey(rootFolderName)) {
+                    folder = rootFolders.get(folderNames.get(0));
+                } else {
+                    folder = new MethodFolder(16, rootFolderName, (button) -> {}, textRenderer);
+                    rootFolders.put(rootFolderName, folder);
+                }
+
+
+
+                // Recursively find the rest of the path
+                folderNames.remove(0);
+                for (String folderName : folderNames) {
+                    folder = folder.subFolder(folderName);
+                }
+
+                folder.add(elementToAdd);
+
+
+//                MethodFolder folder = null;
+//                for (String folderName : folderNames) {
+//                    if (rootFolders.containsKey(folderName)) {
+//                        folder = rootFolders.get(folderName);
+//                    } else {
+//                        folder = new MethodFolder(16, folderName, (button) -> {}, textRenderer);
+//                        if (!searchBar.getText().isEmpty()) folder.open();
+//                        rootFolders.put(folderName, folder);
+//                    }
+//                    folder.add(elementToAdd);
+//                    elementToAdd = folder;
+//                }
+            } else {
+                rootMethods.add(elementToAdd);
+            }
+
+            // Append the method as a button to the hierarchy
+
+//            if (elementToAdd instanceof MethodElement) {
+//                elementToAdd.setFade(getFade());
+//                templates.addDrawableChild(elementToAdd);
+//            }
         }
+
+        rootFolders.forEach((folderName, folder) -> folder.addTo(templates, getFade()));
+        rootMethods.forEach(element -> templates.addDrawableChild(element));
+
     }
 
     @Override

@@ -1,0 +1,135 @@
+package net.millo.millomod.mod.features.impl.coding.cache;
+
+import net.millo.millomod.mod.util.gui.ElementFadeIn;
+import net.millo.millomod.mod.util.gui.elements.ButtonElement;
+import net.millo.millomod.mod.util.gui.elements.ScrollableElement;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
+import org.joml.Matrix4f;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class MethodFolder extends HierarchyElement {
+
+    float openAmount = 0;
+
+    String folderName;
+    ArrayList<ButtonElement> methods;
+    HashMap<String, MethodFolder> subFolders = new HashMap<>();
+    public MethodFolder(int height, String folderName, PressAction onPress, TextRenderer textRenderer) {
+        super(height,
+                Text.of(folderName),
+                onPress, textRenderer);
+        methods = new ArrayList<>();
+
+        textWidget.alignLeft();
+
+        this.folderName = folderName;
+    }
+
+
+    @Override
+    public void onPress(double mouseX, double mouseY, int button) {
+        System.out.println(folderName);
+        opened = !opened;
+//        if (button == 0) super.onPress(mouseX, mouseY, button);
+    }
+
+    @Override
+    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        if (!isParentFolderOpen()) return;
+
+        fade.fadeIn(delta);
+        openAmount = MathHelper.clampedLerp(openAmount, 1f, delta);
+
+        int x = getX() + fade.getXOffset();
+        int y = getY() + fade.getYOffset();
+
+        int xOffset = 4 * getFolderDepth();
+
+        int color = new Color(0, 0, 0, (int)(fade.getProgress() * 150)).hashCode();
+        if (isHovered()) color = new Color(12, 11, 9, (int)(fade.getProgress() * 150)).hashCode();
+
+        context.fill(x, y, x+width, y+height, 0, color);
+
+        // draw lil triangle
+        Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
+        VertexConsumer vertexConsumer = context.getVertexConsumers().getBuffer(RenderLayer.getGui());
+
+        vertexConsumer.vertex(matrix4f, 4 + xOffset + 2, y + height / 2f, 0).color(0xFFFFFFFF).next();
+        vertexConsumer.vertex(matrix4f, x + xOffset + 2, y + height - 6, 0).color(0xFFFFFFFF).next();
+        vertexConsumer.vertex(matrix4f, x + xOffset + 2, y + 6, 0).color(0xFFFFFFFF).next();
+        vertexConsumer.vertex(matrix4f, x + xOffset + 2, y + height - 6, 0).color(0xFFFFFFFF).next();
+        context.draw();
+
+//        context.fill(x + 4 + xOffset, y, x + xOffset + 8, y+height, 0, 0xFFFFFFFF);
+
+
+        if (textWidget == null) return;
+        textWidget.setX(x+10 + xOffset);
+        textWidget.setY(y);
+        textWidget.render(context, mouseX, mouseY, delta);
+    }
+
+    public void add(ButtonElement elementToAdd) {
+        if (methods.contains(elementToAdd)) return;
+        methods.add(elementToAdd);
+    }
+
+    public void addTo(ScrollableElement templates, ElementFadeIn fade) {
+        setFade(fade);
+        System.out.println("Added: " + folderName + " to " + parentFolder);
+        templates.addDrawableChild(this);
+
+        for (ButtonElement method : methods) {
+            if (method instanceof MethodFolder folder) {
+                folder.setParentFolder(this);
+                folder.setDepth(depth + 1);
+                folder.addTo(templates, fade);
+            } else if (method instanceof MethodElement methodElement) {
+                methodElement.setParentFolder(this);
+                methodElement.setFade(fade);
+                templates.addDrawableChild(methodElement);
+            }
+        }
+    }
+
+
+    private boolean opened = false;
+    public void open() {
+        opened = true;
+    }
+    public void close() {
+        opened = false;
+    }
+    public boolean isOpen() {
+        return opened && isParentFolderOpen();
+    }
+
+
+    private int depth = 1;
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public MethodFolder subFolder(String folderName) {
+        if (subFolders.containsKey(folderName)) {
+            return subFolders.get(folderName);
+        }
+        MethodFolder subFolder = new MethodFolder(16, folderName, (button) -> {}, textRenderer);
+        subFolders.put(folderName, subFolder);
+        add(subFolder);
+        return subFolder;
+    }
+}
+

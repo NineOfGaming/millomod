@@ -47,6 +47,8 @@ public class MilloMod implements ClientModInitializer {
 
         // TODO: in menu search press enter to r/c item if only one is highlighted
 
+        // TODO: a way to set plot spawn uniquely for build
+
 
     }
 

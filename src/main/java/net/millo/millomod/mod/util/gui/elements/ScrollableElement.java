@@ -83,7 +83,7 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
                 this.setScrollY(this.getMaxScrollY());
             } else {
                 int i = this.getScrollbarThumbHeight();
-                double d = Math.max(1, this.getMaxScrollY() / (this.height - i));
+                double d = Math.max(1, this.getMaxScrollY() / Math.min((this.height - i), 1));
                 this.setScrollY(this.targetScrollY + deltaY * d);
             }
 
