@@ -41,6 +41,7 @@ public class SettingsGUI extends GUI {
         addBooleanOption(settingsList, "menu_search");
         addBooleanOption(settingsList, "auto_command");
         addBooleanOption(settingsList, "notification_tray");
+        addBooleanOption(settingsList, "argument_insert");
 //        addIntegerOption(settingsList, "fs_toggle.speed", 0, 1000);
 
 //        addHeader(settingsList, "Unstable Features");

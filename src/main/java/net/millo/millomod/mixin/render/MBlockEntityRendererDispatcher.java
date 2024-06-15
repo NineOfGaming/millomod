@@ -21,35 +21,35 @@ public class MBlockEntityRendererDispatcher {
 
 
     // net/minecraft/client/gui/DrawContext
-    @ModifyVariable(method = "render(Lnet/minecraft/block/entity/BlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;)V", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    public VertexConsumerProvider render(VertexConsumerProvider provider, BlockEntity blockEntity) {
-        if (blockEntity instanceof SignBlockEntity) {
-            boolean glow = ((Search) FeatureHandler.getFeature("search")).shouldIGlow((SignBlockEntity) blockEntity);
-
-            if (MilloMod.MC.player != null && blockEntity.getPos().isWithinDistance(MilloMod.MC.player.getEyePos(), 2.5d)) {
-                glow = false;
-            }
-
-            if (glow) {
-                return withOutline(provider, Color.YELLOW);
-            }
-        }
-        return provider;
-    }
-
-
-    @Unique
-    private VertexConsumerProvider withOutline(VertexConsumerProvider source, Color color) {
-        return (type) -> {
-            VertexConsumer buffer = source.getBuffer(type);
-            Optional<RenderLayer> outline = type.getAffectedOutline();
-            if (outline.isPresent()) {
-                OutlineVertexConsumerProvider outlineSource = MilloMod.MC.getBufferBuilders().getOutlineVertexConsumers();
-                outlineSource.setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-                VertexConsumer outlineBuffer = outlineSource.getBuffer(outline.get());
-                return VertexConsumers.union(outlineBuffer, buffer);
-            }
-            return buffer;
-        };
-    }
+//    @ModifyVariable(method = "render(Lnet/minecraft/block/entity/BlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;)V", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+//    public VertexConsumerProvider render(VertexConsumerProvider provider, BlockEntity blockEntity) {
+//        if (blockEntity instanceof SignBlockEntity) {
+//            boolean glow = ((Search) FeatureHandler.getFeature("search")).shouldIGlow((SignBlockEntity) blockEntity);
+//
+//            if (MilloMod.MC.player != null && blockEntity.getPos().isWithinDistance(MilloMod.MC.player.getEyePos(), 2.5d)) {
+//                glow = false;
+//            }
+//
+//            if (glow) {
+//                return withOutline(provider, Color.YELLOW);
+//            }
+//        }
+//        return provider;
+//    }
+//
+//
+//    @Unique
+//    private VertexConsumerProvider withOutline(VertexConsumerProvider source, Color color) {
+//        return (type) -> {
+//            VertexConsumer buffer = source.getBuffer(type);
+//            Optional<RenderLayer> outline = type.getAffectedOutline();
+//            if (outline.isPresent()) {
+//                OutlineVertexConsumerProvider outlineSource = MilloMod.MC.getBufferBuilders().getOutlineVertexConsumers();
+//                outlineSource.setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+//                VertexConsumer outlineBuffer = outlineSource.getBuffer(outline.get());
+//                return VertexConsumers.union(outlineBuffer, buffer);
+//            }
+//            return buffer;
+//        };
+//    }
 }

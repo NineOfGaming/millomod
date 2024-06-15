@@ -6,6 +6,7 @@ import net.millo.millomod.mod.features.OnSendPacket;
 import net.millo.millomod.mod.features.impl.util.Tracker;
 import net.millo.millomod.system.Utility;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.item.ItemStack;
@@ -76,12 +77,14 @@ public class ArgumentInsert extends Feature {
 
     @OnSendPacket
     public boolean onSlotClick(ClickSlotC2SPacket packet) {
+        if (!isEnabled()) return false;
         if (Tracker.mode != Tracker.Mode.DEV) return false;
         if (isSelectorOpen() || showTextField()) return true;
+        if (!Screen.hasShiftDown()) return false;
 
         if (packet.getStack().getItem().equals(Items.AIR)) {
             if (packet.getModifiedStacks().isEmpty()) {
-                if (packet.getButton() == 1 && packet.getActionType() == SlotActionType.PICKUP) {
+                if (packet.getButton() == 1 && packet.getActionType() == SlotActionType.QUICK_MOVE) {
                     selectorOpen = true;
                     selectorSlot = packet.getSlot();
                     shown = 0f;

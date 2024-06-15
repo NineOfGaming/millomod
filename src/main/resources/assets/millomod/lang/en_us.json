@@ -32,7 +32,7 @@
   "millo.feature.not_switcher": "Not Switcher",
   "millo.feature.not_switcher.desc": "Keybind to toggle the NOT state on a conditional block",
   "millo.feature.argument_insert": "Quick Value Item",
-  "millo.feature.argument_insert.desc": "Create value items within a Menu by right clicking an empty slot",
+  "millo.feature.argument_insert.desc": "Create value items within a Menu by shift right clicking an empty slot",
 
   "millo.command.settings": "settings",
   "millo.command.settings.desc": "Opens the Millo Mod settings menu",

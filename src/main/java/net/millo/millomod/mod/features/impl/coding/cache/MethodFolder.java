@@ -36,11 +36,11 @@ public class MethodFolder extends HierarchyElement {
 
     @Override
     public void onPress(double mouseX, double mouseY, int button) {
-        System.out.println(folderName);
         opened = !opened;
 //        if (button == 0) super.onPress(mouseX, mouseY, button);
     }
 
+    float arrowAngle = 0f;
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         if (!isParentFolderOpen()) return;
@@ -59,16 +59,27 @@ public class MethodFolder extends HierarchyElement {
         context.fill(x, y, x+width, y+height, 0, color);
 
         // draw lil triangle
+        float w = 3.4f;
+        arrowAngle = MathHelper.clampedLerp(arrowAngle, isOpen() ? 1.5707f : 0f, delta);
+
         Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
         VertexConsumer vertexConsumer = context.getVertexConsumers().getBuffer(RenderLayer.getGui());
 
-        vertexConsumer.vertex(matrix4f, 4 + xOffset + 2, y + height / 2f, 0).color(0xFFFFFFFF).next();
-        vertexConsumer.vertex(matrix4f, x + xOffset + 2, y + height - 6, 0).color(0xFFFFFFFF).next();
-        vertexConsumer.vertex(matrix4f, x + xOffset + 2, y + 6, 0).color(0xFFFFFFFF).next();
-        vertexConsumer.vertex(matrix4f, x + xOffset + 2, y + height - 6, 0).color(0xFFFFFFFF).next();
-        context.draw();
+        float x1 = MathHelper.cos(arrowAngle) * w;
+        float y1 = MathHelper.sin(arrowAngle) * w;
 
-//        context.fill(x + 4 + xOffset, y, x + xOffset + 8, y+height, 0, 0xFFFFFFFF);
+        float x2 = MathHelper.cos(arrowAngle + 2.094f) * w;
+        float y2 = MathHelper.sin(arrowAngle + 2.094f) * w;
+
+        float x3 = MathHelper.cos(arrowAngle + 4.188f) * w;
+        float y3 = MathHelper.sin(arrowAngle + 4.188f) * w;
+
+        vertexConsumer.vertex(matrix4f, x + xOffset + x3 + 4, y + y3 + height / 2f, 0).color(0xFFFFFFFF).next();
+        vertexConsumer.vertex(matrix4f, x + xOffset + x2 + 4, y + y2 + height / 2f, 0).color(0xFFFFFFFF).next();
+        vertexConsumer.vertex(matrix4f, x + xOffset + x2 + 4, y + y2 + height / 2f, 0).color(0xFFFFFFFF).next();
+        vertexConsumer.vertex(matrix4f, x + xOffset + x1 + 4, y + y1 + height / 2f, 0).color(0xFFFFFFFF).next();
+
+        context.draw();
 
 
         if (textWidget == null) return;
@@ -84,7 +95,6 @@ public class MethodFolder extends HierarchyElement {
 
     public void addTo(ScrollableElement templates, ElementFadeIn fade) {
         setFade(fade);
-        System.out.println("Added: " + folderName + " to " + parentFolder);
         templates.addDrawableChild(this);
 
         for (ButtonElement method : methods) {
