@@ -2,9 +2,12 @@ package net.millo.millomod.mod.features.impl.coding.cache;
 
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.millo.millomod.mod.util.GlobalUtil;
 import net.millo.millomod.mod.util.gui.GUIStyles;
+import net.millo.millomod.system.Utility;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -13,7 +16,9 @@ import net.minecraft.text.Text;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ArgumentItem {
@@ -27,6 +32,15 @@ public class ArgumentItem {
 
     private String get(String name) {
         return data.has(name) ? data.get(name).getAsString() : "";
+    }
+
+    private static String getScoreCLI(String scope) {
+        return switch (scope) {
+            case "saved" -> "-s";
+            case "local" -> "-l";
+            case "line" -> "-i";
+            default -> "";
+        };
     }
 
     public void addTo(LineElement line) {
@@ -43,10 +57,13 @@ public class ArgumentItem {
 
 
         switch (id) {
-            case "txt" -> line.addComponent(Text.literal("\"" + name + "\"").setStyle(GUIStyles.TEXT.getStyle()));
-            case "num" -> line.addComponent(Text.literal(name).setStyle(GUIStyles.NUMBER.getStyle()));
+            case "txt" -> line.addComponent(Text.literal("\"" + name + "\"").setStyle(GUIStyles.TEXT.getStyle()),
+                    button -> Utility.sendCommand("str " + name));
+            case "num" -> line.addComponent(Text.literal(name).setStyle(GUIStyles.NUMBER.getStyle()),
+                    button -> Utility.sendCommand("num " + name));
             case "var" -> line.addComponent(Text.literal(name).setStyle(GUIStyles.VARIABLE.getStyle()),
-                                Tooltip.of(Text.literal(scope.toUpperCase()).setStyle(GUIStyles.valueOf(scope.toUpperCase()).getStyle())));
+                    Tooltip.of(Text.literal(scope.toUpperCase()).setStyle(GUIStyles.valueOf(scope.toUpperCase()).getStyle())),
+                    button -> Utility.sendCommand("var " + name + " " + getScoreCLI(scope)));
             case "bl_tag" -> line.addComponent(Text.literal(option).setStyle(GUIStyles.BLOCK_TAG.getStyle()),
                                 Tooltip.of(Text.literal(tag).setStyle(GUIStyles.COMMENT.getStyle())));
             case "g_val" -> line.addComponent(Text.literal(type + (Objects.equals(target, "Default") ? "" : (" [" + target.charAt(0) + "]"))).setStyle(GUIStyles.GAME_VALUE.getStyle()),
@@ -56,7 +73,9 @@ public class ArgumentItem {
                     String nbtString = get("item");
                     ItemStack item = ItemStack.fromNbt(NbtHelper.fromNbtProviderString(nbtString));
                     MutableText tooltipTxt = Text.empty();
-                    var nbt = item.getNbt();
+                    NbtCompound nbt = item.getNbt();
+
+                    // ITEM NAME
                     if (nbt != null && nbt.contains("display")) {
                         var display = nbt.getCompound("display");
                         if (display.contains("Name")) {
@@ -69,8 +88,33 @@ public class ArgumentItem {
                         }
                     }
 
+                    // ITEM MATERIAL
                     tooltipTxt.append(Text.literal("\n" + item.getItem().toString()).setStyle(GUIStyles.COMMENT.getStyle()));
+
+
+                    // ITEM TAGS
+                    if (nbt != null) {
+                        NbtCompound pbv = nbt.getCompound("PublicBukkitValues");
+                        if (pbv != null) {
+                            Set<String> keys = pbv.getKeys();
+                            if (!keys.isEmpty()) {
+                                tooltipTxt.append(Text.literal("\n\nTags:\n").setStyle(GUIStyles.COMMENT.getStyle()));
+
+                                keys.forEach(key -> {
+                                            String value = pbv.get(key).toString();
+                                            value = value.length() > 50 ? value.substring(0, 50)+"..." : value;
+                                            tooltipTxt.append(Text.literal(key.replaceFirst("^.+:", "")).setStyle(GUIStyles.ACTION.getStyle())
+                                                    .append(Text.literal(" = ").setStyle(GUIStyles.DEFAULT.getStyle()))
+                                                    .append(Text.literal(value).setStyle(GUIStyles.NAME.getStyle()))
+                                                    .append(Text.literal("\n")));
+                                        }
+                                );
+                            }
+                        }
+                    }
+
                     line.addComponent(Text.literal(item.toString()).setStyle(GUIStyles.ITEM.getStyle()), Tooltip.of(tooltipTxt));
+
                 } catch (CommandSyntaxException e) {
                     e.printStackTrace();
                 }
@@ -164,7 +208,11 @@ public class ArgumentItem {
                             data.get("x").getAsDouble(),
                             data.get("y").getAsDouble(),
                             data.get("z").getAsDouble()))
-                    .setStyle(GUIStyles.VECTOR.getStyle()));
+                    .setStyle(GUIStyles.VECTOR.getStyle()),
+                    button -> Utility.sendCommand("vec get " + String.format("%f %f %f",
+                            data.get("x").getAsDouble(),
+                            data.get("y").getAsDouble(),
+                            data.get("z").getAsDouble())));
             case "loc" -> {
                 boolean isBlock = data.get("isBlock").getAsBoolean();
                 if (!isBlock) {

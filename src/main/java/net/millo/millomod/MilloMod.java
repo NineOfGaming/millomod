@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class MilloMod implements ClientModInitializer {
 
     public static final String MOD_ID = "millomod";
-    public static final String MOD_VERSION = "1.4.5";
+    public static final String MOD_VERSION = "1.5.0";
 
     @SuppressWarnings("unused")
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
@@ -34,21 +34,22 @@ public class MilloMod implements ClientModInitializer {
         // Idle clicker game while bored
 
 
-        // TODO: Able to get number/text/vars whilst in a menu (maybe send a command)
-
-        // TODO: Auto %var() brackets
+        // TODO: Auto %var() brackets - %var() interpreter
         // TODO: Add a `ticks -> 0m 0s` option for numbers (endersaltz)
-        // TODO: Side chat
         // TODO: reference book arguments in GUI
         // TODO: /search
         // TODO: socket server, for item-give, maybe more
 
         // TODO: Paywall
 
-        // TODO: in menu search press enter to r/c item if only one is highlighted
-
         // TODO: a way to set plot spawn uniquely for build
 
+        // TODO: Friend list
+        // TODO: Code Section Partitioning for Commenting, Grouping and Warping     (also in build area)
+        //  - Mainly for mega plots
+
+
+        // TODO: "Heh, Its Millo Time..."
 
     }
 

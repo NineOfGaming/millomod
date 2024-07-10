@@ -1,7 +1,13 @@
-package net.millo.millomod.mixin.render;
+package net.millo.millomod.mixin.render.chat;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.millo.millomod.MilloMod;
+import net.millo.millomod.mod.features.impl.global.sidechat.HudWithSideChat;
 import net.millo.millomod.system.Config;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.hud.ChatHud;
+import net.minecraft.client.gui.hud.MessageIndicator;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -28,10 +34,22 @@ public class MChatScreen extends Screen {
     }
 
     @Inject(method = "render", at = @At("RETURN"))
-    public void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    public void renderAutoCommand(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         boolean enabled = Config.getInstance().get("auto_command.enabled");
         if (!enabled) return;
 
         context.fill(0, height - 14, 2, height - 2, Color.PINK.hashCode());
     }
+
+    @WrapOperation(method = "render", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/hud/ChatHud;getIndicatorAt(DD)Lnet/minecraft/client/gui/hud/MessageIndicator;"))
+    public MessageIndicator renderSideChat(ChatHud mainChat, double mouseX, double mouseY, Operation<MessageIndicator> operation) {
+        var mainTag = operation.call(mainChat, mouseX, mouseY);
+        if (mainTag != null) return mainTag;
+
+        // Get message indicator from side chat
+        return ((HudWithSideChat) MilloMod.MC.inGameHud).millomod$getSideChat().getIndicatorAt(mouseX, mouseY);
+    }
+
+
 }

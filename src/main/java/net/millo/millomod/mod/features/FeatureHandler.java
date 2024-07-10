@@ -2,10 +2,8 @@ package net.millo.millomod.mod.features;
 
 import net.millo.millomod.mod.features.impl.coding.*;
 import net.millo.millomod.mod.features.impl.coding.argumentinsert.ArgumentInsert;
-import net.millo.millomod.mod.features.impl.global.AutoCommand;
-import net.millo.millomod.mod.features.impl.global.FSToggle;
-import net.millo.millomod.mod.features.impl.global.MenuSearch;
-import net.millo.millomod.mod.features.impl.global.PreviewSkin;
+import net.millo.millomod.mod.features.impl.global.*;
+import net.millo.millomod.mod.features.impl.global.sidechat.SideChatFeature;
 import net.millo.millomod.mod.features.impl.switcher.ModeSwitcher;
 import net.millo.millomod.mod.features.impl.util.NotificationTray;
 import net.millo.millomod.mod.features.impl.util.Tracker;
@@ -46,7 +44,9 @@ public class FeatureHandler {
                 new ModeSwitcher(), // ?
                 new NotSwitcher(),
                 new CodeClientPlotFix(),
-                new ArgumentInsert()
+                new ArgumentInsert(),
+                new NoClientClick(), //@
+                new SideChatFeature() //@
         );
 
         Config config = Config.getInstance();

@@ -1,5 +1,6 @@
 package net.millo.millomod.mod.util.gui.elements;
 
+import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.impl.coding.cache.LineElement;
 import net.millo.millomod.mod.util.MathUtil;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
@@ -47,6 +48,15 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
             for (ScrollableEntryI drawable : drawables) {
                 if (drawable instanceof Element element) {
                     element.mouseClicked(mouseX, mouseY, button);
+                }
+
+                if (drawable instanceof TextFieldElement text) {
+                    if (text.isHovered() && MilloMod.MC.currentScreen != null) {
+                        text.setFocused(true);
+                        MilloMod.MC.currentScreen.setFocused(text);
+                        text.onClick(mouseX, mouseY);
+                        return true;
+                    }
                 }
 
 //                if (!(drawable instanceof ClickableElementI)) continue;

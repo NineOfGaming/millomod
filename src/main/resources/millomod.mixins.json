@@ -13,10 +13,12 @@
     "network.MClientCommonNetworkHandler",
     "player.MClientPlayerEntity",
     "render.MBlockEntityRendererDispatcher",
-    "render.MChatScreen",
     "render.MContainerScreen",
     "render.MDebugRenderer",
-    "render.MInGameHUD"
+    "render.MInGameHUD",
+    "render.chat.MChatHud",
+    "render.chat.MChatScreen",
+    "render.chat.MMessageHandler"
   ],
   "injectors": {
     "defaultRequire": 1
