@@ -165,7 +165,8 @@ public class Config {
             configString.append(entry.getValue().toString()).append("\n");
         }
 
-        System.out.println("Saving Config: " + configString);
+        // THE CONFIG OUTPUT MEUHTHEHAA
+//        System.out.println("Saving Config: " + configString);
 
         // Write the config in the file
         if (!file.exists()) {

@@ -10,6 +10,7 @@ import java.awt.*;
 public class SideChat extends ChatHud {
 
     private final MinecraftClient mc;
+    private int xOffset = 0;
 
     public SideChat() {
         super(MilloMod.MC);
@@ -18,7 +19,7 @@ public class SideChat extends ChatHud {
 
     @Override
     public void render(DrawContext context, int currentTick, int mouseX, int mouseY) {
-        int xOffset = mc.getWindow().getScaledWidth() - getWidth() - tailWidth(getChatScale());
+        xOffset = mc.getWindow().getScaledWidth() - getWidth() - tailWidth(getChatScale());
 
         context.getMatrices().push();
         context.getMatrices().translate((float) xOffset, 0f, 0f);
@@ -40,5 +41,8 @@ public class SideChat extends ChatHud {
         return (int)(12 * scale);
     }
 
+    public double getXOffset() {
+        return xOffset;
+    }
 }
 

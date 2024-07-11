@@ -6,6 +6,7 @@ import net.millo.millomod.system.Config;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -15,7 +16,15 @@ public class SideChatFeature extends Feature {
 
     private static String filter;
     private static boolean simpleFilter;
-    private static boolean privateChat, supportChat, modChat, adminChat;
+
+    private static final ArrayList<ChatRule> rules = new ArrayList<>();
+
+    public SideChatFeature() {
+        rules.add(new ChatRule("side_chat.private_chat", "\\[\\w+ → \\w+\\].*"));
+        rules.add(new ChatRule("side_chat.mod_chat", "\\[MOD\\].*"));
+        rules.add(new ChatRule("side_chat.admin_chat", "\\[ADMIN\\].*"));
+        rules.add(new ChatRule("side_chat.support_chat", "\\[SUPPORT\\].*"));
+    }
 
     @Override
     public String getKey() {
@@ -28,43 +37,25 @@ public class SideChatFeature extends Feature {
         config.set("side_chat.filter", "");
         config.set("side_chat.simple_filter", true);
 
-        config.set("side_chat.private_chat", true);
-        config.set("side_chat.support_chat", true);
-        config.set("side_chat.mod_chat", true);
-        config.set("side_chat.admin_chat", true);
+        rules.forEach(rule -> config.set(rule.getKey(), true));
     }
 
     @Override
     public void onConfigUpdate(Config config) {
         super.onConfigUpdate(config);
-        filter = Config.getInstance().get("side_chat.filter");
-        simpleFilter = Config.getInstance().get("side_chat.simple_filter");
+        filter = config.get("side_chat.filter");
+        simpleFilter = config.get("side_chat.simple_filter");
 
-        privateChat = Config.getInstance().get("side_chat.private_chat");
-        supportChat = Config.getInstance().get("side_chat.support_chat");
-        modChat = Config.getInstance().get("side_chat.mod_chat");
-        adminChat = Config.getInstance().get("side_chat.admin_chat");
+        rules.forEach(rule -> rule.update(config));
     }
 
     public static boolean fitsFilter(Text text) {
         String str = text.getString();
         if (!FeatureHandler.getFeature("side_chat").isEnabled()) return false;
 
+        for (ChatRule rule : rules) if (rule.match(str)) return true;
 
-        if (privateChat && str.matches("\\[\\w+ → \\w+\\].*")) return true;
-        if (modChat && str.startsWith("[MOD] ")) return true;
-        if (adminChat && str.startsWith("[ADMIN] ")) return true;
-
-        if (supportChat) {
-            Text sibling = text.getSiblings().get(0);
-            var color = sibling.getStyle().getColor();
-            if ("[SUPPORT] ".equals(sibling.getString()) &&
-                    color != null && color.getHexCode().equals("#557FD4")) {
-                return true;
-            }
-        }
-
-
+        if (str.startsWith("! Incoming Report")) return true;
 
         // Custom filter
         if (filter.isEmpty()) return false;
@@ -73,6 +64,26 @@ public class SideChatFeature extends Feature {
             return (Arrays.stream(searchText).anyMatch(str::contains));
         }
         return Pattern.compile(filter).matcher(str).find();
+
+
+//        if (!text.getSiblings().isEmpty()) {
+//            Text sibling = text.getSiblings().get(0);
+//            TextColor color = sibling.getStyle().getColor();
+//            if (color != null) {
+//                String hexCode = color.getHexCode();
+//            }
+//
+////            if ("[SUPPORT] ".equals(sibling.getString()) &&
+////               .equals("#557FD4")) {
+////                return true;
+////            }
+//
+//        }
+
+        // SUPPORT #557FD4
+        //
+
+
     }
 
 }
