@@ -31,8 +31,8 @@ public class MilloMod implements ClientModInitializer {
         SoundHandler.load();
 
 
-        // Idle clicker game while bored
 
+        // Idle clicker game while bored
 
         // TODO: Auto %var() brackets - %var() interpreter
         // TODO: Add a `ticks -> 0m 0s` option for numbers (endersaltz)

@@ -16,6 +16,7 @@
     "render.MContainerScreen",
     "render.MDebugRenderer",
     "render.MInGameHUD",
+    "render.MWorldRenderer",
     "render.chat.MChatHud",
     "render.chat.MChatScreen",
     "render.chat.MMessageHandler"

@@ -25,6 +25,7 @@ public class KeybindHandler {
         ClientTickEvents.END_CLIENT_TICK
                 .register(client -> features.forEach(feature -> feature.triggerKeybind(config)));
 
+
     }
 
 }

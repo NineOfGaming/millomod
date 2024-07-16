@@ -7,13 +7,13 @@ import net.millo.millomod.mod.hypercube.template.TemplateBlock;
 import net.millo.millomod.mod.util.MathUtil;
 import net.millo.millomod.mod.util.gui.GUI;
 import net.millo.millomod.mod.util.gui.GUIStyles;
-import net.millo.millomod.mod.util.gui.elements.ButtonElement;
-import net.millo.millomod.mod.util.gui.elements.ScrollableElement;
-import net.millo.millomod.mod.util.gui.elements.TextElement;
-import net.millo.millomod.mod.util.gui.elements.TextFieldElement;
+import net.millo.millomod.mod.util.gui.elements.*;
 import net.millo.millomod.system.FileManager;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
 import net.minecraft.text.Text;
 
 import java.util.*;
@@ -324,12 +324,18 @@ public class CacheGUI extends GUI {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (modifiers == 2 && keyCode == 70) {
-            searchBar.setEditable(true);
-            searchBar.setSelectionStart(0);
-            searchBar.setSelectionEnd(searchBar.getText().length());
-            this.setFocused(searchBar);
+
+        if (keyCode == 70) {
+            if (modifiers == 2) {
+                searchBar.setEditable(true);
+                searchBar.setSelectionStart(0);
+                searchBar.setSelectionEnd(searchBar.getText().length());
+                this.setFocused(searchBar);
+            } else if (modifiers == 3) {
+                openSearchMenu();
+            }
         }
+
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
@@ -352,5 +358,20 @@ public class CacheGUI extends GUI {
         addDrawableChild(new TextElement(paddingX, paddingY + toolbarSize, backgroundWidth, backgroundHeight - toolbarSize,
                 Text.literal("Empty").setStyle(GUIStyles.COMMENT.getStyle()),
                 textRenderer));
+    }
+
+
+
+    private boolean searchMenuOpen = false;
+    private void openSearchMenu() {
+        if (searchMenuOpen) return;
+        searchMenuOpen = true;
+
+        addDrawableChild(new CacheSearchMenu(this, width - paddingX, paddingY));
+    }
+
+    @Override
+    public <T extends Element & Drawable & Selectable> T addDrawableChild(T drawableElement) {
+        return super.addDrawableChild(drawableElement);
     }
 }

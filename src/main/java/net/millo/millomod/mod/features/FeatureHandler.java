@@ -46,7 +46,8 @@ public class FeatureHandler {
                 new CodeClientPlotFix(),
                 new ArgumentInsert(),
                 new NoClientClick(), //@
-                new SideChatFeature() //@
+                new SideChatFeature(), //@
+                new CodeHider()
         );
 
         Config config = Config.getInstance();

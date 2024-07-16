@@ -42,6 +42,7 @@ public class SettingsGUI extends GUI {
         addFeatureToggle(settingsList, "notification_tray");
         addFeatureToggle(settingsList, "argument_insert");
         addFeatureToggle(settingsList, "no_client_click");
+        addFeatureToggle(settingsList, "code_hider");
 
 
         addHeader(settingsList, "Side Chat");

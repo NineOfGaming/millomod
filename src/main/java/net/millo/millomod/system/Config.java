@@ -38,6 +38,7 @@ public class Config {
 
         public static ConfigEntry<?> of(String from) {
             /// key:i=5
+            /// key:s=some more text
             String[] parts = from.split("[=:]", 3);
             if (parts.length != 3) {
                 throw new RuntimeException("Syntax error in config file on: " + from);
