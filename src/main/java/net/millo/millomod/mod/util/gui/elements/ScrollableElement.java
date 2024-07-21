@@ -87,16 +87,9 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
 
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (this.visible && this.isFocused() && this.scrollbarDragged) {
-            if (mouseY < (double)this.getY()) {
-                this.setScrollY(0.0);
-            } else if (mouseY > (double)(this.getY() + this.height)) {
-                this.setScrollY(this.getMaxScrollY());
-            } else {
-                int i = this.getScrollbarThumbHeight();
-                double d = Math.max(1, this.getMaxScrollY() / Math.min((this.height - i), 1));
-                this.setScrollY(this.targetScrollY + deltaY * d);
-            }
-
+            int i = this.getScrollbarThumbHeight();
+            double d = Math.max(1, this.getMaxScrollY() / (this.height - i));
+            this.setScrollY(this.targetScrollY + deltaY * d);
             return true;
         }
         for (ScrollableEntryI drawable : drawables) {
@@ -216,11 +209,7 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
     }
 
     private int getContentsHeight() {
-        int height = 0;
-        for (ScrollableEntryI i : drawables) {
-            height += i.getHeight();
-        }
-        return height;
+        return drawables.stream().mapToInt(ScrollableEntryI::getHeight).sum();
     }
 
     public ArrayList<ScrollableEntryI> getDrawables() {

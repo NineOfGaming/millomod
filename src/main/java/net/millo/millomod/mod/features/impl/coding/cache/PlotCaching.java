@@ -261,7 +261,7 @@ public class PlotCaching extends Feature implements Keybound {
                 scanPlotTicksTried = 0;
                 scanStepTarget = scanStack.pop();
                 scanPlotStep = ScanPlotStep.WAIT_FOR_TP;
-                TeleportHandler.teleportTo(scanStepTarget.toCenterPos(), () -> {
+                TeleportHandler.teleportTo(scanStepTarget.toCenterPos().add(0, 1.5, 0), () -> {
                     scanPlotStep = ScanPlotStep.CACHE;
                 });
             }
