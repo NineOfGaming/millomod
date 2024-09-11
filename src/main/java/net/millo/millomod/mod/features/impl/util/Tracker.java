@@ -9,8 +9,8 @@ import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
+import net.minecraft.util.math.Vec3d;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,6 +74,7 @@ public class Tracker extends Feature {
     }
 
 
+    private Vec3d localPlayerPos;
     private int requestPlotIdDelay = 0;
     @Override
     public void onTick() {
@@ -84,7 +85,14 @@ public class Tracker extends Feature {
                 MilloMod.MC.getNetworkHandler().sendCommand("locate");
             }
         }
+
+        if (MilloMod.MC.player != null) localPlayerPos = getPlot().getPos().relativize(MilloMod.MC.player.getPos()).add(-1, 0, 0);
     }
+
+    public Vec3d getLocalPlayerPos() {
+        return localPlayerPos;
+    }
+
 
     @HandlePacket
     public boolean gameMessage(GameMessageS2CPacket message) {

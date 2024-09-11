@@ -25,15 +25,18 @@ public class CacheGUI extends GUI {
     private boolean hierarchyOpen = true;
     private double hierarchyX = paddingX;
 
-    private ScrollableElement lines;
+    private ScrollableElement lineContainer;
     private ButtonElement hierarchyButton;
     private TextElement plotIdText;
+    private TextFieldElement forcePlotIdField;
     private ScrollableElement templates;
     private TextFieldElement searchBar;
 
     private ArrayList<String> methodNames = new ArrayList<>();
+    private ArrayList<LineElement> lines;
 
     private int plotId;
+    private static int forcedPlotId = -1;
     int toolbarSize = 20;
 
 
@@ -75,7 +78,7 @@ public class CacheGUI extends GUI {
             return;
         }
         addLinesFromTemplate();
-        lines.setFade(getFade());
+        lineContainer.setFade(getFade());
     }
 
     public TextRenderer getTextRenderer() {
@@ -87,9 +90,9 @@ public class CacheGUI extends GUI {
         double desiredHierarchyX = hierarchyOpen ? width / 5d : paddingX;
         hierarchyX = MathUtil.clampLerp(hierarchyX, desiredHierarchyX, delta);
 
-        if (lines != null) {
-            lines.setX((int) hierarchyX);
-            lines.setWidth(backgroundWidth - (int) hierarchyX + paddingX);
+        if (lineContainer != null) {
+            lineContainer.setX((int) hierarchyX);
+            lineContainer.setWidth(backgroundWidth - (int) hierarchyX + paddingX);
         }
 
         hierarchyButton.setX((int) hierarchyX);
@@ -123,6 +126,9 @@ public class CacheGUI extends GUI {
     protected void init() {
         super.init();
         plotId = Tracker.getPlot().getPlotId();
+        if (forcedPlotId > 0) plotId = forcedPlotId;
+
+        searchMenuOpen = false;
 
         // Toolbar
         hierarchyButton = new ButtonElement(
@@ -157,6 +163,34 @@ public class CacheGUI extends GUI {
         updateTemplateList();
 
         addDrawableChild(templates);
+
+        forcePlotIdField = new TextFieldElement(textRenderer, 0, 0, 100, 16, Text.of(""));
+        if (forcedPlotId > 0) forcePlotIdField.setText(String.valueOf(forcedPlotId));
+
+        forcePlotIdField.setPlaceholder(Text.literal("Force Plot ID").setStyle(GUIStyles.COMMENT.getStyle()));
+        forcePlotIdField.setChangedListener(s -> {
+            if (s.isEmpty()) {
+                forcedPlotId = -1;
+                return;
+            }
+            if (!FileManager.isPlotCached(s)) return;
+            int id;
+            try {
+                id = Integer.parseInt(s);
+            } catch (NumberFormatException e) {
+                return;
+            }
+            if (forcedPlotId == id) return;
+
+            forcedPlotId = id;
+
+            // Forceful reload
+            template = null;
+            loadTemplateLines(null);
+
+        });
+
+        addDrawableChild(forcePlotIdField);
 
         if (template == null) {
             return;
@@ -198,10 +232,12 @@ public class CacheGUI extends GUI {
 
     private void addLinesFromTemplate() {
 
-        if (lines != null) remove(lines);
-        lines = new ScrollableElement(paddingX, paddingY + toolbarSize, backgroundWidth, backgroundHeight - toolbarSize, Text.literal(""));
+        if (lineContainer != null) remove(lineContainer);
+        lineContainer = new ScrollableElement(paddingX, paddingY + toolbarSize, backgroundWidth, backgroundHeight - toolbarSize, Text.literal(""));
 
         if (template == null) return;
+
+        lines = new ArrayList<>();
 
         int worldProgress = 0; // keeps track of how many in world blocks have gone by
         int lineNum = 0;
@@ -214,11 +250,17 @@ public class CacheGUI extends GUI {
                     if (indentation < 0) indentation = 0;
                 } else worldProgress -= 2;
 
+
             LineElement line = i.toLine();
             line.setIndent(indentation);
             line.setLineNum(lineNum, template.startPos.add(-1, 0, worldProgress));
             line.init(backgroundWidth, 12);
-            lines.addDrawableChild(line);
+            if (searchMenuOpen) {
+                line.highlight(searchMenu.getSearchText());
+            }
+
+            lineContainer.addDrawableChild(line);
+            lines.add(line);
 
             if (Objects.equals(i.id, "bracket") && Objects.equals(i.direct, "open") ||
                     Objects.equals(i.block, "func") || Objects.equals(i.block, "process") ||
@@ -228,7 +270,7 @@ public class CacheGUI extends GUI {
             worldProgress += 2;
         }
 
-        addDrawableChild(lines);
+        addDrawableChild(lineContainer);
     }
 
 
@@ -271,8 +313,6 @@ public class CacheGUI extends GUI {
                 List<String> folderNames = new ArrayList<>(List.of(folderNamespace.split("\\.")));
 //                Collections.reverse(folderNames);
 
-                System.out.println(folderNames);
-
                 String rootFolderName = folderNames.get(0);
                 MethodFolder folder = null;
                 if (rootFolders.containsKey(rootFolderName)) {
@@ -281,7 +321,6 @@ public class CacheGUI extends GUI {
                     folder = new MethodFolder(16, rootFolderName, (button) -> {}, textRenderer);
                     rootFolders.put(rootFolderName, folder);
                 }
-
 
 
                 // Recursively find the rest of the path
@@ -318,7 +357,7 @@ public class CacheGUI extends GUI {
         }
 
         rootFolders.forEach((folderName, folder) -> folder.addTo(templates, getFade()));
-        rootMethods.forEach(element -> templates.addDrawableChild(element));
+        rootMethods.forEach(templates::addDrawableChild);
 
     }
 
@@ -326,12 +365,12 @@ public class CacheGUI extends GUI {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 
         if (keyCode == 70) {
-            if (modifiers == 2) {
+            if (modifiers == 3) {
                 searchBar.setEditable(true);
                 searchBar.setSelectionStart(0);
                 searchBar.setSelectionEnd(searchBar.getText().length());
                 this.setFocused(searchBar);
-            } else if (modifiers == 3) {
+            } else if (modifiers == 2) {
                 openSearchMenu();
             }
         }
@@ -348,8 +387,8 @@ public class CacheGUI extends GUI {
     public void reload() {
         updateMethodNamesList();
         updateTemplateList();
-        remove(lines);
-        lines = null;
+        remove(lineContainer);
+        lineContainer = null;
         template = null;
         addEmpty();
     }
@@ -362,16 +401,40 @@ public class CacheGUI extends GUI {
 
 
 
+    CacheSearchMenu searchMenu;
     private boolean searchMenuOpen = false;
     private void openSearchMenu() {
         if (searchMenuOpen) return;
         searchMenuOpen = true;
 
-        addDrawableChild(new CacheSearchMenu(this, width - paddingX, paddingY));
+        searchMenu = new CacheSearchMenu(this, width - paddingX, paddingY);
+        addDrawableChild(searchMenu);
     }
 
     @Override
     public <T extends Element & Drawable & Selectable> T addDrawableChild(T drawableElement) {
         return super.addDrawableChild(drawableElement);
+    }
+
+    @Override
+    public <T extends Element & Selectable> T addSelectableChild(T child) {
+        return super.addSelectableChild(child);
+    }
+
+    public ArrayList<LineElement> getLines() {
+        return lines;
+    }
+
+    public String getSearchText() {
+        if (!searchMenuOpen) return "";
+        return searchMenu.getSearchText();
+    }
+
+    public ArrayList<String> getAllMethods() {
+        return methodNames;
+    }
+
+    public int getPlotId() {
+        return plotId;
     }
 }

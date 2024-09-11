@@ -53,10 +53,12 @@ public enum GUIStyles {
     LOCATION(Formatting.GREEN),
     LOC(LOCATION.style),
     VEC(VECTOR.style),
-    COMPONENT(new Color(0x7FD42A))
+    COMPONENT(new Color(0x7FD42A)),
+
 
 
     ;
+
     private final Style style;
     GUIStyles(Color color) {
         this(Style.EMPTY.withColor(color.hashCode()));

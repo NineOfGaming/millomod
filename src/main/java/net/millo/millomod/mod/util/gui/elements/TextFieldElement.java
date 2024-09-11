@@ -40,7 +40,7 @@ public class TextFieldElement extends TextFieldWidget implements ScrollableEntry
         this.hovered = mouseX >= this.getRealX() && mouseY >= this.getRealY() && mouseX < this.getRealX() + this.width && mouseY < this.getRealY() + this.height;
 
         context.getMatrices().push();
-        context.getMatrices().translate(fade.getXOffset(), fade.getYOffset(), 0);
+        context.getMatrices().translate(fade.getXOffset(), fade.getYOffset(), z);
 
         int x = getX();
         int y = getY();
@@ -74,5 +74,10 @@ public class TextFieldElement extends TextFieldWidget implements ScrollableEntry
 
     public void setFade(ElementFadeIn fade) {
         this.fade = fade;
+    }
+
+    private int z = 0;
+    public void setZ(int z) {
+        this.z = z;
     }
 }

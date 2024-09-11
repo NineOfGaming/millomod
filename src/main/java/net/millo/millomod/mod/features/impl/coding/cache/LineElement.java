@@ -4,10 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.impl.util.teleport.TeleportHandler;
-import net.millo.millomod.mod.util.gui.ClickableElementI;
-import net.millo.millomod.mod.util.gui.ElementFadeIn;
-import net.millo.millomod.mod.util.gui.GUIStyles;
-import net.millo.millomod.mod.util.gui.ScrollableEntryI;
+import net.millo.millomod.mod.util.gui.*;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
@@ -25,6 +22,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
 public class LineElement implements ScrollableEntryI, Element, Widget, Selectable, ClickableElementI {
@@ -38,6 +36,7 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
 
     ArrayList<TextWidget> textWidgets = new ArrayList<>();
     HashMap<TextWidget, PressAction> pressActionMap = new HashMap<>();
+    HashMap<TextWidget, String> tagMap = new HashMap<>();
     TextRenderer textRenderer;
     private boolean hasLineNum = false;
 
@@ -56,29 +55,44 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
 
 
 
+    private TextWidget createTextWidget(Text message){
+        TextWidget w = new TextWidget(x, y, textRenderer.getWidth(message), height, message, textRenderer);
+        textWidgets.add(w);
+        return w;
+    }
 
     public LineElement addComponent(Text message) {
         if (message.getString().isEmpty()) return this;
-        textWidgets.add(new TextWidget(x, y, textRenderer.getWidth(message), height, message, textRenderer));
+        createTextWidget(message);
         return this;
     }
     public LineElement addComponent(Text message, Tooltip tooltip) {
-        TextWidget w = new TextWidget(x, y, textRenderer.getWidth(message), height, message, textRenderer);
+        TextWidget w = createTextWidget(message);
         w.setTooltip(tooltip);
-        textWidgets.add(w);
         return this;
     }
     public LineElement addComponent(Text message, PressAction action) {
-        TextWidget w = new TextWidget(x, y, textRenderer.getWidth(message), height, message, textRenderer);
-        textWidgets.add(w);
+        TextWidget w = createTextWidget(message);
         pressActionMap.put(w, action);
         return this;
     }
     public LineElement addComponent(Text message, Tooltip tooltip, PressAction action) {
-        TextWidget w = new TextWidget(x, y, textRenderer.getWidth(message), height, message, textRenderer);
+        TextWidget w = createTextWidget(message);
         w.setTooltip(tooltip);
-        textWidgets.add(w);
         pressActionMap.put(w, action);
+        return this;
+    }
+    public LineElement addComponent(Text message, PressAction action, String tag) {
+        TextWidget w = createTextWidget(message);
+        pressActionMap.put(w, action);
+        tagMap.put(w, tag);
+        return this;
+    }
+    public LineElement addComponent(Text message, Tooltip tooltip, PressAction action, String tag) {
+        TextWidget w = createTextWidget(message);
+        w.setTooltip(tooltip);
+        pressActionMap.put(w, action);
+        tagMap.put(w, tag);
         return this;
     }
 
@@ -100,6 +114,11 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
         this.hasLineNum = true;
     }
 
+
+    public String getString() {
+        return textWidgets.stream().map(i -> i.getMessage().getString()).collect(Collectors.joining());
+    }
+
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         if (this.visible) {
@@ -107,6 +126,19 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
             this.renderWidget(context, mouseX, mouseY, delta);
         }
     }
+
+    public SearchResult searchText(String query) {
+        query = query.toLowerCase();
+        int ind = 0;
+        for (TextWidget textWidget : textWidgets) {
+            if (textWidget.getMessage().getString().toLowerCase().contains(query)) {
+                return new SearchResult(this, ind);
+            }
+            ind++;
+        }
+        return null;
+    }
+
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         fade.fadeIn(delta);
 
@@ -121,6 +153,8 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
         }
 
         int ind = 0;
+        String searchHighlight = CacheGUI.lastOpenedGUI.getSearchText().toLowerCase();
+
         for (TextWidget textWidget : textWidgets) {
             ind ++;
 
@@ -133,6 +167,10 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
             boolean hovered = mouseX >= xx && mouseX < xx+textWidget.getWidth() && mouseY >= yy && mouseY < yy + textWidget.getHeight();
             if (hovered) {
                 context.fill(x, y, x+textWidget.getWidth(), y + textWidget.getHeight(), new Color(255, 255, 255, 20).hashCode());
+            }
+            if (!searchHighlight.isEmpty() && textWidget.getMessage().getString().toLowerCase().contains(searchHighlight)) {
+                context.fill(x, y, x+textWidget.getWidth(), y + textWidget.getHeight(), new Color(0, 255, 255, 80).hashCode());
+                context.fill(x, y+textWidget.getHeight()-2, x+textWidget.getWidth(), y+textWidget.getHeight()-1, new Color(255, 255, 255).hashCode());
             }
 
             // Text
@@ -270,6 +308,10 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
         addComponent(Text.literal(")"));
 
         return this;
+    }
+
+    public void highlight(String searchText) {
+
     }
 
 

@@ -1,9 +1,12 @@
 package net.millo.millomod.mod.features.impl.coding.cache;
 
+import net.millo.millomod.MilloMod;
 import net.millo.millomod.SoundHandler;
+import net.millo.millomod.mod.hypercube.template.Template;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.mod.util.gui.elements.ContextElement;
 import net.millo.millomod.system.FileManager;
+import net.millo.millomod.system.Utility;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
@@ -61,15 +64,22 @@ public class MethodElement extends HierarchyElement {
         if (button == 1) {
             CacheGUI.lastOpenedGUI.openContext(mouseX, mouseY,
                     new ContextElement(100, textRenderer)
+                            .add(Text.literal("Get Item"), (b) -> {
+                                Template template = FileManager.readTemplate(plotId, filename);
+                                if (template == null) return;
+                                if (MilloMod.MC.player == null) return;
+
+                                Utility.giveItem(template.getItem());
+                            })
                             .add(Text.literal("Delete").setStyle(GUIStyles.SCARY.getStyle()), (b) -> {
                                 SoundHandler.playClick();
                                 FileManager.deleteTemplateFile(plotId, filename);
                                 CacheGUI.lastOpenedGUI.reload();
                                 CacheGUI.lastOpenedGUI.closeContext();
                             })
-                            .add(Text.literal("Refactor"), (b) -> {
-                                SoundHandler.playClick();
-                            })
+//                            .add(Text.literal("Refactor"), (b) -> {
+//                                SoundHandler.playClick();
+//                            })
             );
         }
     }

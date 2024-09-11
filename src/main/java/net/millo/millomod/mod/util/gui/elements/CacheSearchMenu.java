@@ -2,8 +2,12 @@ package net.millo.millomod.mod.util.gui.elements;
 
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.impl.coding.cache.CacheGUI;
+import net.millo.millomod.mod.features.impl.coding.cache.LineElement;
+import net.millo.millomod.mod.hypercube.template.Template;
+import net.millo.millomod.mod.hypercube.template.TemplateBlock;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
-import net.millo.millomod.mod.util.gui.GUIStyles;
+import net.millo.millomod.mod.util.gui.SearchResult;
+import net.millo.millomod.system.FileManager;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -11,18 +15,21 @@ import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class CacheSearchMenu implements Drawable, Element, Widget, Selectable {
 
+    private static String searchText = "";
 
     ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.LEFT);
     private int x, y, width, height;
-    private int targetX;
+    private int targetX, targetHeight;
 
     private CacheGUI cacheGUI;
 
     private TextFieldElement searchTextField;
+    private ButtonElement searchButton;
 
     // [x,y] in parameters is the top right corner
     public CacheSearchMenu(CacheGUI cacheGUI, int x, int y) {
@@ -32,11 +39,51 @@ public class CacheSearchMenu implements Drawable, Element, Widget, Selectable {
         this.y = y;
         this.width = cacheGUI.width/5;
         this.height = 80;
+        targetHeight = 80;
 
         targetX = x - width;
 
-        searchTextField = new TextFieldElement(cacheGUI.getTextRenderer(), 0, 0, width, 16, Text.literal("Search"));
+        searchTextField = new TextFieldElement(cacheGUI.getTextRenderer(), targetX+1, y+1, width-2, 16, Text.literal("Search"));
+        searchTextField.setZ(11);
+        searchTextField.setText(searchText);
+        searchTextField.setChangedListener((s) -> searchText = s);
         cacheGUI.addDrawableChild(searchTextField);
+
+        searchButton = new ButtonElement(targetX+1, y+17, (width-2)/2, 16, Text.literal("Search"), this::search, cacheGUI.getTextRenderer());
+        searchButton.setZ(11);
+        cacheGUI.addDrawableChild(searchButton);
+    }
+
+    public String getSearchText() {
+        return searchText;
+    }
+
+    private void search(ButtonElement buttonElement) {
+        System.out.println(searchTextField.getText());
+
+        String txt = searchTextField.getText().toLowerCase();
+
+        // Search through all files
+
+        int totalResults = 0;
+
+        ArrayList<String> methodNames = cacheGUI.getAllMethods();
+        for (String methodName : methodNames) {
+            Template template = FileManager.readTemplate(cacheGUI.getPlotId(), methodName);
+
+            int templateResults = 0;
+
+            if (template == null) continue;
+            for (TemplateBlock block : template.blocks) {
+                LineElement line = block.toLine();
+                SearchResult result = line.searchText(txt);
+                if (result != null) {
+                    totalResults ++;
+                    System.out.println(line.getString() + " " + result);
+                }
+            }
+        }
+
     }
 
 
@@ -46,6 +93,8 @@ public class CacheSearchMenu implements Drawable, Element, Widget, Selectable {
         fade.fadeIn(delta);
 
         x = (int) MathHelper.clampedLerp(x, targetX, MilloMod.MC.getLastFrameDuration());
+        height = (int) MathHelper.clampedLerp(height, targetHeight, MilloMod.MC.getLastFrameDuration());
+        searchTextField.setPosition(x + 1 + fade.getXOffset(), y + 1 + fade.getYOffset());
 
         context.getMatrices().push();
         context.getMatrices().translate(fade.getXOffset(), fade.getYOffset(), 0);
@@ -57,8 +106,10 @@ public class CacheSearchMenu implements Drawable, Element, Widget, Selectable {
         context.getMatrices().pop();
     }
 
-
-
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return Element.super.mouseClicked(mouseX, mouseY, button);
+    }
 
     @Override
     public void setFocused(boolean focused) {
@@ -72,7 +123,7 @@ public class CacheSearchMenu implements Drawable, Element, Widget, Selectable {
 
     @Override
     public ScreenRect getNavigationFocus() {
-        return new ScreenRect(getX(), getY(), getWidth(), getHeight());
+        return new ScreenRect(getX(), getY(), width, height);
     }
 
     @Override
@@ -84,7 +135,7 @@ public class CacheSearchMenu implements Drawable, Element, Widget, Selectable {
 
     }
     public void setX(int x) {
-        this.x =x;
+        this.x = x;
     }
     public void setY(int y) {
         this.y = y;

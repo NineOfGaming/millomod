@@ -58,12 +58,12 @@ public class ArgumentItem {
 
         switch (id) {
             case "txt" -> line.addComponent(Text.literal("\"" + name + "\"").setStyle(GUIStyles.TEXT.getStyle()),
-                    button -> Utility.sendCommand("str " + name));
+                    button -> Utility.sendCommand("str " + name), "str");
             case "num" -> line.addComponent(Text.literal(name).setStyle(GUIStyles.NUMBER.getStyle()),
-                    button -> Utility.sendCommand("num " + name));
+                    button -> Utility.sendCommand("num " + name), "num");
             case "var" -> line.addComponent(Text.literal(name).setStyle(GUIStyles.VARIABLE.getStyle()),
                     Tooltip.of(Text.literal(scope.toUpperCase()).setStyle(GUIStyles.valueOf(scope.toUpperCase()).getStyle())),
-                    button -> Utility.sendCommand("var " + name + " " + getScoreCLI(scope)));
+                    button -> Utility.sendCommand("var " + name + " " + getScoreCLI(scope)), "var");
             case "bl_tag" -> line.addComponent(Text.literal(option).setStyle(GUIStyles.BLOCK_TAG.getStyle()),
                                 Tooltip.of(Text.literal(tag).setStyle(GUIStyles.COMMENT.getStyle())));
             case "g_val" -> line.addComponent(Text.literal(type + (Objects.equals(target, "Default") ? "" : (" [" + target.charAt(0) + "]"))).setStyle(GUIStyles.GAME_VALUE.getStyle()),

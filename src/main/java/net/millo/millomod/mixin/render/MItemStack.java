@@ -37,10 +37,12 @@ public abstract class MItemStack {
         Set<String> keys = pbv.getKeys();
         if (keys.isEmpty()) return;
 
+        List<String> sortedKeys = keys.stream().sorted().toList();
+
         List<Text> t = cir.getReturnValue();
         t.add(Text.of(""));
         t.add(Text.literal("Tags:").setStyle(GUIStyles.COMMENT.getStyle()));
-        keys.forEach(key -> {
+        sortedKeys.forEach(key -> {
                 String value = pbv.get(key).toString();
                 value = value.length() > 50 ? value.substring(0, 50)+"..." : value;
                 t.add(Text.literal(key.replaceFirst("^.+:", "")).setStyle(GUIStyles.ACTION.getStyle())

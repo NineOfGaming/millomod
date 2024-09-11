@@ -71,6 +71,9 @@ public class ButtonElement implements ScrollableEntryI, Element, Widget, Selecta
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         fade.fadeIn(delta);
 
+        context.getMatrices().push();
+        context.getMatrices().translate(0, 0, z);
+
         int x = getX() + fade.getXOffset();
         int y = getY() + fade.getYOffset();
         int color = new Color(0, 0, 0, (int)(fade.getProgress() * 150)).hashCode();
@@ -82,6 +85,8 @@ public class ButtonElement implements ScrollableEntryI, Element, Widget, Selecta
         textWidget.setX(x);
         textWidget.setY(y);
         textWidget.render(context, mouseX, mouseY, delta);
+
+        context.getMatrices().pop();
     }
 
     public void setX(int x) {
@@ -177,6 +182,11 @@ public class ButtonElement implements ScrollableEntryI, Element, Widget, Selecta
 
     public void setTooltip(Text literal) {
         tooltip = Tooltip.of(literal);
+    }
+
+    private int z = 0;
+    public void setZ(int z) {
+        this.z = z;
     }
 
     @Environment(EnvType.CLIENT)

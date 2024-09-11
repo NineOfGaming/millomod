@@ -72,6 +72,10 @@ public class FileManager {
         }
     }
 
+    public static boolean isPlotCached(String plotId) {
+        return Files.exists(getTemplatePath().resolve(plotId));
+    }
+
 
     static class ReadTemplate {
         public String code;
