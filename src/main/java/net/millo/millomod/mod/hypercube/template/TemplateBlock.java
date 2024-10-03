@@ -129,8 +129,8 @@ public class TemplateBlock {
                     .addSpace()
                     .addComponent(Text.literal(block.data).setStyle(GUIStyles.NAME.getStyle()), (button) -> {
                         SoundHandler.playClick();
-                        var gui = CacheGUI.lastOpenedGUI;
-                        gui.findMethod(block.data+"."+block.block);
+                        CacheGUI gui = CacheGUI.lastOpenedGUI;
+                        gui.findMethod(Template.parseFileName(block.data)+"."+block.block);
                     })
                     .addArguments(block.getArguments());
         }

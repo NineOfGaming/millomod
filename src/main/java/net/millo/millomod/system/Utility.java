@@ -50,6 +50,8 @@ public class Utility {
         MinecraftClient mc = MilloMod.MC;
         DefaultedList<ItemStack> inv = mc.player.getInventory().main;
 
+        if (MilloMod.MC.interactionManager == null) return;
+
         for (int index = 0; index < inv.size(); index++) {
             ItemStack i = inv.get(index);
             ItemStack compareItem = i.copy();
@@ -76,7 +78,13 @@ public class Utility {
             return;
         }
 
+        MilloMod.MC.player.getInventory().setStack(slot, item);
+        MilloMod.MC.interactionManager.clickCreativeStack(item, slot);
+    }
+
+    public static void setItem(int slot, ItemStack item) {
         if (MilloMod.MC.interactionManager == null) return;
+        if (MilloMod.MC.player == null) return;
 
         MilloMod.MC.player.getInventory().setStack(slot, item);
         MilloMod.MC.interactionManager.clickCreativeStack(item, slot);

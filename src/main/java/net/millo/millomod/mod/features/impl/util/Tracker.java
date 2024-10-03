@@ -5,6 +5,7 @@ import net.millo.millomod.mod.Callback;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.HandlePacket;
 import net.millo.millomod.mod.hypercube.Plot;
+import net.millo.millomod.system.FileManager;
 import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
@@ -107,12 +108,26 @@ public class Tracker extends Feature {
             String regex = "\\[\\d+\\]\\n";
             Matcher matcher = Pattern.compile(regex).matcher(content);
             if (matcher.find()) {
-                String plotIdString = matcher.group().trim().replace("[", "").replace("]", "");
-                plot.setId(Integer.parseInt(plotIdString));
-                requestPlotId = false;
-                plotIdCallbacks.forEach(Callback::run);
-                plotIdCallbacks.clear();
-                return true;
+
+                // plot name
+                String nameRegex = "(?<=→ ).*(?= \\[\\d+\\]\\n)";
+                Matcher nameMatcher = Pattern.compile(nameRegex).matcher(content);
+                if (nameMatcher.find()) {
+                    String plotName = nameMatcher.group().trim();
+
+                    // plot id
+                    String plotIdString = matcher.group().trim().replace("[", "").replace("]", "");
+                    int id = Integer.parseInt(plotIdString);
+                    plot.setId(id);
+                    plot.setName(plotName);
+                    requestPlotId = false;
+                    plotIdCallbacks.forEach(Callback::run);
+                    plotIdCallbacks.clear();
+
+                    FileManager.dnsAdd(id, plotName);
+                    FileManager.dnsSave();
+                    return true;
+                }
             }
             regex = "spawn\\n";
             matcher = Pattern.compile(regex).matcher(content);

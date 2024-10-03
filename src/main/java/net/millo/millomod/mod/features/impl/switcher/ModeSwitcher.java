@@ -41,7 +41,7 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
     // TODO: if player is in spawn, show "favourites" on first page instead
 
 
-    private ArrayList<Option> addCommandOption(ArrayList<Option> list, String text, String command) {
+    private static ArrayList<Option> addCommandOption(ArrayList<Option> list, String text, String command) {
         list.add(new Option(Text.of(text), () -> Utility.sendCommand(command)));
         return list;
     }
@@ -60,57 +60,72 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
         options = getPage(page);
     }
 
-    public ArrayList<Option> getPage(int page) {
-        this.page = (4 + page) % 4;
-        ArrayList<Option> result = new ArrayList<>();
+    private static final ArrayList<ArrayList<Option>> pages;
+    static {
+        pages = new ArrayList<>();
+        pages.add(createPage(
+                "Dev", "dev",
+                "Play", "play",
+                "Build", "build"
+                ));
 
-//        if (Tracker.getPlot().isSpawn()) {
-//            return result;
-//        }
-        if (this.page == 0) {
-            addCommandOption(result, "Dev", "dev");
-            addCommandOption(result, "Play", "play");
-            addCommandOption(result, "Build", "build");
+        pages.add(createPage(
+                "Not", "not",
+                "Cancel", "cancel",
+                "Refer", "reference",
+                "B.F.S.", "bracket",
+                "G. Val", "val",
+                "Values", "values"
+        ));
+
+        pages.add(createPage(
+                "Spawn", "s",
+                "Node 1", "server node1",
+                "Node 2", "server node2",
+                "Node 3", "server node3",
+                "Node 4", "server node4",
+                "Node 5", "server node5",
+                "Node 6", "server node6",
+                "Node 7", "server node7",
+                "Beta", "server beta"
+        ));
+
+        ArrayList<Option> page3 = new ArrayList<>();
+        addCommandOption(page3, "C l", "c l");
+        addCommandOption(page3, "C g", "c g");
+        addCommandOption(page3, "C n", "c n");
+        addCommandOption(page3, "C dnd", "c dnd");
+        page3.add(new Option(Text.of("Auto @"), () -> {
+            FeatureHandler.getFeature("auto_command").toggleEnabled();
+            NotificationTray.pushNotification(
+                    Text.literal("Toggled"),
+                    Text.translatable("config.millo.auto_command"),
+                    GUIStyles.getTrueFalse(true)
+            );
+        }));
+        pages.add(page3);
+
+        pages.add(createPage(
+                "Creat", "gmc",
+                "Adven", "gma",
+                "Survi", "gms",
+                "Spect", "gmsp"
+        ));
+    }
+
+    private static ArrayList<Option> createPage(String ...args) {
+        ArrayList<Option> page = new ArrayList<>();
+        for (int i = 0; i < args.length; i += 2) {
+            String name = args[i];
+            String command = args[i + 1];
+            addCommandOption(page, name, command);
         }
+        return page;
+    }
 
-        if (this.page == 1) {
-            addCommandOption(result, "Not", "not");
-            addCommandOption(result, "Cancel", "cancel");
-            addCommandOption(result, "Refer", "reference");
-            addCommandOption(result, "B.F.S.", "bracket");
-            addCommandOption(result, "G. Val", "val");
-            addCommandOption(result, "Values", "values");
-        }
-
-        if (this.page == 2) {
-            addCommandOption(result, "Spawn", "s");
-            addCommandOption(result, "Node 1", "server node1");
-            addCommandOption(result, "Node 2", "server node2");
-            addCommandOption(result, "Node 3", "server node3");
-            addCommandOption(result, "Node 4", "server node4");
-            addCommandOption(result, "Node 5", "server node5");
-            addCommandOption(result, "Node 6", "server node6");
-            addCommandOption(result, "Node 7", "server node7");
-            addCommandOption(result, "Beta", "server beta");
-        }
-
-        if (this.page == 3) {
-            addCommandOption(result, "C l", "c l");
-            addCommandOption(result, "C g", "c g");
-            addCommandOption(result, "C n", "c n");
-            addCommandOption(result, "C dnd", "c dnd");
-            result.add(new Option(Text.of("Auto @"), () -> {
-                FeatureHandler.getFeature("auto_command").toggleEnabled();
-                NotificationTray.pushNotification(
-                        Text.literal("Toggled"),
-                        Text.translatable("config.millo.auto_command"),
-                        GUIStyles.getTrueFalse(enabled)
-                );
-            }));
-        }
-
-
-        return result;
+    private ArrayList<Option> getPage(int page) {
+        this.page = (5 + page) % 5;
+        return pages.get(this.page);
     }
 
     public ModeSwitcher() {
@@ -140,7 +155,7 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
         }
 
 
-        int totalPages = 4;
+        int totalPages = pages.size();
         int w = ((totalPages) * 5) / 2 - 1;
         context.getMatrices().push();
         context.getMatrices().translate(centerX, centerY + 10, 0);
@@ -148,9 +163,9 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
 
         for (int i = 0; i < totalPages; i++) {
             if (i == page) {
-                context.fill(i * 5 - w -1, -1, i*5+3 - w, 3, Color.white.hashCode());
+                context.fill(i * 5 - w - 1, -1, i * 5 + 3 - w, 3, Color.white.hashCode());
             } else {
-                context.fill(i * 5 - w, 0, i*5+2 - w, 2, Color.gray.hashCode());
+                context.fill(i * 5 - w, 0, i * 5 + 2 - w, 2, Color.gray.hashCode());
             }
         }
 

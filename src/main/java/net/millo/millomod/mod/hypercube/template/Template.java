@@ -12,6 +12,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 public class Template {
@@ -54,9 +56,22 @@ public class Template {
         }
     }
 
-
     public String getFileName() {
-        return getName().replaceAll("[<>:\"/\\|?*]", "") + "." + getMethodName();
+        return parseFileName(getName()) + "." + getMethodName();
+    }
+    public static String parseFileName(String fileName) {
+        String replacements = "[<>:\"/\\|?*]";
+
+        StringBuilder result = new StringBuilder();
+
+        Matcher matcher = Pattern.compile(replacements).matcher(fileName);
+        while (matcher.find()) {
+            int index = replacements.indexOf(matcher.group());
+            if (index != -1) matcher.appendReplacement(result, "_"+index+"_");
+        }
+
+        matcher.appendTail(result);
+        return result.toString();
     }
     public String getMethodName() {
         return blocks.get(0).block;
@@ -84,7 +99,7 @@ public class Template {
 
         NbtCompound display = new NbtCompound();
         String displayName ="{\"text\":\"\",\"extra\":[{\"text\":\"#TYPE \",\"obfuscated\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"color\":\"aqua\",\"bold\":true},{\"text\":\"» \",\"italic\":false,\"color\":\"dark_aqua\",\"bold\":false},{\"text\":\"#NAME\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http://#NAME\"},\"italic\":false,\"color\":\"aqua\"},{\"text\":\"\",\"italic\":false,\"color\":\"aqua\"}]}";
-        displayName = displayName.replaceAll("#TYPE", getMethodName()).replaceAll("#NAME", getName());
+        displayName = displayName.replaceAll("#TYPE", getMethodName()).replaceAll("#NAME", Matcher.quoteReplacement(getName()));
         display.putString("Name", displayName);
 
         nbt.put("display", display);

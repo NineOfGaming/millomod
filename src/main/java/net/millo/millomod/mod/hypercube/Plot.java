@@ -18,6 +18,8 @@ public class Plot {
     private final int originX, originZ;
     private final boolean hasUnderground;
 
+    private String name;
+
     private boolean spawn = false;
 
     public Plot(int x, int z) {
@@ -131,5 +133,9 @@ public class Plot {
 
     public int getPlotId() {
         return plotId;
+    }
+
+    public void setName(String plotName) {
+        name = plotName;
     }
 }

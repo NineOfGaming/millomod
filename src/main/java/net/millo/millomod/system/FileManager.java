@@ -3,6 +3,7 @@ package net.millo.millomod.system;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.hypercube.template.Template;
@@ -13,10 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FileManager {
@@ -25,6 +23,70 @@ public class FileManager {
         Path path = FabricLoader.getInstance().getConfigDir();
         return path.resolve(filename).toFile();
     }
+
+    // Cached Plots DNS
+
+    public static File getDNSFile() {
+        Path path = MilloMod.MC.runDirectory.toPath().resolve(MilloMod.MOD_ID);
+        File file = path.resolve("plots.dns").toFile();
+        file.mkdirs();
+        return file;
+    }
+
+    private static Map<Integer, String> dnsContent = new HashMap<>();
+    public static void dnsRemove(int plotId) {
+        dnsContent.remove(plotId);
+    }
+    public static void dnsAdd(int plotId, String plotName) {
+        dnsContent.put(plotId, plotName);
+    }
+    public static void dnsSave() {
+        JsonObject inf = new JsonObject();
+
+        dnsContent.forEach((id, name) -> {
+            inf.addProperty(String.valueOf(id), name);
+        });
+
+        try {
+            File file = getDNSFile();
+            Files.deleteIfExists(file.toPath());
+            Files.createFile(file.toPath());
+            if (!file.exists()) file.createNewFile();
+            Files.write(file.toPath(), inf.toString().getBytes(), StandardOpenOption.WRITE);
+        } catch (IOException e) {
+            System.out.println("Couldn't save plot dns: " + e);
+        }
+    }
+
+    public static void readDNS() {
+        File file = getDNSFile();
+        if (!file.exists()) {
+            System.out.println("DNS file does not exist.");
+            return;
+        }
+
+        try {
+            String content = new String(Files.readAllBytes(file.toPath()));
+
+            JsonObject inf = JsonParser.parseString(content).getAsJsonObject();
+
+            dnsContent = new HashMap<>();
+
+            inf.entrySet().forEach(entry -> {
+                int id = Integer.parseInt(entry.getKey());
+                String name = entry.getValue().getAsString();
+                dnsContent.put(id, name);
+            });
+        } catch (Exception e) {
+            return;
+        }
+    }
+
+    public static Map<Integer, String> getDNSContent() {
+        return dnsContent;
+    }
+
+    // Cached Templates
 
     public static Path getTemplatePath() {
         Path path = MilloMod.MC.runDirectory.toPath().resolve(MilloMod.MOD_ID).resolve("cache");

@@ -4,7 +4,7 @@ import net.millo.millomod.system.Config;
 
 public class ChatRule {
 
-    private String regex, key;
+    private final String regex, key;
     private boolean enabled = false;
     public ChatRule(String key, String regex) {
         this.regex = regex;

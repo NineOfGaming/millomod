@@ -6,6 +6,8 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.millo.millomod.mod.commands.Command;
 import net.millo.millomod.mod.commands.ArgBuilder;
 import net.millo.millomod.mod.features.impl.util.teleport.TeleportHandler;
+import net.millo.millomod.mod.util.GlobalUtil;
+import net.millo.millomod.system.Utility;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandRegistryAccess;
@@ -81,7 +83,7 @@ public class RedevCommand extends Command {
 
                 if (slot >= 0 && slot < player.getInventory().size()) {
                     ItemStack stackInSlot = ItemStack.fromNbt(itemTag.getCompound("Item"));
-                    player.getInventory().setStack(slot, stackInSlot);
+                    Utility.setItem(slot, stackInSlot);
                 }
             }
         }
