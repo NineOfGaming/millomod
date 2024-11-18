@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.millo.millomod.mod.commands.ArgBuilder;
 import net.millo.millomod.mod.commands.Command;
-import net.millo.millomod.system.Utility;
+import net.millo.millomod.system.PlayerUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandRegistryAccess;
@@ -48,7 +48,7 @@ public class DfGiveCommand extends Command {
     private void giveItem(ClientPlayerEntity player, ItemStack item) {
         if (!player.isCreative()) return;
         item.setCount(Math.min(item.getCount(), item.getMaxCount()));
-        Utility.giveItem(item);
+        PlayerUtil.giveItem(item);
     }
 
     @Override

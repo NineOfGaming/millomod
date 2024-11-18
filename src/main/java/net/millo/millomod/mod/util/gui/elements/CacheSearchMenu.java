@@ -67,6 +67,7 @@ public class CacheSearchMenu implements Drawable, Element, Widget, Selectable {
 
         int totalResults = 0;
 
+        ArrayList<SearchResult> results = new ArrayList<>();
         ArrayList<String> methodNames = cacheGUI.getAllMethods();
         for (String methodName : methodNames) {
             Template template = FileManager.readTemplate(cacheGUI.getPlotId(), methodName);
@@ -79,9 +80,11 @@ public class CacheSearchMenu implements Drawable, Element, Widget, Selectable {
                 SearchResult result = line.searchText(txt);
                 if (result != null) {
                     totalResults ++;
-                    System.out.println(line.getString() + " " + result);
+                    templateResults ++;
+                    System.out.println(methodName + ": " + line.getString() + " " + result);
                 }
             }
+
         }
 
     }

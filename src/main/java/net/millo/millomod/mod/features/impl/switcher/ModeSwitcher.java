@@ -1,7 +1,6 @@
 package net.millo.millomod.mod.features.impl.switcher;
 
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
-import net.millo.millomod.KeybindHandler;
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.Callback;
 import net.millo.millomod.mod.features.Feature;
@@ -9,11 +8,10 @@ import net.millo.millomod.mod.features.FeatureHandler;
 import net.millo.millomod.mod.features.IRenderable;
 import net.millo.millomod.mod.features.Keybound;
 import net.millo.millomod.mod.features.impl.util.NotificationTray;
-import net.millo.millomod.mod.features.impl.util.Tracker;
 import net.millo.millomod.mod.util.GlobalUtil;
 import net.millo.millomod.mod.util.RenderInfo;
 import net.millo.millomod.mod.util.gui.GUIStyles;
-import net.millo.millomod.system.Utility;
+import net.millo.millomod.system.PlayerUtil;
 import net.millo.millomod.system.Config;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -23,8 +21,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 
 public class ModeSwitcher extends Feature implements Keybound, IRenderable {
@@ -42,7 +38,7 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
 
 
     private static ArrayList<Option> addCommandOption(ArrayList<Option> list, String text, String command) {
-        list.add(new Option(Text.of(text), () -> Utility.sendCommand(command)));
+        list.add(new Option(Text.of(text), () -> PlayerUtil.sendCommand(command)));
         return list;
     }
 

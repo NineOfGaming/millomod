@@ -4,6 +4,7 @@ import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.Callback;
 import net.millo.millomod.mod.features.impl.util.Tracker;
 import net.millo.millomod.mod.util.LocationItem;
+import net.millo.millomod.system.PlayerUtil;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -14,9 +15,10 @@ import net.minecraft.util.math.Vec3d;
 
 public class Teleport {
 
-    private Callback callback;
+    private final Callback callback;
     private boolean active = false;
     public Vec3d target;
+    public String methodTarget;
     private ItemStack locationItem;
     private int buffer, lastTickPackets = 1, thisTickPackets, attempts;
     private boolean doNotSuppress = false;
@@ -26,6 +28,15 @@ public class Teleport {
     public Teleport(Vec3d target, Callback callback) {
         this.callback = callback;
         this.target = target;
+        this.methodTarget = null;
+
+        go();
+    }
+
+    public Teleport(String methodname, Callback callback) {
+        this.callback = callback;
+        this.target = null;
+        this.methodTarget = methodname;
 
         go();
     }
@@ -91,18 +102,23 @@ public class Teleport {
 
         ClientPlayerEntity player = MilloMod.MC.player;
         if (!player.isCreative()) return;
-        ClientPlayNetworkHandler net = MilloMod.MC.getNetworkHandler();
-        if (net == null) return;
+
+        if (target != null) {
+            PlayerUtil.sendCommand("p tp " + target.x + " " + target.y + " " + target.z);
+        } else {
+            PlayerUtil.sendCommand("ctp " + methodTarget);
+        }
 
         active = true;
 
-        if (Tracker.getPlot().isInArea(target)) {
-            locationItem = new LocationItem(Tracker.getPlot().getPos().relativize(target))
-                    .setRotation(player.getPitch(), player.getYaw())
-                    .toStack();
 
-            useLocationItem(player, net);
-        }
+//        if (Tracker.getPlot().isInArea(target)) {
+//            locationItem = new LocationItem(Tracker.getPlot().getPos().relativize(target))
+//                    .setRotation(player.getPitch(), player.getYaw())
+//                    .toStack();
+//
+//            useLocationItem(player, net);
+//        }
 
     }
 

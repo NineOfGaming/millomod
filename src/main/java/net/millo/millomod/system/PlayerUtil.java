@@ -14,7 +14,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-public class Utility {
+public class PlayerUtil {
 
     public static void sendCommand(String command) {
         if (MilloMod.MC.getNetworkHandler() == null) return;
@@ -50,7 +50,8 @@ public class Utility {
         MinecraftClient mc = MilloMod.MC;
         DefaultedList<ItemStack> inv = mc.player.getInventory().main;
 
-        if (MilloMod.MC.interactionManager == null) return;
+        if (!mc.player.isCreative()) return;
+        if (mc.interactionManager == null) return;
 
         for (int index = 0; index < inv.size(); index++) {
             ItemStack i = inv.get(index);
@@ -71,15 +72,15 @@ public class Utility {
             }
         }
 
-        int slot = MilloMod.MC.player.getInventory().getEmptySlot();
+        int slot = mc.player.getInventory().getEmptySlot();
 
         if (slot == -1) {
-            MilloMod.MC.player.sendMessage(Text.literal("No inventory room!").setStyle(GUIStyles.SCARY.getStyle()));
+            mc.player.sendMessage(Text.literal("No inventory room!").setStyle(GUIStyles.SCARY.getStyle()));
             return;
         }
 
-        MilloMod.MC.player.getInventory().setStack(slot, item);
-        MilloMod.MC.interactionManager.clickCreativeStack(item, slot);
+        mc.player.getInventory().setStack(slot, item);
+        mc.interactionManager.clickCreativeStack(item, slot);
     }
 
     public static void setItem(int slot, ItemStack item) {

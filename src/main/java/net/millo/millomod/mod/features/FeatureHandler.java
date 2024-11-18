@@ -4,6 +4,7 @@ import net.millo.millomod.mod.features.impl.coding.*;
 import net.millo.millomod.mod.features.impl.coding.argumentinsert.ArgumentInsert;
 import net.millo.millomod.mod.features.impl.global.*;
 import net.millo.millomod.mod.features.impl.global.sidechat.SideChatFeature;
+import net.millo.millomod.mod.features.impl.global.websocket.SocketServe;
 import net.millo.millomod.mod.features.impl.switcher.ModeSwitcher;
 import net.millo.millomod.mod.features.impl.util.NotificationTray;
 import net.millo.millomod.mod.features.impl.util.Tracker;
@@ -47,7 +48,8 @@ public class FeatureHandler {
                 new ArgumentInsert(),
                 new NoClientClick(), //@
                 new SideChatFeature(), //@
-                new CodeHider()
+                new CodeHider(), // @
+                new SocketServe() // +
         );
 
         Config config = Config.getInstance();

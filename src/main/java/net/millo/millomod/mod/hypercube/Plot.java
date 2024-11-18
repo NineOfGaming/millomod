@@ -69,6 +69,18 @@ public class Plot {
         return inX && inZ;
     }
 
+    public boolean isInDevMega(Vec3d pos) {
+        if (spawn) return false;
+
+        double x = pos.getX();
+        double z = pos.getZ();
+
+        boolean inX = x <= originX && x >= originX - 300;
+        boolean inZ = z >= originZ && z <= originZ + 301;
+
+        return inX && inZ;
+    }
+
     public Vec3d getPos() {
         return new Vec3d(originX, 0, originZ);
     }

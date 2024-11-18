@@ -19,4 +19,12 @@ public class SearchResult {
     public int getSegment() {
         return segment;
     }
+
+    @Override
+    public String toString() {
+        return "SearchResult{" +
+                "line=" + line +
+                ", segment=" + segment +
+                '}';
+    }
 }

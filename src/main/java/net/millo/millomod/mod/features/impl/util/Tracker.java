@@ -82,7 +82,7 @@ public class Tracker extends Feature {
         if (requestPlotId) {
             if (requestPlotIdDelay > 0) requestPlotIdDelay--;
             else if (MilloMod.MC.getNetworkHandler() != null) {
-                requestPlotIdDelay = 20;
+                requestPlotIdDelay = 100;
                 MilloMod.MC.getNetworkHandler().sendCommand("locate");
             }
         }

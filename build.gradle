@@ -35,6 +35,9 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	implementation "net.kyori:adventure-api:4.17.0"
 
+	// Websocket
+	implementation "org.java-websocket:Java-WebSocket:1.5.3"
+
 //	compileOnly "maven.modrinth:sodium:mc1.20.4-0.5.8"
 
 	// Uncomment the following line to enable the deprecated Fabric API modules. 

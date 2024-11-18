@@ -6,7 +6,7 @@ import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
 import net.millo.millomod.system.Config;
-import net.millo.millomod.system.Utility;
+import net.millo.millomod.system.PlayerUtil;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
@@ -16,12 +16,9 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtHelper;
-import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.RaycastContext;
 
 public class NotSwitcher extends Feature implements Keybound {
@@ -83,9 +80,9 @@ public class NotSwitcher extends Feature implements Keybound {
 
             ItemStack item = player.getMainHandStack();
 
-            Utility.sendHandItem(notArrowItem);
-            Utility.rightClickPos(blockPos);
-            Utility.sendHandItem(item);
+            PlayerUtil.sendHandItem(notArrowItem);
+            PlayerUtil.rightClickPos(blockPos);
+            PlayerUtil.sendHandItem(item);
         }
 
     }

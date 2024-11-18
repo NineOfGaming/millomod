@@ -2,9 +2,8 @@ package net.millo.millomod.mod.features.impl.coding.cache;
 
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.millo.millomod.mod.util.GlobalUtil;
 import net.millo.millomod.mod.util.gui.GUIStyles;
-import net.millo.millomod.system.Utility;
+import net.millo.millomod.system.PlayerUtil;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -16,7 +15,6 @@ import net.minecraft.text.Text;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -58,12 +56,12 @@ public class ArgumentItem {
 
         switch (id) {
             case "txt" -> line.addComponent(Text.literal("\"" + name + "\"").setStyle(GUIStyles.TEXT.getStyle()),
-                    button -> Utility.sendCommand("str " + name), "str");
+                    button -> PlayerUtil.sendCommand("str " + name), "str");
             case "num" -> line.addComponent(Text.literal(name).setStyle(GUIStyles.NUMBER.getStyle()),
-                    button -> Utility.sendCommand("num " + name), "num");
+                    button -> PlayerUtil.sendCommand("num " + name), "num");
             case "var" -> line.addComponent(Text.literal(name).setStyle(GUIStyles.VARIABLE.getStyle()),
                     Tooltip.of(Text.literal(scope.toUpperCase()).setStyle(GUIStyles.valueOf(scope.toUpperCase()).getStyle())),
-                    button -> Utility.sendCommand("var " + name + " " + getScoreCLI(scope)), "var");
+                    button -> PlayerUtil.sendCommand("var " + name + " " + getScoreCLI(scope)), "var");
             case "bl_tag" -> line.addComponent(Text.literal(option).setStyle(GUIStyles.BLOCK_TAG.getStyle()),
                                 Tooltip.of(Text.literal(tag).setStyle(GUIStyles.COMMENT.getStyle())));
             case "g_val" -> line.addComponent(Text.literal(type + (Objects.equals(target, "Default") ? "" : (" [" + target.charAt(0) + "]"))).setStyle(GUIStyles.GAME_VALUE.getStyle()),
@@ -209,7 +207,7 @@ public class ArgumentItem {
                             data.get("y").getAsDouble(),
                             data.get("z").getAsDouble()))
                     .setStyle(GUIStyles.VECTOR.getStyle()),
-                    button -> Utility.sendCommand("vec get " + String.format("%f %f %f",
+                    button -> PlayerUtil.sendCommand("vec get " + String.format("%f %f %f",
                             data.get("x").getAsDouble(),
                             data.get("y").getAsDouble(),
                             data.get("z").getAsDouble())));

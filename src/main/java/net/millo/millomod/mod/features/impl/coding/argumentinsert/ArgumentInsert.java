@@ -4,7 +4,7 @@ import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.OnSendPacket;
 import net.millo.millomod.mod.features.impl.util.Tracker;
-import net.millo.millomod.system.Utility;
+import net.millo.millomod.system.PlayerUtil;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -62,7 +62,7 @@ public class ArgumentInsert extends Feature {
         if (net == null || MilloMod.MC.player == null || MilloMod.MC.interactionManager == null) return;
 
         ItemStack oldOffhandItem = MilloMod.MC.player.getInventory().getStack(45);
-        Utility.sendOffhandItem(selectedOption.getItem(value));
+        PlayerUtil.sendOffhandItem(selectedOption.getItem(value));
 
         MilloMod.MC.interactionManager.clickSlot(
                 MilloMod.MC.player.currentScreenHandler.syncId,
@@ -72,7 +72,7 @@ public class ArgumentInsert extends Feature {
                 MilloMod.MC.player
         );
 
-        Utility.sendOffhandItem(oldOffhandItem);
+        PlayerUtil.sendOffhandItem(oldOffhandItem);
     }
 
     @OnSendPacket

@@ -10,8 +10,6 @@ public interface IRenderable {
     // Something
     default void render(RenderInfo info) {}
 
-
-
     default void setHudConfig(Config config) {
         config.setIfNull("hud."+getKey()+".x", getX());
         config.setIfNull("hud."+getKey()+".y", getX());
@@ -21,7 +19,6 @@ public interface IRenderable {
         setX(config.get("hud."+getKey()+".x"));
         setY(config.get("hud."+getKey()+".y"));
     }
-
 
     void setX(int x);
     void setY(int y);

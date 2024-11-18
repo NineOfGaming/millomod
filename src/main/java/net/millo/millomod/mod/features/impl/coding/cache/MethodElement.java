@@ -6,7 +6,7 @@ import net.millo.millomod.mod.hypercube.template.Template;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.mod.util.gui.elements.ContextElement;
 import net.millo.millomod.system.FileManager;
-import net.millo.millomod.system.Utility;
+import net.millo.millomod.system.PlayerUtil;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
@@ -69,7 +69,7 @@ public class MethodElement extends HierarchyElement {
                                 if (template == null) return;
                                 if (MilloMod.MC.player == null) return;
 
-                                Utility.giveItem(template.getItem());
+                                PlayerUtil.giveItem(template.getItem());
                             })
                             .add(Text.literal("Delete").setStyle(GUIStyles.SCARY.getStyle()), (b) -> {
                                 SoundHandler.playClick();

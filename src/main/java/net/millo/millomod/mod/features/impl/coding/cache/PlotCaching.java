@@ -13,17 +13,17 @@ import net.millo.millomod.mod.features.impl.util.NotificationTray;
 import net.millo.millomod.mod.hypercube.template.Template;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.system.FileManager;
-import net.millo.millomod.system.Utility;
+import net.millo.millomod.system.PlayerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
@@ -36,8 +36,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Stack;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class PlotCaching extends Feature implements Keybound {
@@ -61,7 +60,7 @@ public class PlotCaching extends Feature implements Keybound {
              if (content.equals("Error: Unable to create code template! Exceeded the code data size limit.")) {
                 cacheNextItem = 0;
                 if (doingFullScan) {
-                    scanPlotStep = ScanPlotStep.TELEPORT;
+                    scanPlotStep_OLD = ScanPlotStep.TELEPORT;
                     return true;
                 }
             }
@@ -99,7 +98,7 @@ public class PlotCaching extends Feature implements Keybound {
         if (cacheGUI != null) cacheGUI.loadTemplate(cachedTemplate);
 
         if (doingFullScan) {
-            scanPlotStep = ScanPlotStep.TELEPORT;
+            scanPlotStep_OLD = ScanPlotStep.TELEPORT;
         }
 
         return true;
@@ -134,7 +133,7 @@ public class PlotCaching extends Feature implements Keybound {
                 if (doingFullScan) {
                     cacheTries ++;
                     if (cacheTries > 3) {
-                        scanPlotStep = ScanPlotStep.TELEPORT;
+                        scanPlotStep_OLD = ScanPlotStep.TELEPORT;
                         NotificationTray.pushNotification(Text.of("Failed to cache"),
                                 Text.literal(clickedLoc.toString()).setStyle(GUIStyles.SCARY.getStyle()));
                     } else cacheMethodFromPosition(BlockPos.ofFloored(clickedLoc));
@@ -142,8 +141,12 @@ public class PlotCaching extends Feature implements Keybound {
             }
         }
 
-        if (doingFullScan) {
+        if (fullScan) {
             scanTick();
+        }
+
+        if (doingFullScan) {
+            scanTickOld();
         }
     }
 
@@ -203,24 +206,25 @@ public class PlotCaching extends Feature implements Keybound {
 //        player.getInventory().setStack(player.getInventory().selectedSlot, item);
 
         player.getInventory().setStack(player.getInventory().selectedSlot, ItemStack.EMPTY);
-        Utility.sendHandItem(ItemStack.EMPTY);
-        if (!sneaking) Utility.sendSneak(true);
-        Utility.rightClickPos(position);
-        if (!sneaking) Utility.sendSneak(false);
-        Utility.sendHandItem(item);
+        PlayerUtil.sendHandItem(ItemStack.EMPTY);
+        if (!sneaking) PlayerUtil.sendSneak(true);
+        PlayerUtil.rightClickPos(position);
+        if (!sneaking) PlayerUtil.sendSneak(false);
+        PlayerUtil.sendHandItem(item);
         player.getInventory().setStack(player.getInventory().selectedSlot, item);
     }
 
 
 
 
-    private Stack<BlockPos> scanStack;
+    private Stack<BlockPos> scanStack_OLD;
     private BlockPos scanStepTarget;
     private boolean doingFullScan = false;
-    private ScanPlotStep scanPlotStep = ScanPlotStep.NONE;
-    private int scanPlotTicksTried = 0;
+    private ScanPlotStep scanPlotStep_OLD = ScanPlotStep.NONE;
+    private int scanPlotTicksTried_OLD = 0;
 
-    public boolean scanPlot() {
+
+    public boolean scanPlotOld() {
         if (doingFullScan) {
             doingFullScan = false;
             return false;
@@ -229,45 +233,159 @@ public class PlotCaching extends Feature implements Keybound {
 
         ArrayList<BlockPos> signs = Tracker.getPlot().scanForMethods();
 
-        scanStack = new Stack<>();
-        scanStack.addAll(signs);
+        scanStack_OLD = new Stack<>();
+        scanStack_OLD.addAll(signs);
 
-        scanPlotStep = ScanPlotStep.TELEPORT;
+        scanPlotStep_OLD = ScanPlotStep.TELEPORT;
         return true;
     }
 
 
+    private HashMap<String, Template> methodStack;
+    private Iterator<Map.Entry<String, Template>> methodStackIterator;
+    private Map.Entry<String, Template> methodStackEntry;
+    private boolean fullScan = false;
+    private ScanPlotStep scanStep;
+    private int waitForShulkers = 0;
+    public boolean scanPlot() {
+        if (fullScan) {
+            scanStep = ScanPlotStep.NONE;
+            fullScan = false;
+            return false;
+        }
+        fullScan = true;
+
+        waitForShulkers = 0;
+        scanStep = ScanPlotStep.CACHE;
+        methodStack = new HashMap<>();
+        PlayerUtil.sendCommand("p totemplate");
+
+        return true;
+    }
+
+    @HandlePacket
+    public boolean slotUpdateScanPlot(ScreenHandlerSlotUpdateS2CPacket slot) {
+        if (!fullScan) return false;
+        if (scanStep != ScanPlotStep.CACHE) return false;
+
+        NbtCompound nbt = slot.getStack().getNbt();
+        if (nbt == null) return false;
+
+        NbtCompound blockEntityTag = nbt.getCompound("BlockEntityTag");
+        if (blockEntityTag == null || !blockEntityTag.contains("Items", NbtElement.LIST_TYPE))
+            return false;
+
+        NbtList items = blockEntityTag.getList("Items", NbtElement.COMPOUND_TYPE);
+        if (items == null) return false;
+
+        for (NbtElement itemNbt : items) {
+            NbtCompound item = (NbtCompound) itemNbt;
+            if (item == null || !item.contains("tag", NbtElement.COMPOUND_TYPE)) continue;
+
+            NbtCompound tag = item.getCompound("tag");
+            if (tag == null || !tag.contains("PublicBukkitValues", NbtElement.COMPOUND_TYPE)) continue;
+
+            NbtCompound bukkitValues = tag.getCompound("PublicBukkitValues");
+            if (bukkitValues == null || !bukkitValues.contains("hypercube:codetemplatedata", NbtElement.STRING_TYPE))
+                continue;
+
+            String codeTemplateData = bukkitValues.getString("hypercube:codetemplatedata");
+
+            Template template = Template.parseItem(codeTemplateData);
+
+            methodStack.put(template.getName(), template);
+        }
+
+        waitForShulkers = 1;
+
+        return false;
+    }
+
     private void scanTick() {
+        if (!fullScan || MilloMod.MC.player == null) return;
+
+        if (scanStep == ScanPlotStep.CACHE && waitForShulkers >= 1) {
+            waitForShulkers++;
+            if (waitForShulkers > 5) {
+                waitForShulkers = 0;
+                NotificationTray.pushNotification(Text.of("Caching"), Text.of(methodStack.size() + " methods"));
+
+                methodStackIterator = methodStack.entrySet().iterator();
+                scanStep = ScanPlotStep.TELEPORT;
+            }
+            return;
+        }
+
+        if (methodStackIterator == null) return;
+
+        if (!methodStackIterator.hasNext() && scanStep == ScanPlotStep.TELEPORT) {
+            fullScan = false;
+            scanStep = ScanPlotStep.NONE;
+            NotificationTray.pushNotification(Text.of("Finished full scan"));
+            return;
+        }
+
+        switch (scanStep) {
+            default -> {}
+            case TELEPORT -> {
+                scanStep = ScanPlotStep.WAIT_FOR_TP;
+                methodStackEntry = methodStackIterator.next();
+                String methodName = methodStackEntry.getKey();
+                String methodType = methodStackEntry.getValue().getMethodName().charAt(0) + "";
+
+                TeleportHandler.teleportToMethod(methodType + " " + methodName, () -> {
+                    scanStep = ScanPlotStep.WAIT_FOR_CACHE;
+                });
+
+            }
+            case WAIT_FOR_CACHE -> {
+                scanStep = ScanPlotStep.TELEPORT;
+                cacheTries = 0;
+
+                Template template = methodStackEntry.getValue();
+                template.startPos = TeleportHandler.getLastTeleportPosition().add(0, -1.5, 0);
+
+                NotificationTray.pushNotification(Text.of("Caching"), Text.of(template.getName()));
+
+                FileManager.writeTemplate(template);
+            }
+        }
+
+    }
+
+
+
+
+    private void scanTickOld() {
         if (!doingFullScan || MilloMod.MC.player == null) return;
 
-        if (scanStack.isEmpty() && scanPlotStep == ScanPlotStep.TELEPORT) {
+        if (scanStack_OLD.isEmpty() && scanPlotStep_OLD == ScanPlotStep.TELEPORT) {
             doingFullScan = false;
             MilloMod.MC.player.sendMessage(Text.of("Finished full scan"));
             return;
         }
-        scanPlotTicksTried ++;
-        if (scanPlotTicksTried > 10) {
-            TeleportHandler.abort();
-            scanPlotStep = ScanPlotStep.CACHE;
+        scanPlotTicksTried_OLD++;
+        if (scanPlotTicksTried_OLD > 10) {
+            scanPlotStep_OLD = ScanPlotStep.CACHE;
             if (MilloMod.MC.player.getPos().distanceTo(scanStepTarget.toCenterPos()) > 4) {
-                scanStack.add(scanStepTarget);
-                scanPlotStep = ScanPlotStep.TELEPORT;
+                scanStack_OLD.add(scanStepTarget);
+                scanPlotStep_OLD = ScanPlotStep.TELEPORT;
             }
         }
 
-        switch (scanPlotStep) {
+        switch (scanPlotStep_OLD) {
             default -> {}
             case TELEPORT -> {
-                scanPlotTicksTried = 0;
-                scanStepTarget = scanStack.pop();
-                scanPlotStep = ScanPlotStep.WAIT_FOR_TP;
+                scanPlotTicksTried_OLD = 0;
+                scanStepTarget = scanStack_OLD.pop();
+                scanPlotStep_OLD = ScanPlotStep.WAIT_FOR_TP;
                 TeleportHandler.teleportTo(scanStepTarget.toCenterPos().add(0, 1.5, 0), () -> {
-                    scanPlotStep = ScanPlotStep.CACHE;
+                    scanPlotStep_OLD = ScanPlotStep.CACHE;
                 });
             }
             case CACHE -> {
-                scanPlotTicksTried = 0;
-                scanPlotStep = ScanPlotStep.WAIT_FOR_CACHE;
+                scanPlotTicksTried_OLD = 0;
+                scanPlotStep_OLD = ScanPlotStep.WAIT_FOR_CACHE;
                 cacheTries = 0;
                 cacheMethodFromPosition(scanStepTarget);
             }
