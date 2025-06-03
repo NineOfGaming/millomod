@@ -31,6 +31,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add version.json patch.json
+          git add version/version.json version/patch.json
           git commit -m "Update version and patch info for ${{ github.sha }}" || echo "No Changes"
           git push
