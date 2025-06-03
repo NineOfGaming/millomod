@@ -1,4 +1,6 @@
 name: Build and Publish
+permissions:
+  contents: write
 
 on:
   push:
@@ -11,6 +13,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # fetch all history for branch creation
 
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -31,6 +35,23 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Checkout or create the update branch
+          if git show-ref --verify --quiet refs/heads/auto/update-version; then
+            git checkout auto/update-version
+          else
+            git checkout -b auto/update-version
+          fi
+
+          # Stage files
           git add version/version.json version/patch.json
-          git commit -m "Update version and patch info for ${{ github.sha }}" || echo "No Changes"
-          git push
+
+          # Commit if there are changes
+          if ! git diff --cached --quiet; then
+            git commit -m "Update version and patch info for ${{ github.sha }}"
+            git push -u origin auto/update-version
+          else
+            echo "No changes to commit"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
