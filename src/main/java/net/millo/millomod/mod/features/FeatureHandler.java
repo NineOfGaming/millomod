@@ -31,25 +31,30 @@ public class FeatureHandler {
         // (@) configurable, (-) always off, (+) always on, (?) other/keybinding
         features.clear();
         register(
-                new LagslayerHUD(), //@
-                new PreviewSkin(), //-
-                new MenuSearch(), //@
-                new AutoCommand(), //@
-                new NotificationTray(), //@
-                new Search(), //-
+                new LagslayerHUD(), // @
+                new PreviewSkin(), // -
+                new MenuSearch(), // @
+                new AutoCommand(), // @
+                new NotificationTray(), // @
+                new Search(), // -
                 new PlotCaching(), // ?
-                new Tracker(), //+
-                new TeleportHandler(), //+
+                new Tracker(), // +
+                new TeleportHandler(), // +
                 new ShowTags(), // ?
                 new FSToggle(), // ?
                 new ModeSwitcher(), // ?
-                new NotSwitcher(),
+                new NotSwitcher(), // ?
                 new CodeClientPlotFix(),
-                new ArgumentInsert(),
-                new NoClientClick(), //@
-                new SideChatFeature(), //@
-                new CodeHider(), // @
-                new SocketServe() // +
+                new ArgumentInsert(), // @
+                new NoClientClick(), // @
+                new SideChatFeature(), // @
+//                new CodeHider(), // @
+                new SocketServe(), // +
+                new PickChestValue(), // ?
+                new SpectatorToggle(), // ?  -Cannot exit rn
+                new SoundPreview(), // @
+                new ActionDumpReader(), // +
+                new AngelsGrace() // @
         );
 
         Config config = Config.getInstance();

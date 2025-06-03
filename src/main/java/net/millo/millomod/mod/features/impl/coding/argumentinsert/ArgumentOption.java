@@ -1,6 +1,11 @@
 package net.millo.millomod.mod.features.impl.coding.argumentinsert;
 
+import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.LoreComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -13,6 +18,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
+import java.util.List;
 
 public abstract class ArgumentOption {
     protected final String id;
@@ -31,10 +37,13 @@ public abstract class ArgumentOption {
         NbtCompound pbv = new NbtCompound();
         pbv.putString("hypercube:varitem", getVarItemString(item, value));
 
-        NbtCompound nbt = item.getNbt();
-        nbt.putInt("CustomModelData", 5000);
-        nbt.put("PublicBukkitValues", pbv);
-        item.setNbt(nbt);
+        NbtCompound custom_nbt = new NbtCompound();
+        custom_nbt.putInt("CustomModelData", 5000);
+        custom_nbt.put("PublicBukkitValues", pbv);
+
+        NbtComponent custom_data = NbtComponent.of(custom_nbt);
+
+        item.set(DataComponentTypes.CUSTOM_DATA, custom_data);
 
         return item;
     }
@@ -94,7 +103,8 @@ public abstract class ArgumentOption {
 
         @Override
         protected String getVarItemString(ItemStack item, String value) {
-            item.setCustomName(Text.literal(value).setStyle(Style.EMPTY.withColor(0xff5555).withItalic(false)));
+            if (value.equalsIgnoreCase("z")) value = "0"; // Quick hand for 0. as I can only reach up to 9 without moving my hand. (I know, I am lazy)
+            item.set(DataComponentTypes.CUSTOM_NAME, Text.literal(value).setStyle(Style.EMPTY.withColor(0xff5555).withItalic(false)));
             return "{\"id\":\"num\",\"data\":{\"name\":\"" + value + "\"}}";
         }
     }
@@ -105,7 +115,7 @@ public abstract class ArgumentOption {
 
         @Override
         protected String getVarItemString(ItemStack item, String value) {
-            item.setCustomName(Text.literal(value).setStyle(Style.EMPTY.withItalic(false)));
+            item.set(DataComponentTypes.CUSTOM_NAME, Text.literal(value).setStyle(Style.EMPTY.withItalic(false)));
             return "{\"id\":\"txt\",\"data\":{\"name\":\"" + value + "\"}}";
         }
     }
@@ -116,7 +126,7 @@ public abstract class ArgumentOption {
 
         @Override
         protected String getVarItemString(ItemStack item, String value) {
-            item.setCustomName(Text.literal(value).setStyle(Style.EMPTY.withColor(Formatting.AQUA).withItalic(false)));
+            item.set(DataComponentTypes.CUSTOM_NAME, Text.literal(value).setStyle(Style.EMPTY.withColor(Formatting.AQUA).withItalic(false)));
             return "{\"id\":\"comp\",\"data\":{\"name\":\"" + value + "\"}}";
         }
     }
@@ -128,14 +138,19 @@ public abstract class ArgumentOption {
 
 
         private enum Scope {
-            LINE("line", "-i", "{\"italic\":false,\"color\":\"#55AAFF\",\"text\":\"LINE\"}"),
-            LOCAL("local", "-l", "{\"italic\":false,\"color\":\"#55FF55\",\"text\":\"LOCAL\"}"),
-            SAVED("saved", "-s", "{\"italic\":false,\"color\":\"#FFFF55\",\"text\":\"SAVE\"}"),
-            UNSAVED("unsaved", "\n", "{\"italic\":false,\"color\":\"#AAAAAA\",\"text\":\"GAME\"}");
+            LINE("line", "-i", Text.literal("LINE").setStyle(GUIStyles.LINE.getStyle().withItalic(false))),
+            LOCAL("local", "-l", Text.literal("LOCAL").setStyle(GUIStyles.LOCAL.getStyle().withItalic(false))),
+            SAVED("saved", "-s", Text.literal("SAVE").setStyle(GUIStyles.SAVED.getStyle().withItalic(false))),
+            UNSAVED("unsaved", "\n", Text.literal("GAME").setStyle(GUIStyles.UNSAVED.getStyle().withItalic(false)));
+//            LINE("line", "-i", "{\"italic\":false,\"color\":\"#55AAFF\",\"text\":\"LINE\"}"),
+//            LOCAL("local", "-l", "{\"italic\":false,\"color\":\"#55FF55\",\"text\":\"LOCAL\"}"),
+//            SAVED("saved", "-s", "{\"italic\":false,\"color\":\"#FFFF55\",\"text\":\"SAVE\"}"),
+//            UNSAVED("unsaved", "\n", "{\"italic\":false,\"color\":\"#AAAAAA\",\"text\":\"GAME\"}");
 
-            private final String scope, key, lore;
+            private final String scope, key;
+            private final Text lore;
 
-            Scope(String scope, String key, String lore) {
+            Scope(String scope, String key, Text lore) {
                 this.scope = scope;
                 this.key = key;
                 this.lore = lore;
@@ -153,13 +168,10 @@ public abstract class ArgumentOption {
                 }
             }
 
-            item.setCustomName(Text.literal(value).setStyle(Style.EMPTY.withItalic(false)));
-            NbtCompound dispNbt = item.getNbt().getCompound("display");
-            NbtList loreList = new NbtList();
-            loreList.add(NbtString.of(scope.lore));
-            dispNbt.put("Lore", loreList);
-            item.getNbt().put("display", dispNbt);
+            LoreComponent lore = new LoreComponent(List.of(scope.lore));
 
+            item.set(DataComponentTypes.CUSTOM_NAME, Text.literal(value).setStyle(Style.EMPTY.withColor(Formatting.WHITE).withItalic(false)));
+            item.set(DataComponentTypes.LORE, lore);
 
             return "{\"id\":\"var\",\"data\":{\"name\":\"" + value + "\",\"scope\":\"" + scope.scope + "\"}}";
         }

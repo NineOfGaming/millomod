@@ -1,7 +1,10 @@
 package net.millo.millomod.mod.features.impl.coding.cache;
 
+import net.millo.millomod.SoundHandler;
 import net.millo.millomod.mod.util.gui.ElementFadeIn;
+import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.millo.millomod.mod.util.gui.elements.ButtonElement;
+import net.millo.millomod.mod.util.gui.elements.ContextElement;
 import net.millo.millomod.mod.util.gui.elements.ScrollableElement;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -36,8 +39,29 @@ public class MethodFolder extends HierarchyElement {
 
     @Override
     public void onPress(double mouseX, double mouseY, int button) {
-        opened = !opened;
+        if (button == 0) opened = !opened;
+        if (button == 1) {
+            CacheGUI.lastOpenedGUI.openContext(mouseX, mouseY,
+                    new ContextElement(100, textRenderer)
+                            .add(Text.literal("Delete").setStyle(GUIStyles.SCARY.getStyle()), (b) -> {
+                                SoundHandler.playClick();
+                                delete();
+                                CacheGUI.lastOpenedGUI.reload();
+                                CacheGUI.lastOpenedGUI.closeContext();
+                            })
+            );
+        }
 //        if (button == 0) super.onPress(mouseX, mouseY, button);
+    }
+
+    @Override
+    public void delete() {
+        // delete all subfolders and methods
+        for (ButtonElement method : methods) {
+            if (method instanceof HierarchyElement element) {
+                element.delete();
+            }
+        }
     }
 
     float arrowAngle = 0f;
@@ -63,7 +87,6 @@ public class MethodFolder extends HierarchyElement {
         arrowAngle = MathHelper.clampedLerp(arrowAngle, isOpen() ? 1.5707f : 0f, delta);
 
         Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
-        VertexConsumer vertexConsumer = context.getVertexConsumers().getBuffer(RenderLayer.getGui());
 
         float x1 = MathHelper.cos(arrowAngle) * w;
         float y1 = MathHelper.sin(arrowAngle) * w;
@@ -74,10 +97,15 @@ public class MethodFolder extends HierarchyElement {
         float x3 = MathHelper.cos(arrowAngle + 4.188f) * w;
         float y3 = MathHelper.sin(arrowAngle + 4.188f) * w;
 
-        vertexConsumer.vertex(matrix4f, x + xOffset + x3 + 4, y + y3 + height / 2f, 0).color(0xFFFFFFFF).next();
-        vertexConsumer.vertex(matrix4f, x + xOffset + x2 + 4, y + y2 + height / 2f, 0).color(0xFFFFFFFF).next();
-        vertexConsumer.vertex(matrix4f, x + xOffset + x2 + 4, y + y2 + height / 2f, 0).color(0xFFFFFFFF).next();
-        vertexConsumer.vertex(matrix4f, x + xOffset + x1 + 4, y + y1 + height / 2f, 0).color(0xFFFFFFFF).next();
+        context.draw((provider) -> {
+            VertexConsumer consumer = provider.getBuffer(RenderLayer.getGui());
+
+            consumer.vertex(matrix4f, x + xOffset + x3 + 4, y + y3 + height / 2f, 0).color(0xFFFFFFFF);
+            consumer.vertex(matrix4f, x + xOffset + x2 + 4, y + y2 + height / 2f, 0).color(0xFFFFFFFF);
+            consumer.vertex(matrix4f, x + xOffset + x2 + 4, y + y2 + height / 2f, 0).color(0xFFFFFFFF);
+            consumer.vertex(matrix4f, x + xOffset + x1 + 4, y + y1 + height / 2f, 0).color(0xFFFFFFFF);
+        });
+
 
         context.draw();
 

@@ -6,15 +6,20 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
 import net.millo.millomod.MilloMod;
+import net.millo.millomod.mod.features.impl.util.NotificationTray;
+import net.millo.millomod.mod.features.impl.util.Tracker;
 import net.millo.millomod.mod.hypercube.template.Template;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class FileManager {
@@ -26,8 +31,14 @@ public class FileManager {
 
     // Cached Plots DNS
 
-    public static File getDNSFile() {
+    public static Path getModFolder() {
         Path path = MilloMod.MC.runDirectory.toPath().resolve(MilloMod.MOD_ID);
+        path.toFile().mkdirs();
+        return path;
+    }
+
+    public static File getDNSFile() {
+        Path path = getModFolder();
         File file = path.resolve("plots.dns").toFile();
         file.mkdirs();
         return file;
@@ -89,7 +100,7 @@ public class FileManager {
     // Cached Templates
 
     public static Path getTemplatePath() {
-        Path path = MilloMod.MC.runDirectory.toPath().resolve(MilloMod.MOD_ID).resolve("cache");
+        Path path = getModFolder().resolve("cache");
         path.toFile().mkdirs();
         return path;
     }
@@ -107,11 +118,13 @@ public class FileManager {
     // fix writing first
     public static void writeTemplate(Template template) {
         JsonObject inf = new JsonObject();
-        var pos = new JsonArray();
-        pos.add(template.startPos.x);
-        pos.add(template.startPos.y);
-        pos.add(template.startPos.z);
-        inf.add("pos", pos);
+        if (template.startPos != null) {
+            var pos = new JsonArray();
+            pos.add(template.startPos.x);
+            pos.add(template.startPos.y);
+            pos.add(template.startPos.z);
+            inf.add("pos", pos);
+        }
         inf.addProperty("code", template.b64Code);
 
         try {
@@ -138,6 +151,145 @@ public class FileManager {
         return Files.exists(getTemplatePath().resolve(plotId));
     }
 
+    public static ArrayList<Integer> cachedPlots = new ArrayList<>();
+    public static ArrayList<Integer> getCachedPlots() {
+        cachedPlots = Arrays.stream(Objects.requireNonNull(getTemplatePath().toFile().listFiles()))
+                .map(File::getName)
+                .map(Integer::parseInt)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        return cachedPlots;
+    }
+
+    public static ArrayList<Integer> getPlotsCached() {
+        if (cachedPlots.isEmpty()) return getCachedPlots();
+        return cachedPlots;
+    }
+
+    public static void clearDiff() {
+        try {
+            File file = getModFolder().resolve("diffs").toFile();
+            if (!file.exists()) return;
+            Arrays.stream(Objects.requireNonNull(file.listFiles())).forEach(f -> {
+                try {
+                    Files.deleteIfExists(f.toPath());
+                } catch (IOException e) {
+                    System.out.println("Couldn't delete diff: " + e);
+                }
+            });
+        } catch (Exception e) {
+            System.out.println("Couldn't delete diffs: " + e);
+        }
+    }
+    public static void writeDiff(String method, String data) {
+        try {
+            File file = getModFolder().resolve("diffs").toFile();
+            if (!file.exists()) file.mkdirs();
+            file = file.toPath().resolve(method + ".diff").toFile();
+            Files.deleteIfExists(file.toPath());
+            Files.createFile(file.toPath());
+            Files.write(file.toPath(), data.getBytes(), StandardOpenOption.WRITE);
+        } catch (IOException e) {
+            System.out.println("Couldn't save diff: " + e);
+        }
+    }
+
+    public static void writeJson(String name, JsonObject json) {
+        try {
+            File file = getModFolder().resolve(name).toFile();
+            Files.deleteIfExists(file.toPath());
+            Files.createFile(file.toPath());
+            Files.write(file.toPath(), json.toString().getBytes(), StandardOpenOption.WRITE);
+        } catch (IOException e) {
+            System.out.println("Couldn't save json: " + e);
+        }
+    }
+
+    public static String readJson(String name) {
+        File file = getModFolder().resolve(name).toFile();
+        if (!file.exists()) return null;
+
+        try {
+            return new String(Files.readAllBytes(file.toPath()));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static void clearExportedPlot(int id) {
+        try {
+            File file = getModFolder().resolve("exports").resolve(String.valueOf(id)).toFile();
+            if (!file.exists()) return;
+            Arrays.stream(Objects.requireNonNull(file.listFiles())).forEach(f -> {
+                try {
+                    Files.deleteIfExists(f.toPath());
+                } catch (IOException e) {
+                    System.out.println("Couldn't delete export: " + e);
+                }
+            });
+        } catch (Exception e) {
+            System.out.println("Couldn't delete exports: " + e);
+        }
+    }
+
+    public static void writeExportedPlot(int id, String method, String data) {
+        try {
+            File file = getModFolder().resolve("exports").resolve(String.valueOf(id)).toFile();
+            if (!file.exists()) file.mkdirs();
+            file = file.toPath().resolve(method).toFile();
+            Files.deleteIfExists(file.toPath());
+            Files.createFile(file.toPath());
+            Files.write(file.toPath(), data.getBytes(), StandardOpenOption.WRITE);
+        } catch (IOException e) {
+            System.out.println("Couldn't save export: " + e);
+        }
+    }
+
+    public static void clearCachedPlot(int id) {
+        try {
+            File file = getTemplatePlotPath(id).toFile();
+            if (!file.exists()) return;
+            Arrays.stream(Objects.requireNonNull(file.listFiles())).forEach(f -> {
+                try {
+                    Files.deleteIfExists(f.toPath());
+                } catch (IOException e) {
+                    System.out.println("Couldn't delete cached plot: " + e);
+                }
+            });
+        } catch (Exception e) {
+            System.out.println("Couldn't delete cached plot: " + e);
+        }
+    }
+
+    public static void openCachedPlotsFolder() {
+        int id = Tracker.getPlot().getPlotId();
+
+        File file;
+        if (id == 0) {
+            file = getTemplatePath().toFile();
+        } else {
+            file = getTemplatePlotPath(id).toFile();
+        }
+        if (!file.exists()) {
+            NotificationTray.pushNotification(Text.literal("Cached plots path does not exist."));
+            return;
+        }
+        if (!file.isDirectory()) {
+            NotificationTray.pushNotification(Text.literal("Cached plots path is not a directory."));
+            return;
+        }
+
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(file);
+            } else {
+                NotificationTray.pushNotification(Text.literal("Desktop is not supported on this system."));
+            }
+        } catch (IOException e) {
+            NotificationTray.pushNotification(Text.literal("Failed to open cached plots folder: " + e.getMessage()));
+        }
+    }
+
 
     static class ReadTemplate {
         public String code;
@@ -149,6 +301,8 @@ public class FileManager {
             ReadTemplate inf = new Gson().fromJson(readData, ReadTemplate.class);
             Template template = Template.parse(inf.code);
             if (template == null) return null;
+            if (inf.pos == null) return template;
+
             template.startPos = new Vec3d(inf.pos.get(0), inf.pos.get(1), inf.pos.get(2));
             return template;
         } catch (IOException e) {

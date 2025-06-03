@@ -1,10 +1,12 @@
 package net.millo.millomod.mod.features.impl.coding.cache;
 
+import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.impl.util.Tracker;
 import net.millo.millomod.mod.features.impl.util.teleport.TeleportHandler;
 import net.millo.millomod.mod.util.GlobalUtil;
+import net.millo.millomod.mod.util.ItemUtil;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
@@ -20,10 +22,15 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ContainerComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
@@ -74,14 +81,8 @@ public class PlotCaching extends Feature implements Keybound {
         if (cacheNextItem == 0) return false;
         cacheNextItem = 0;
 
-        NbtCompound nbt = slot.getStack().getNbt();
-        if (nbt == null) return false;
-
-        NbtCompound bukkitValues = nbt.getCompound("PublicBukkitValues");
-        if (bukkitValues == null || !bukkitValues.contains("hypercube:codetemplatedata", NbtElement.STRING_TYPE))
-            return false;
-
-        String codeTemplateData = bukkitValues.getString("hypercube:codetemplatedata");
+        String codeTemplateData = ItemUtil.getPBVString(slot.getStack(), "hypercube:codetemplatedata");
+        if (codeTemplateData == null) return false;
 
         cachedTemplate = Template.parseItem(codeTemplateData);
         cachedTemplate.startPos = clickedLoc;
@@ -224,14 +225,14 @@ public class PlotCaching extends Feature implements Keybound {
     private int scanPlotTicksTried_OLD = 0;
 
 
-    public boolean scanPlotOld() {
+    public boolean scanPlotOld(String size) {
         if (doingFullScan) {
             doingFullScan = false;
             return false;
         }
         doingFullScan = true;
 
-        ArrayList<BlockPos> signs = Tracker.getPlot().scanForMethods();
+        ArrayList<BlockPos> signs = Tracker.getPlot().scanForMethods(size);
 
         scanStack_OLD = new Stack<>();
         scanStack_OLD.addAll(signs);
@@ -268,30 +269,23 @@ public class PlotCaching extends Feature implements Keybound {
         if (!fullScan) return false;
         if (scanStep != ScanPlotStep.CACHE) return false;
 
-        NbtCompound nbt = slot.getStack().getNbt();
-        if (nbt == null) return false;
+        ComponentMap shulkerComponents = slot.getStack().getComponents();
+        if (shulkerComponents == null) return false;
 
-        NbtCompound blockEntityTag = nbt.getCompound("BlockEntityTag");
-        if (blockEntityTag == null || !blockEntityTag.contains("Items", NbtElement.LIST_TYPE))
-            return false;
+        ContainerComponent containerComponent = shulkerComponents.get(DataComponentTypes.CONTAINER);
+        if (containerComponent == null) return false;
 
-        NbtList items = blockEntityTag.getList("Items", NbtElement.COMPOUND_TYPE);
-        if (items == null) return false;
+        NotificationTray.pushNotification(Text.of("Scanning"), Text.literal("Shulker Box").setStyle(GUIStyles.NAME.getStyle()));
 
-        for (NbtElement itemNbt : items) {
-            NbtCompound item = (NbtCompound) itemNbt;
-            if (item == null || !item.contains("tag", NbtElement.COMPOUND_TYPE)) continue;
-
-            NbtCompound tag = item.getCompound("tag");
-            if (tag == null || !tag.contains("PublicBukkitValues", NbtElement.COMPOUND_TYPE)) continue;
-
-            NbtCompound bukkitValues = tag.getCompound("PublicBukkitValues");
+        for (ItemStack itemStack : containerComponent.iterateNonEmpty()) {
+            var bukkitValues = ItemUtil.getPBV(itemStack);
             if (bukkitValues == null || !bukkitValues.contains("hypercube:codetemplatedata", NbtElement.STRING_TYPE))
                 continue;
 
             String codeTemplateData = bukkitValues.getString("hypercube:codetemplatedata");
 
             Template template = Template.parseItem(codeTemplateData);
+            FileManager.writeTemplate(template);
 
             methodStack.put(template.getName(), template);
         }
@@ -306,12 +300,14 @@ public class PlotCaching extends Feature implements Keybound {
 
         if (scanStep == ScanPlotStep.CACHE && waitForShulkers >= 1) {
             waitForShulkers++;
-            if (waitForShulkers > 5) {
+            if (waitForShulkers > 10) {
                 waitForShulkers = 0;
                 NotificationTray.pushNotification(Text.of("Caching"), Text.of(methodStack.size() + " methods"));
 
                 methodStackIterator = methodStack.entrySet().iterator();
                 scanStep = ScanPlotStep.TELEPORT;
+
+                fullScan = false; // end of scan
             }
             return;
         }
@@ -356,22 +352,32 @@ public class PlotCaching extends Feature implements Keybound {
 
 
 
+    int teleportDelay = 0;
     private void scanTickOld() {
         if (!doingFullScan || MilloMod.MC.player == null) return;
 
         if (scanStack_OLD.isEmpty() && scanPlotStep_OLD == ScanPlotStep.TELEPORT) {
             doingFullScan = false;
-            MilloMod.MC.player.sendMessage(Text.of("Finished full scan"));
+            MilloMod.MC.player.sendMessage(Text.of("Finished full scan"), false);
             return;
         }
         scanPlotTicksTried_OLD++;
-        if (scanPlotTicksTried_OLD > 10) {
+        if (scanPlotTicksTried_OLD > 10 && scanStepTarget != null) {
             scanPlotStep_OLD = ScanPlotStep.CACHE;
             if (MilloMod.MC.player.getPos().distanceTo(scanStepTarget.toCenterPos()) > 4) {
                 scanStack_OLD.add(scanStepTarget);
                 scanPlotStep_OLD = ScanPlotStep.TELEPORT;
             }
         }
+
+
+        if (scanPlotStep_OLD == ScanPlotStep.TELEPORT) {
+            teleportDelay ++;
+            if (teleportDelay < 60) {
+                return;
+            }
+        }
+        teleportDelay = 0;
 
         switch (scanPlotStep_OLD) {
             default -> {}
@@ -380,6 +386,11 @@ public class PlotCaching extends Feature implements Keybound {
                 scanStepTarget = scanStack_OLD.pop();
                 scanPlotStep_OLD = ScanPlotStep.WAIT_FOR_TP;
                 TeleportHandler.teleportTo(scanStepTarget.toCenterPos().add(0, 1.5, 0), () -> {
+                    if (!TeleportHandler.lastSuccess) {
+                        // Out of bounds, skip
+                        scanPlotStep_OLD = ScanPlotStep.TELEPORT;
+                        return;
+                    }
                     scanPlotStep_OLD = ScanPlotStep.CACHE;
                 });
             }
@@ -391,6 +402,10 @@ public class PlotCaching extends Feature implements Keybound {
             }
         }
 
+    }
+
+    public ArrayList<Integer> getCachedPlots() {
+        return FileManager.getCachedPlots();
     }
 
     private enum ScanPlotStep { NONE, TELEPORT, WAIT_FOR_TP, CACHE, WAIT_FOR_CACHE }

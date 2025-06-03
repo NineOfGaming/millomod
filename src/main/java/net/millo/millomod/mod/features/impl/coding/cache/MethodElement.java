@@ -39,7 +39,7 @@ public class MethodElement extends HierarchyElement {
     private final int plotId;
     public MethodElement(int height, int plotId, String filename, PressAction onPress, TextRenderer textRenderer) {
         super(height,
-                Text.of(filename.replaceAll("\\.(event|func|process|entity_event)$", "").replaceAll(".+(?=\\.\\w)", "")),
+                Text.of(Template.reverseFileName(filename).replaceAll("\\.(event|func|process|entity_event)$", "").replaceAll(".+(?=\\.\\w)", "")),
                 onPress, textRenderer);
         name = filename.replaceAll("\\.(event|func|process|entity_event)$", "");
         this.filename = filename;
@@ -69,19 +69,34 @@ public class MethodElement extends HierarchyElement {
                                 if (template == null) return;
                                 if (MilloMod.MC.player == null) return;
 
+                                SoundHandler.playClick();
                                 PlayerUtil.giveItem(template.getItem());
+                                CacheGUI.lastOpenedGUI.closeContext();
+                            })
+                            .add(Text.literal("Get String"), (b) -> {
+                                if (MilloMod.MC.player == null) return;
+
+                                SoundHandler.playClick();
+                                PlayerUtil.sendCommand("txt " + name);
+                                CacheGUI.lastOpenedGUI.closeContext();
                             })
                             .add(Text.literal("Delete").setStyle(GUIStyles.SCARY.getStyle()), (b) -> {
                                 SoundHandler.playClick();
-                                FileManager.deleteTemplateFile(plotId, filename);
+                                delete();
                                 CacheGUI.lastOpenedGUI.reload();
                                 CacheGUI.lastOpenedGUI.closeContext();
                             })
+
 //                            .add(Text.literal("Refactor"), (b) -> {
 //                                SoundHandler.playClick();
 //                            })
             );
         }
+    }
+
+    @Override
+    public void delete() {
+        FileManager.deleteTemplateFile(plotId, filename);
     }
 
     @Override
