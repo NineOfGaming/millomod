@@ -47,14 +47,14 @@ Within the cache gui you can:
 
 ## Developer Tools
 `SocketServe` provides a local socket access on port `31321`, allowing external tools to:
-	-	Send Items
+	- Send Items
  	- Send Templates
 
 Sending data to the client requires a JSON formatted like this:
 ```json
 {
 	"type": "item",
-	"source": "Whomever Sent Item,
+	"source": "Whomever Sent Item",
 	"data": "minecraft:stone[custom_name=\"Hello\"]"
 }
 ```
