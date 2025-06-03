@@ -3,7 +3,7 @@
 *A client-side utility mod for the Minecraft server [MCDiamondFire](https://mcdiamondfire.com/home/), designed to boost productivity for creators and developers building games with codes blocks.*
 
 ## About
-This mod enhances development experience on DiamondFire by:
+This mod targets to make coding efficient.
 
 ## Compatibility
 Minecraft Version: 1.21.3
