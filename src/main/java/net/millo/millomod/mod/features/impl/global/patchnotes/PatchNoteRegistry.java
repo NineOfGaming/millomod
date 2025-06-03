@@ -25,4 +25,12 @@ public class PatchNoteRegistry {
         return patchNotes;
     }
 
+    public static PatchNotes get(String modVersion) {
+        for (PatchNotes patchNote : patchNotes) {
+            if (patchNote.getVersion().equals(modVersion)) {
+                return patchNote;
+            }
+        }
+        return null;
+    }
 }

@@ -99,3 +99,13 @@ publishing {
 		// retrieving dependencies.
 	}
 }
+
+tasks.register('generateUpdateFiles', JavaExec) {
+	group = "build"
+	description = "Generate version.json and patch.json files"
+
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass.set("net.millo.millomod.versioning.GenerateUpdateFiles")
+
+	args project.version.toString()
+}

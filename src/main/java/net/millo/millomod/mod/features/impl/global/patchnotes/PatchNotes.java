@@ -1,15 +1,16 @@
 package net.millo.millomod.mod.features.impl.global.patchnotes;
 
-import net.kyori.adventure.text.Component;
 import net.millo.millomod.mod.util.gui.GUIStyles;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public abstract class PatchNotes {
 
+    @NotNull
     public abstract String getVersion();
 
     public abstract String getTitle();
@@ -29,7 +30,29 @@ public abstract class PatchNotes {
         return new ArrayList<>(Arrays.asList(notes));
     }
 
+    public SerializedPatchNotes serialize() {
+        return new SerializedPatchNotes(getVersion(), getTitle(),getContent().stream()
+                .map(PatchNote::serialize).toArray(SerializedPatchNote[]::new));
+    }
+    public static PatchNotes deserialize(SerializedPatchNotes in) {
+        ArrayList<PatchNote> notes = new ArrayList<>(Arrays.stream(in.patchNotes).map(PatchNote::deserialize).toList());
+        return new PatchNotes() {
+            @Override
+            public @NotNull String getVersion() {
+                return in.version;
+            }
 
+            @Override
+            public String getTitle() {
+                return in.title;
+            }
+
+            @Override
+            public ArrayList<PatchNote> getContent() {
+                return notes;
+            }
+        };
+    }
 
     // Single feature / bug fix
     public static class PatchNote {
@@ -77,6 +100,13 @@ public abstract class PatchNotes {
             return text.setStyle(GUIStyles.UNSAVED.getStyle());
         }
 
+        public SerializedPatchNote serialize() {
+            return new SerializedPatchNote(type.name(), feature, description);
+        }
+        public static PatchNote deserialize(SerializedPatchNote in) {
+            return new PatchNote(Type.valueOf(in.type), in.feature, in.description);
+        }
+
         ///
 
         public static PatchNote feature(String feature) {
@@ -116,6 +146,31 @@ public abstract class PatchNotes {
 
         public Type getType() {
             return type;
+        }
+    }
+
+
+    public static class SerializedPatchNotes {
+        public String version;
+        public String title;
+        public SerializedPatchNote[] patchNotes;
+
+        public SerializedPatchNotes(String version, String title, SerializedPatchNote[] notes) {
+            this.version = version;
+            this.title = title;
+            patchNotes = notes;
+        }
+    }
+
+    public static class SerializedPatchNote {
+        public String type;
+        public String feature;
+        public String description;
+
+        public SerializedPatchNote(String type, String feature, String description) {
+            this.type = type;
+            this.feature = feature;
+            this.description = description;
         }
     }
 

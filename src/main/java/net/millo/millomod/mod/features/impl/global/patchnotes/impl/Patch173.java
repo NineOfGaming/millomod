@@ -1,6 +1,7 @@
 package net.millo.millomod.mod.features.impl.global.patchnotes.impl;
 
 import net.millo.millomod.mod.features.impl.global.patchnotes.PatchNotes;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 public class Patch173 extends PatchNotes {
 
     @Override
-    public String getVersion() {
+    public @NotNull String getVersion() {
         return "1.7.3";
     }
 
