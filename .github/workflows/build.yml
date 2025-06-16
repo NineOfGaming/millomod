@@ -55,3 +55,35 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get build filename
+        run: |
+          echo "FILENAME=$(ls build/libs | awk '! /sources/ {print $1}')" >> $GITHUB_ENV
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: $FILENAME
+          path: build/libs/$FILENAME
+
+      - name: Create Release
+        id: create_release
+        run: |
+          REPO_NAME=$(basename ${GITHUB_REPOSITORY})
+          GITHUB_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/releases"
+          TAG_NAME="v$(./gradlew version)"
+          RESPONSE=$(curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -d "{\"tag_name\": \"$TAG_NAME\", \"name\": \"Release $TAG_NAME\"}" $GITHUB_API_URL)
+          echo "Release created with tag: $TAG_NAME"
+          echo "::set-output name=release_url::$(echo $RESPONSE | jq -r .upload_url)"
+
+        
+      - name: Upload release assets
+        id: upload-release-assets
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.release_url }}
+          asset_path: build/libs/$FILENAME
+          asset_name: $FILENAME
+          asset_content_type: application/octet-stream
+
+
