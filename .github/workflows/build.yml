@@ -49,6 +49,7 @@ jobs:
           # Commit if there are changes
           if [ "$(git branch --show-current)" == "auto/update-version" ]; then
             if ! git diff --cached --quiet; then
+              git status
               git commit -m "Update version and patch info for ${{ github.sha }}"
               git pull --rebase
               git push -u origin auto/update-version
