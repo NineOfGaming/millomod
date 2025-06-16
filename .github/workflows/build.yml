@@ -43,15 +43,21 @@ jobs:
             git checkout -b auto/update-version
           fi
 
+          git pull --rebase
+
           # Stage files
           git add version/version.json version/patch.json
-
+          
           # Commit if there are changes
-          if ! git diff --cached --quiet; then
-            git commit -m "Update version and patch info for ${{ github.sha }}"
-            git push -u origin auto/update-version
+          if [ "$(git branch --show-current)" == "auto/update-version" ]; then
+            if ! git diff --cached --quiet; then
+              git commit -m "Update version and patch info for ${{ github.sha }}"
+              git push -u origin auto/update-version
+            else
+              echo "No changes to commit"
+            fi
           else
-            echo "No changes to commit"
+            echo "Could not checkotu branch auto/update-version"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
