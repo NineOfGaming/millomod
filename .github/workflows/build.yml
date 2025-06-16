@@ -61,7 +61,7 @@ jobs:
           echo "FILENAME=$(ls build/libs | awk '! /sources/ {print $1}')" >> $GITHUB_ENV
       
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: $FILENAME
           path: build/libs/$FILENAME
