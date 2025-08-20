@@ -84,15 +84,15 @@ public class IntegerElement implements Element, Selectable, ScrollableEntryI {
         if (isHovered()) color = new Color(12, 11, 9, (int)(fade.getProgress() * 150)).hashCode();
 
 
-        context.getMatrices().push();
-        context.getMatrices().translate(fade.getXOffset(), fade.getYOffset(), 0);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(fade.getXOffset(), fade.getYOffset());
 
         context.fill(x, y, x+width, y+height, color);
         int xx = startX + (value * (endX-startX-2) / max);
         context.fill(startX, y+height/2, endX, y+height/2+1, 0xffffffff);
         context.fill(xx, y, xx+2, y + height, 0xffffffff);
 
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
 
     }
 

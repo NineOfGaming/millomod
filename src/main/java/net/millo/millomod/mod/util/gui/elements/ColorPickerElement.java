@@ -200,11 +200,10 @@ public class ColorPickerElement implements Drawable, Element, Widget, Selectable
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         fade.fadeIn(delta);
-        context.getMatrices().push();
+        context.getMatrices().pushMatrix();
         context.getMatrices().translate(
                 fade.getXOffset(),
-                fade.getYOffset(),
-                0
+                fade.getYOffset()
         );
 
         wheel.forEach(p -> context.fillGradient(
@@ -246,7 +245,7 @@ public class ColorPickerElement implements Drawable, Element, Widget, Selectable
         context.fill(xx, yy, xx+20, yy+20, selectedColor.hashCode());
         context.drawBorder(xx, yy, 20, 20, Color.black.hashCode());
 
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
     }
 
     public static Color getSelectedColor() {

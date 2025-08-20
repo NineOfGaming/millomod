@@ -68,10 +68,10 @@ public class NotificationTray extends Feature implements IRenderable {
             float x = (getX() + getWidth() - notification.x);
             float y = (getY() + notification.y);
 
-            context.getMatrices().push();
-            context.getMatrices().translate(x, y, 0f);
+            context.getMatrices().pushMatrix();
+            context.getMatrices().translate(x, y);
             context.drawText(textRenderer, notification.message, 0, 0, Color.WHITE.hashCode(), true);
-            context.getMatrices().pop();
+            context.getMatrices().popMatrix();
         }
     }
 

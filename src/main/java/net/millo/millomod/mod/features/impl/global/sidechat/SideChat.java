@@ -22,10 +22,10 @@ public class SideChat extends ChatHud {
     public void render(DrawContext context, int currentTick, int mouseX, int mouseY, boolean focused) {
         xOffset = mc.getWindow().getScaledWidth() - getWidth() - tailWidth(getChatScale());
 
-        context.getMatrices().push();
-        context.getMatrices().translate((float) xOffset, 0f, 0f);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate((float) xOffset, 0f);
         super.render(context, currentTick, mouseX - xOffset, mouseY, focused);
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
     }
 
     @Override

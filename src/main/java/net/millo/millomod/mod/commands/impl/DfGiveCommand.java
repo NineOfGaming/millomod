@@ -37,7 +37,7 @@ public class DfGiveCommand extends Command {
                                     clipboard = clipboard.replaceAll("^\\/?(df)?(give )?(@p )?", "");
 
                                     if (mc.player == null) return -1;
-                                    mc.player.networkHandler.sendCommand("dfgive " + clipboard.trim());
+                                    PlayerUtil.sendCommand("dfgive " + clipboard.trim());
 
                                     return 1;
                                 })

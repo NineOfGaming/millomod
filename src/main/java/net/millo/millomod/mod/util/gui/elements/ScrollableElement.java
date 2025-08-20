@@ -121,10 +121,10 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
 
 //            this.drawBox(context);
             context.enableScissor(this.getX() + 1, this.getY() + 1, this.getX() + this.width - 1, this.getY() + this.height - 1);
-            context.getMatrices().push();
-            context.getMatrices().translate(0, -this.scrollY, 0.0);
+            context.getMatrices().pushMatrix();
+            context.getMatrices().translate(0, -(float) this.scrollY);
             this.renderContents(context, mouseX, mouseY, delta);
-            context.getMatrices().pop();
+            context.getMatrices().popMatrix();
             context.disableScissor();
             this.renderOverlay(context);
         }
@@ -137,8 +137,8 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
 
         int dy = i + (int) (-this.scrollY);
 
-        context.getMatrices().push();
-        context.getMatrices().translate(j, i, 0.0);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(j, i);
         for (ScrollableEntryI drawable : drawables) {
             drawable.setRealX(drawable.getX() + j);
             drawable.setRealY(drawable.getY() + dy);
@@ -148,10 +148,10 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
                 drawable.render(context, mouseX, mouseY, delta);
             }
 
-            context.getMatrices().translate(0, drawable.getHeight(), 0.0);
+            context.getMatrices().translate(0, drawable.getHeight());
             dy += drawable.getHeight();
         }
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
     }
 
     private int getPadding() {
@@ -174,7 +174,7 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
 //        context.drawGuiTexture(SCROLLER_TEXTURE, j, k, 8, i);
 
         int color = new Color(65, 73, 80, 190).hashCode();
-        context.fill(j-SCROLLER_WIDTH, k, j, k+i, 0, color);
+        context.fill(j-SCROLLER_WIDTH, k, j, k+i, color);
 
 
     }

@@ -7,6 +7,7 @@ import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.commands.CommandHandler;
 import net.millo.millomod.mod.features.FeatureHandler;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +53,10 @@ public class MilloMod implements ClientModInitializer {
 
         // TODO: "Heh, Its Millo Time..."
 
+    }
+
+    public static ClientPlayNetworkHandler networkHandler() {
+        return MC.getNetworkHandler();
     }
 
 

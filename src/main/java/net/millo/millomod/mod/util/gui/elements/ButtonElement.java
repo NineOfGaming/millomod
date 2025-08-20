@@ -64,29 +64,29 @@ public class ButtonElement implements ScrollableEntryI, Element, Widget, Selecta
         if (this.visible) {
             this.hovered = mouseX >= this.getRealX() && mouseY >= this.getRealY() && mouseX < this.getRealX() + this.width && mouseY < this.getRealY() + this.height;
             this.renderWidget(context, mouseX, mouseY, delta);
-            this.tooltip.render(this.isHovered(), this.isFocused(), this.getNavigationFocus());
+            this.tooltip.render(context, mouseX, mouseY, this.isHovered(), this.isFocused(), this.getNavigationFocus());
         }
     }
 
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         fade.fadeIn(delta);
 
-        context.getMatrices().push();
-        context.getMatrices().translate(0, 0, z);
+        context.getMatrices().pushMatrix();
+//        context.getMatrices().translate(0, 0, z);
 
         int x = getX() + fade.getXOffset();
         int y = getY() + fade.getYOffset();
         int color = new Color(0, 0, 0, (int)(fade.getProgress() * 150)).hashCode();
         if (isHovered()) color = new Color(12, 11, 9, (int)(fade.getProgress() * 150)).hashCode();
 
-        context.fill(x, y, x+width, y+height, 0, color);
+        context.fill(x, y, x+width, y+height, color);
 
         if (textWidget == null) return;
         textWidget.setX(x);
         textWidget.setY(y);
         textWidget.render(context, mouseX, mouseY, delta);
 
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
     }
 
     public void setX(int x) {

@@ -62,16 +62,16 @@ public class ContextElement implements Element, Widget, Selectable, ClickableEle
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         fade.fadeIn(delta);
 
-        context.getMatrices().push();
-        context.getMatrices().translate(x, y, 1f);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(x, y);
         float scale = -0.5f * (fade.getProgress() + 0.41f) * (fade.getProgress() - 2.41f);
-        context.getMatrices().scale(scale, scale, 0f);
+        context.getMatrices().scale(scale, scale);
 
         context.fill(0, 0, width, height, 0x13000000);
         buttons.forEach(i -> i.render(context, mouseX - x, mouseY - y, delta));
         context.drawBorder(0, 0, width, height, 0xffffffff);
 
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
     }
 
 

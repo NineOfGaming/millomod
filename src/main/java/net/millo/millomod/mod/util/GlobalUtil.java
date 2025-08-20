@@ -35,7 +35,7 @@ public class GlobalUtil {
     }
 
     public static float frameDelta() {
-        return MilloMod.MC.getRenderTickCounter().getLastFrameDuration();
+        return MilloMod.MC.getRenderTickCounter().getDynamicDeltaTicks();
     }
 
     public static <T> boolean applyIfNonNull(T obj, Predicate<T> consumer) {

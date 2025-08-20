@@ -128,9 +128,9 @@ public class MoveableElement extends ClickableWidget implements Drawable, Elemen
 
             if (dragged) color = Color.orange.hashCode();
 
-            context.getMatrices().push();
+            context.getMatrices().pushMatrix();
             context.drawBorder(x, y, width, height, color);
-            context.getMatrices().pop();
+            context.getMatrices().popMatrix();
 
             textWidget.setX(x);
             textWidget.setY(y);

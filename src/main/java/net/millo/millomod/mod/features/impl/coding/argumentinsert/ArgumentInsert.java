@@ -86,14 +86,12 @@ public class ArgumentInsert extends Feature {
         if (isSelectorOpen() || showTextField()) return true;
         if (!Screen.hasShiftDown()) return false;
 
-        if (packet.getStack().getItem().equals(Items.AIR)) {
-            if (packet.getModifiedStacks().isEmpty()) {
-                if (packet.getButton() == 1 && packet.getActionType() == SlotActionType.QUICK_MOVE) {
-                    selectorOpen = true;
-                    selectorSlot = packet.getSlot();
-                    shown = 0f;
-                    return true;
-                }
+        if (packet.modifiedStacks().isEmpty()) {
+            if (packet.button() == 1 && packet.actionType() == SlotActionType.QUICK_MOVE) {
+                selectorOpen = true;
+                selectorSlot = packet.slot();
+                shown = 0f;
+                return true;
             }
         }
 
@@ -165,7 +163,8 @@ public class ArgumentInsert extends Feature {
 
         int col = new Color(255, 175, 175, (int)(shown *255)).hashCode();
 
-        context.getMatrices().translate(x+8, y+8, 500f);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(x+8, y+8);
         context.fill(-8, -8, +8, +8, col);
 
         if (showTextField) {
@@ -181,6 +180,7 @@ public class ArgumentInsert extends Feature {
             ArgumentOption option = options.get(i);
             option.draw(context, xx, yy, GlobalUtil.frameDelta(), shown);
         }
+        context.getMatrices().popMatrix();
 
     }
 

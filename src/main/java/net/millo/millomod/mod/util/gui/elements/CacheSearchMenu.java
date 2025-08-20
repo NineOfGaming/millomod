@@ -112,15 +112,15 @@ public class CacheSearchMenu implements Drawable, Element, Widget, Selectable {
         height = (int) MathHelper.clampedLerp(height, targetHeight, GlobalUtil.frameDelta());
         searchTextField.setPosition(x + 1 + fade.getXOffset(), y + 1 + fade.getYOffset());
 
-        context.getMatrices().push();
-        context.getMatrices().translate(fade.getXOffset(), fade.getYOffset(), 0);
-        context.getMatrices().translate(x, y, 10);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(fade.getXOffset(), fade.getYOffset());
+        context.getMatrices().translate(x, y);
 
         context.fill(0, 0, width, height, 0x96000000);
 //        context.drawBorder(0, 0, width, height, 0xFFFFFFFF);
         context.fill(0, 0, 1, height, 0xFFFFFFFF);
 
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
     }
 
     @Override

@@ -80,13 +80,13 @@ public class MethodFolder extends HierarchyElement {
         int color = new Color(0, 0, 0, (int)(fade.getProgress() * 150)).hashCode();
         if (isHovered()) color = new Color(12, 11, 9, (int)(fade.getProgress() * 150)).hashCode();
 
-        context.fill(x, y, x+width, y+height, 0, color);
+        context.fill(x, y, x+width, y+height, color);
 
         // draw lil triangle
         float w = 3.4f;
         arrowAngle = MathHelper.clampedLerp(arrowAngle, isOpen() ? 1.5707f : 0f, delta);
 
-        Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
+//        Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
 
         float x1 = MathHelper.cos(arrowAngle) * w;
         float y1 = MathHelper.sin(arrowAngle) * w;
@@ -97,17 +97,17 @@ public class MethodFolder extends HierarchyElement {
         float x3 = MathHelper.cos(arrowAngle + 4.188f) * w;
         float y3 = MathHelper.sin(arrowAngle + 4.188f) * w;
 
-        context.draw((provider) -> {
-            VertexConsumer consumer = provider.getBuffer(RenderLayer.getGui());
-
-            consumer.vertex(matrix4f, x + xOffset + x3 + 4, y + y3 + height / 2f, 0).color(0xFFFFFFFF);
-            consumer.vertex(matrix4f, x + xOffset + x2 + 4, y + y2 + height / 2f, 0).color(0xFFFFFFFF);
-            consumer.vertex(matrix4f, x + xOffset + x2 + 4, y + y2 + height / 2f, 0).color(0xFFFFFFFF);
-            consumer.vertex(matrix4f, x + xOffset + x1 + 4, y + y1 + height / 2f, 0).color(0xFFFFFFFF);
-        });
-
-
-        context.draw();
+//        context.draw((provider) -> {
+//            VertexConsumer consumer = provider.getBuffer(RenderLayer.getGui());
+//
+//            consumer.vertex(matrix4f, x + xOffset + x3 + 4, y + y3 + height / 2f, 0).color(0xFFFFFFFF);
+//            consumer.vertex(matrix4f, x + xOffset + x2 + 4, y + y2 + height / 2f, 0).color(0xFFFFFFFF);
+//            consumer.vertex(matrix4f, x + xOffset + x2 + 4, y + y2 + height / 2f, 0).color(0xFFFFFFFF);
+//            consumer.vertex(matrix4f, x + xOffset + x1 + 4, y + y1 + height / 2f, 0).color(0xFFFFFFFF);
+//        });
+//
+//
+//        context.draw();
 
 
         if (textWidget == null) return;

@@ -7,8 +7,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+import net.minecraft.util.PlayerInput;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -19,11 +21,11 @@ public class PlayerUtil {
     public static void sendCommand(String command) {
         if (MilloMod.MC.getNetworkHandler() == null) return;
 
-        MilloMod.MC.getNetworkHandler().sendCommand(command);
+        MilloMod.MC.getNetworkHandler().sendChatCommand(command);
     }
 
     public static void sendHandItem(ItemStack item) {
-        MilloMod.MC.getNetworkHandler().sendPacket(new CreativeInventoryActionC2SPacket(36 + MilloMod.MC.player.getInventory().selectedSlot, item));
+        MilloMod.MC.getNetworkHandler().sendPacket(new CreativeInventoryActionC2SPacket(36 + MilloMod.MC.player.getInventory().getSelectedSlot(), item));
     }
 
     public static void rightClickPos(BlockPos pos) {
@@ -33,12 +35,7 @@ public class PlayerUtil {
     }
 
     public static void sendSneak(boolean sneaking) {
-        MilloMod.MC.getNetworkHandler().sendPacket(
-                new ClientCommandC2SPacket(MilloMod.MC.player,
-                        sneaking ?
-                                ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY :
-                                ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY)
-        );
+        MilloMod.MC.options.sneakKey.setPressed(sneaking);
     }
 
     public static void sendOffhandItem(ItemStack itemStack) {
@@ -48,7 +45,7 @@ public class PlayerUtil {
 
     public static void giveItem(ItemStack item) {
         MinecraftClient mc = MilloMod.MC;
-        DefaultedList<ItemStack> inv = mc.player.getInventory().main;
+        DefaultedList<ItemStack> inv = mc.player.getInventory().getMainStacks();
 
         if (!mc.player.isCreative()) return;
         if (mc.interactionManager == null) return;

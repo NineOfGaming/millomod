@@ -165,7 +165,7 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
         int y = getY() + fade.getYOffset();
 
         int xOff = 0;
-        context.getMatrices().push();
+        context.getMatrices().pushMatrix();
 
         if (hasLineNum) {
             context.fill(x + 30, y, x + 31, y + height, 0xff333333);
@@ -187,10 +187,10 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
             boolean tooltip = false;
             if (hovered) {
                 context.fill(x, y, x+textWidget.getWidth(), y + textWidget.getHeight(), new Color(255, 255, 255, 20).hashCode());
-                if (textWidget.getTooltip() != null) {
-                    setTooltip(textWidget.getTooltip());
-                    tooltip = true;
-                }
+//                if (textWidget.getTooltip() != null) {
+//                    setTooltip(textWidget.getTooltip());
+//                    tooltip = true;
+//                }
             }
             if (!searchHighlight.isEmpty() && textWidget.getMessage().getString().toLowerCase().contains(searchHighlight)) {
                 context.fill(x, y, x+textWidget.getWidth(), y + textWidget.getHeight(), new Color(0, 255, 255, 80).hashCode());
@@ -199,20 +199,20 @@ public class LineElement implements ScrollableEntryI, Element, Widget, Selectabl
 
             // Text
             textWidget.renderWidget(context, mouseX, mouseY, delta);
-            Screen screen = MinecraftClient.getInstance().currentScreen;
-            if (tooltip && screen instanceof GUI gui) {
-                gui.setTooltip(getTooltip().getTooltip(), this.createPositioner(getNavigationFocus(), hovered, isFocused()), isFocused());
-            }
+//            Screen screen = MinecraftClient.getInstance().currentScreen;
+//            if (tooltip && screen instanceof GUI gui) {
+//                gui.setTooltip(getTooltip().getTooltip().getLines(MilloMod.MC), this.createPositioner(getNavigationFocus(), hovered, isFocused()), isFocused());
+//            }
 
 
             xOff += textWidget.getWidth();
-            context.getMatrices().translate(textWidget.getWidth(), 0, 0);
+            context.getMatrices().translate(textWidget.getWidth(), 0);
             if (ind == 1 && hasLineNum) {
                 xOff += 10;
-                context.getMatrices().translate(10, 0, 0);
+                context.getMatrices().translate(10, 0);
             }
         }
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
     }
 
     private TooltipPositioner createPositioner(ScreenRect focus, boolean hovered, boolean focused) {

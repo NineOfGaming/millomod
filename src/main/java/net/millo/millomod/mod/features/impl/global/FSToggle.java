@@ -5,6 +5,7 @@ import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
 import net.millo.millomod.system.Config;
+import net.millo.millomod.system.PlayerUtil;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.MathHelper;
@@ -48,7 +49,7 @@ public class FSToggle extends Feature implements Keybound {
         while (toggleKey.wasPressed()) {
             int spd = on ? 100 : speed;
             on = !on;
-            MilloMod.MC.getNetworkHandler().sendCommand("fs "+spd);
+            PlayerUtil.sendCommand("fs " + spd);
         }
     }
 }

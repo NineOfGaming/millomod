@@ -6,6 +6,7 @@ import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.HandlePacket;
 import net.millo.millomod.mod.hypercube.Plot;
 import net.millo.millomod.system.FileManager;
+import net.millo.millomod.system.PlayerUtil;
 import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.util.math.Vec3d;
 
@@ -85,7 +86,7 @@ public class Tracker extends Feature {
             if (requestPlotIdDelay > 0) requestPlotIdDelay--;
             else if (MilloMod.MC.getNetworkHandler() != null) {
                 requestPlotIdDelay = 100;
-                MilloMod.MC.getNetworkHandler().sendCommand("locate");
+                PlayerUtil.sendCommand("locate");
             }
         }
 

@@ -1,11 +1,15 @@
 package net.millo.millomod.mixin.render;
 
+import net.fabricmc.fabric.api.renderer.v1.render.RenderLayerHelper;
 import net.millo.millomod.system.Config;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.render.BuiltBuffer;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -83,10 +87,7 @@ public abstract class MChestSearch extends Screen {
             color = -2147483648;
         }
 
-        context.getMatrices().push();
-        context.getMatrices().translate(0f, 0f, 100f);
-        context.fillGradient(slot.x, slot.y, slot.x + 16, slot.y + 16, -20, color, color);
-        context.getMatrices().pop();
+        context.fillGradient(slot.x, slot.y, slot.x + 16, slot.y + 16, color, color);
     }
 
     @Inject(at = @At("HEAD"), method = "keyPressed(III)Z", cancellable = true)

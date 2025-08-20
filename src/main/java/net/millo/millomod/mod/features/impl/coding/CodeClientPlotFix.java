@@ -5,6 +5,7 @@ import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.Keybound;
 import net.millo.millomod.system.Config;
+import net.millo.millomod.system.PlayerUtil;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
@@ -33,7 +34,8 @@ public class CodeClientPlotFix extends Feature implements Keybound {
     public void triggerKeybind(Config config) {
         if (MilloMod.MC.getNetworkHandler() == null) return;
         while (key.wasPressed()) {
-            MilloMod.MC.getNetworkHandler().sendCommand("worldplot massive");
+//            MilloMod.MC.getNetworkHandler().sendCommand("worldplot massive");
+            PlayerUtil.sendCommand("fixcc");
         }
     }
 }

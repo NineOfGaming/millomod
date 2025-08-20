@@ -2,17 +2,13 @@ package net.millo.millomod.mixin.render;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.features.FeatureHandler;
 import net.millo.millomod.mod.features.impl.global.sidechat.HudWithSideChat;
 import net.millo.millomod.mod.features.impl.global.sidechat.SideChat;
-import net.millo.millomod.mod.features.impl.global.sidechat.SideChatFeature;
-import net.millo.millomod.mod.util.GlobalUtil;
 import net.millo.millomod.mod.util.RenderInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.LayeredDrawer;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.Window;
@@ -40,11 +36,11 @@ public abstract class MInGameHUD implements HudWithSideChat {
     private void render(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         Window window = client.getWindow();
         FeatureHandler.renderHUD(new RenderInfo(context,
-                tickCounter.getTickDelta(false),
+                tickCounter.getTickProgress(false),
                 ci,
                 window.getScaledWidth(),
                 window.getScaledHeight(),
-                tickCounter.getLastDuration(),
+                tickCounter.getDynamicDeltaTicks(),
                 getTextRenderer()));
     }
 

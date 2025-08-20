@@ -5,6 +5,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.millo.millomod.mod.util.gui.elements.ContextElement;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipPositioner;
@@ -21,7 +22,7 @@ public abstract class GUI extends Screen {
     protected int paddingX = 40;
     protected int paddingY = 40;
     private ElementFadeIn fade = new ElementFadeIn(ElementFadeIn.Direction.UP);
-    private GUI parent;
+    private Screen parent;
     private PositionedTooltip tooltip;
 
     private static class PositionedTooltip {
@@ -53,7 +54,6 @@ public abstract class GUI extends Screen {
         } else super.close();
     }
 
-    @Override
     public void setTooltip(List<OrderedText> tooltip, TooltipPositioner positioner, boolean focused) {
         if (this.tooltip == null || focused) {
             this.tooltip = new PositionedTooltip(tooltip, positioner);
@@ -73,17 +73,14 @@ public abstract class GUI extends Screen {
 
         int color = new Color(0, 0, 0, (int)(fade.getProgress() * 150)).hashCode();
 
-        context.getMatrices().push();
-        context.getMatrices().translate(0f, 0f, -20f);
-        context.fill(x, y, x+backgroundWidth, y+backgroundHeight, 0, color);
-        context.getMatrices().pop();
+        context.fill(RenderPipelines.GUI, x, y, x + backgroundWidth, y + backgroundHeight, color);
     }
 
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         fade.fadeIn(delta);
 
         if (tooltip != null) {
-            context.drawTooltip(textRenderer, tooltip.tooltip, tooltip.positioner, mouseX, mouseY);
+            context.drawTooltip(textRenderer, tooltip.tooltip, tooltip.positioner, mouseX, mouseY, false);
             this.tooltip = null;
         }
 
@@ -119,7 +116,7 @@ public abstract class GUI extends Screen {
         return fade;
     }
 
-    public void setParent(GUI gui) {
+    public void setParent(Screen gui) {
         this.parent = gui;
     }
 

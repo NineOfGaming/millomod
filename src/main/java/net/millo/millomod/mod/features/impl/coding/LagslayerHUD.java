@@ -72,49 +72,50 @@ public class LagslayerHUD extends Feature implements IRenderable {
     }
 
     private void renderDonut(DrawContext context, float delta, float centerX, float centerY, float innerRadius, float outerRadius, int segments, int color, float start, float end) {
-        Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
-        float alpha = (float) ColorHelper.getAlpha(color) / 255.0F;
-        float red = (float) ColorHelper.getRed(color) / 255.0F;
-        float green = (float) ColorHelper.getGreen(color) / 255.0F;
-        float blue = (float) ColorHelper.getBlue(color) / 255.0F;
-
-        double startAngle = start * 2 * Math.PI;
-        double endAngle = end * 2 * Math.PI;
-        double increment = (endAngle - startAngle) / segments;
-
-        for (int i = 0; i < segments; i++) {
-            float angle1 = (float) (i * increment);
-            float angle2 = (float) ((i + 1) * increment);
-
-            float x1_inner = centerX + (float) (Math.cos(angle1) * innerRadius);
-            float y1_inner = centerY + (float) (Math.sin(angle1) * innerRadius);
-
-            float x2_inner = centerX + (float) (Math.cos(angle2) * innerRadius);
-            float y2_inner = centerY + (float) (Math.sin(angle2) * innerRadius);
-
-            float x1_outer = centerX + (float) (Math.cos(angle1) * outerRadius);
-            float y1_outer = centerY + (float) (Math.sin(angle1) * outerRadius);
-
-            float x2_outer = centerX + (float) (Math.cos(angle2) * outerRadius);
-            float y2_outer = centerY + (float) (Math.sin(angle2) * outerRadius);
-
-            context.draw((provider -> {
-                VertexConsumer consumer = provider.getBuffer(RenderLayer.getGui());
-
-                consumer.vertex(matrix4f, x1_outer, y1_outer, 0).color(red, green, blue, alpha);
-                consumer.vertex(matrix4f, x2_outer, y2_outer, 0).color(red, green, blue, alpha);
-                consumer.vertex(matrix4f, x2_inner, y2_inner, 0).color(red, green, blue, alpha);
-                consumer.vertex(matrix4f, x1_inner, y1_inner, 0).color(red, green, blue, alpha);
-
-                consumer.vertex(matrix4f, x1_inner, y1_inner, 0).color(red, green, blue, alpha);
-                consumer.vertex(matrix4f, x2_inner, y2_inner, 0).color(red, green, blue, alpha);
-                consumer.vertex(matrix4f, x2_outer, y2_outer, 0).color(red, green, blue, alpha);
-                consumer.vertex(matrix4f, x1_outer, y1_outer, 0).color(red, green, blue, alpha);
-            }));
-
-        }
-
-        context.draw();
+//        Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
+//
+//        float alpha = (float) ColorHelper.getAlpha(color) / 255.0F;
+//        float red = (float) ColorHelper.getRed(color) / 255.0F;
+//        float green = (float) ColorHelper.getGreen(color) / 255.0F;
+//        float blue = (float) ColorHelper.getBlue(color) / 255.0F;
+//
+//        double startAngle = start * 2 * Math.PI;
+//        double endAngle = end * 2 * Math.PI;
+//        double increment = (endAngle - startAngle) / segments;
+//
+//        for (int i = 0; i < segments; i++) {
+//            float angle1 = (float) (i * increment);
+//            float angle2 = (float) ((i + 1) * increment);
+//
+//            float x1_inner = centerX + (float) (Math.cos(angle1) * innerRadius);
+//            float y1_inner = centerY + (float) (Math.sin(angle1) * innerRadius);
+//
+//            float x2_inner = centerX + (float) (Math.cos(angle2) * innerRadius);
+//            float y2_inner = centerY + (float) (Math.sin(angle2) * innerRadius);
+//
+//            float x1_outer = centerX + (float) (Math.cos(angle1) * outerRadius);
+//            float y1_outer = centerY + (float) (Math.sin(angle1) * outerRadius);
+//
+//            float x2_outer = centerX + (float) (Math.cos(angle2) * outerRadius);
+//            float y2_outer = centerY + (float) (Math.sin(angle2) * outerRadius);
+//
+//            context.draw((provider -> {
+//                VertexConsumer consumer = provider.getBuffer(RenderLayer.getGui());
+//
+//                consumer.vertex(matrix4f, x1_outer, y1_outer, 0).color(red, green, blue, alpha);
+//                consumer.vertex(matrix4f, x2_outer, y2_outer, 0).color(red, green, blue, alpha);
+//                consumer.vertex(matrix4f, x2_inner, y2_inner, 0).color(red, green, blue, alpha);
+//                consumer.vertex(matrix4f, x1_inner, y1_inner, 0).color(red, green, blue, alpha);
+//
+//                consumer.vertex(matrix4f, x1_inner, y1_inner, 0).color(red, green, blue, alpha);
+//                consumer.vertex(matrix4f, x2_inner, y2_inner, 0).color(red, green, blue, alpha);
+//                consumer.vertex(matrix4f, x2_outer, y2_outer, 0).color(red, green, blue, alpha);
+//                consumer.vertex(matrix4f, x1_outer, y1_outer, 0).color(red, green, blue, alpha);
+//            }));
+//
+//        }
+//
+//        context.draw();
     }
 
     @Override

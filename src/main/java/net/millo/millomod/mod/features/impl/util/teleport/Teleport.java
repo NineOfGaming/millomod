@@ -1,5 +1,6 @@
 package net.millo.millomod.mod.features.impl.util.teleport;
 
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.millo.millomod.MilloMod;
 import net.millo.millomod.mod.Callback;
 import net.millo.millomod.mod.features.impl.util.Tracker;
@@ -126,14 +127,12 @@ public class Teleport {
         ItemStack handItem = player.getMainHandStack();
         boolean sneaking = !player.isSneaking();
 
-        net.sendPacket(new CreativeInventoryActionC2SPacket(36 + player.getInventory().selectedSlot, locationItem));
-        if (sneaking)
-            net.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY));
+        net.sendPacket(new CreativeInventoryActionC2SPacket(36 + player.getInventory().getSelectedSlot(), locationItem));
+        if (sneaking) PlayerUtil.sendSneak(true);
         net.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, player.getBlockPos(), Direction.UP));
         net.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK, player.getBlockPos(), Direction.UP));
-        if (sneaking)
-            net.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY));
-        net.sendPacket(new CreativeInventoryActionC2SPacket(36 + player.getInventory().selectedSlot, handItem));
+        if (sneaking) PlayerUtil.sendSneak(false);
+        net.sendPacket(new CreativeInventoryActionC2SPacket(36 + player.getInventory().getSelectedSlot(), handItem));
     }
 
     private void hackTowards() {

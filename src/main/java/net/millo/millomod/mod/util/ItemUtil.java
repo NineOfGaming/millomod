@@ -27,7 +27,9 @@ public enum ItemUtil {
     public static ItemStack fromNbt(String data) {
         try {
             NbtCompound nbt = NbtHelper.fromNbtProviderString(data);
-            return ItemStack.fromNbtOrEmpty(MilloMod.MC.world.getRegistryManager(), nbt);
+//            ItemUtil.fromNbt(nbt);
+//            return ItemStack.fromNbtOrEmpty(MilloMod.MC.world.getRegistryManager(), nbt);
+            throw new UnsupportedOperationException("ItemUtil.fromNbt is not updated for 1.21.8");
         } catch (CommandSyntaxException e) {
             System.out.println("Error parsing item NBT: " + e.getMessage());
             return ItemStack.EMPTY;
@@ -58,7 +60,7 @@ public enum ItemUtil {
         if (custom_data == null) return null;
 
         NbtCompound nbt = custom_data.copyNbt();
-        return nbt.getCompound("PublicBukkitValues");
+        return nbt.getCompound("PublicBukkitValues").orElse(null);
     }
 
 
@@ -66,9 +68,9 @@ public enum ItemUtil {
         NbtCompound pbv = getPBV(stack);
         if (pbv == null) return null;
 
-        if (!pbv.contains(key, NbtElement.STRING_TYPE)) return null;
+        if (!pbv.contains(key)) return null;
 
-        return pbv.getString(key);
+        return pbv.getString(key).orElse(null);
     }
 
 

@@ -67,10 +67,10 @@ public abstract class ArgumentOption {
         this.x = x;
         this.y = y;
 
-        context.getMatrices().push();
-        context.getMatrices().translate(x, y, 1f);
-        context.getMatrices().scale(shown, shown, 1);
-        context.getMatrices().scale(hover*0.2f+1f, hover*0.2f+1f, 1);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(x, y);
+        context.getMatrices().scale(shown, shown);
+        context.getMatrices().scale(hover*0.2f+1f, hover*0.2f+1f);
 
         int color = new Color(0f, 0f, 0f, 0.2f + hover * 0.3f).hashCode();
         int borderCol = new Color(1f-hover, 1f, 1f, 1f).hashCode();
@@ -79,20 +79,20 @@ public abstract class ArgumentOption {
 
         context.drawItem(icon, -8, -8);
 
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
     }
 
     public void drawAugment(DrawContext context, int x, int y, float delta) {
         this.x = MathHelper.clampedLerp(this.x, x, delta);
         this.y = MathHelper.clampedLerp(this.y, y, delta);
 
-        context.getMatrices().push();
-        context.getMatrices().translate(this.x, this.y, 1f);
-        context.getMatrices().scale(0.9f, 0.9f, 1f);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(this.x, this.y);
+        context.getMatrices().scale(0.9f, 0.9f);
 
         context.drawItem(icon, -8, -8);
 
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
     }
 
 

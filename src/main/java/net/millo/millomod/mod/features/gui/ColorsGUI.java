@@ -203,7 +203,7 @@ public class ColorsGUI extends GUI {
             int color = this.color.hashCode();
             int borderColor = new Color(51, 51, 51).hashCode();
 
-            context.fill(x, y, x+width, y+height, 0, color);
+            context.fill(x, y, x+width, y+height, color);
             if (this.isHovered()) context.drawBorder(x, y, width, height, borderColor);
         }
     }

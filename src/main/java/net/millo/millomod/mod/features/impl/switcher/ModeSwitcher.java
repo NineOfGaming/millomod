@@ -152,9 +152,9 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
 
         int totalPages = pages.size();
         int w = ((totalPages) * 5) / 2 - 1;
-        context.getMatrices().push();
-        context.getMatrices().translate(centerX, centerY + 10, 0);
-        context.getMatrices().scale(shown, shown, 0);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(centerX, centerY + 10);
+        context.getMatrices().scale(shown, shown);
 
         for (int i = 0; i < totalPages; i++) {
             if (i == page) {
@@ -164,7 +164,7 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
             }
         }
 
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
 
     }
 
@@ -250,10 +250,10 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
 
             if (selected) drawMouseLine(context, x, y);
 
-            context.getMatrices().push();
-            context.getMatrices().translate(x, y, 0);
-            context.getMatrices().scale(shown, shown, 0);
-            context.getMatrices().scale(hover*0.2f+1f, hover*0.2f+1f, 1);
+            context.getMatrices().pushMatrix();
+            context.getMatrices().translate(x, y);
+            context.getMatrices().scale(shown, shown);
+            context.getMatrices().scale(hover*0.2f+1f, hover*0.2f+1f);
 
             int color = new Color(0f, 0f, 0f, 0.2f + hover * 0.3f).hashCode();
             int borderCol = new Color(1f-hover, 1f, 1f, 1f).hashCode();
@@ -263,7 +263,7 @@ public class ModeSwitcher extends Feature implements Keybound, IRenderable {
             int w = textRenderer.getWidth(text);
             context.drawText(textRenderer, text, -w / 2, -5, Color.WHITE.hashCode(), true);
 
-            context.getMatrices().pop();
+            context.getMatrices().popMatrix();
         }
 
         private void drawMouseLine(DrawContext context, int x, int y) {

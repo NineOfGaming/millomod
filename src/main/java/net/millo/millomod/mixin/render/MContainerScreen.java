@@ -140,20 +140,17 @@ public abstract class MContainerScreen<T extends ScreenHandler> extends Screen {
 
         Slot slot = this.handler.slots.get(insertFeature.getSlot());
 
-        context.getMatrices().push();
-        context.getMatrices().translate(this.x, this.y, 0.0F);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(this.x, this.y);
         insertFeature.render(context, mouseX, mouseY, delta, slot, ci);
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
     }
 
     @Unique
     private void renderTextField(DrawContext context, int mouseX, int mouseY, float delta) {
         if (!textFieldShown) return;
 
-        context.getMatrices().push();
-        context.getMatrices().translate(0f, 0f, 500f);
         argumentTextField.render(context, mouseX, mouseY, delta);
-        context.getMatrices().pop();
     }
 
 
@@ -196,36 +193,36 @@ public abstract class MContainerScreen<T extends ScreenHandler> extends Screen {
 //        var entity = new Skin
     }
 
-    @Unique
-    private GameProfile readGameProfile(NbtCompound skullOwner) {
-        UUID uuid = skullOwner.getUuid("Id");
-        String name = skullOwner.getString("Name");
-
-        try {
-            GameProfile gameProfile = new GameProfile(uuid, name);
-            if (skullOwner.contains("Properties", 10)) {
-                NbtCompound properties = skullOwner.getCompound("Properties");
-
-                for (String property : properties.getKeys()) {
-                    NbtList list = properties.getList(property, 2);
-
-                    for (int i = 0; i < list.size(); ++i) {
-                        NbtCompound tag = list.getCompound(i);
-                        String value = tag.getString("Value");
-                        if (tag.contains("Signature", 8)) {
-                            gameProfile.getProperties().put(property, new Property(property, value, tag.getString("Signature")));
-                        } else {
-                            gameProfile.getProperties().put(property, new Property(property, value));
-                        }
-                    }
-                }
-            }
-
-            return gameProfile;
-        } catch (Throwable t) {
-            return null;
-        }
-    }
+//    @Unique
+//    private GameProfile readGameProfile(NbtCompound skullOwner) {
+//        UUID uuid = skullOwner.getUuid("Id");
+//        String name = skullOwner.getString("Name");
+//
+//        try {
+//            GameProfile gameProfile = new GameProfile(uuid, name);
+//            if (skullOwner.contains("Properties", 10)) {
+//                NbtCompound properties = skullOwner.getCompound("Properties");
+//
+//                for (String property : properties.getKeys()) {
+//                    NbtList list = properties.getList(property, 2);
+//
+//                    for (int i = 0; i < list.size(); ++i) {
+//                        NbtCompound tag = list.getCompound(i);
+//                        String value = tag.getString("Value");
+//                        if (tag.contains("Signature", 8)) {
+//                            gameProfile.getProperties().put(property, new Property(property, value, tag.getString("Signature")));
+//                        } else {
+//                            gameProfile.getProperties().put(property, new Property(property, value));
+//                        }
+//                    }
+//                }
+//            }
+//
+//            return gameProfile;
+//        } catch (Throwable t) {
+//            return null;
+//        }
+//    }
 
 }
 

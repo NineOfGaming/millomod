@@ -206,13 +206,13 @@ public class PlotCaching extends Feature implements Keybound {
 //        net.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().selectedSlot, item));
 //        player.getInventory().setStack(player.getInventory().selectedSlot, item);
 
-        player.getInventory().setStack(player.getInventory().selectedSlot, ItemStack.EMPTY);
+        player.getInventory().setStack(player.getInventory().getSelectedSlot(), ItemStack.EMPTY);
         PlayerUtil.sendHandItem(ItemStack.EMPTY);
         if (!sneaking) PlayerUtil.sendSneak(true);
         PlayerUtil.rightClickPos(position);
         if (!sneaking) PlayerUtil.sendSneak(false);
         PlayerUtil.sendHandItem(item);
-        player.getInventory().setStack(player.getInventory().selectedSlot, item);
+        player.getInventory().setStack(player.getInventory().getSelectedSlot(), item);
     }
 
 
@@ -279,10 +279,10 @@ public class PlotCaching extends Feature implements Keybound {
 
         for (ItemStack itemStack : containerComponent.iterateNonEmpty()) {
             var bukkitValues = ItemUtil.getPBV(itemStack);
-            if (bukkitValues == null || !bukkitValues.contains("hypercube:codetemplatedata", NbtElement.STRING_TYPE))
+            if (bukkitValues == null || !bukkitValues.contains("hypercube:codetemplatedata"))
                 continue;
 
-            String codeTemplateData = bukkitValues.getString("hypercube:codetemplatedata");
+            String codeTemplateData = bukkitValues.getString("hypercube:codetemplatedata").orElse(null);
 
             Template template = Template.parseItem(codeTemplateData);
             FileManager.writeTemplate(template);

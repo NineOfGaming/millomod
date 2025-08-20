@@ -28,7 +28,6 @@ public class TextFieldElement extends TextFieldWidget implements ScrollableEntry
     }
 
 
-    @Override
     protected boolean clicked(double mouseX, double mouseY) {
         return hovered && active;
     }
@@ -39,8 +38,8 @@ public class TextFieldElement extends TextFieldWidget implements ScrollableEntry
 
         this.hovered = mouseX >= this.getRealX() && mouseY >= this.getRealY() && mouseX < this.getRealX() + this.width && mouseY < this.getRealY() + this.height;
 
-        context.getMatrices().push();
-        context.getMatrices().translate(fade.getXOffset(), fade.getYOffset(), z);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(fade.getXOffset(), fade.getYOffset());
 
         int x = getX();
         int y = getY();
@@ -57,9 +56,9 @@ public class TextFieldElement extends TextFieldWidget implements ScrollableEntry
         context.fill(x, y, x + getWidth(), y + getHeight(), color);
         context.fill(x, y + getHeight() - 1, x + getWidth(), y + getHeight(), underlineColor);
 
-        context.getMatrices().translate(4f, 4f, 0);
+        context.getMatrices().translate(4f, 4f);
         super.renderWidget(context, mouseX, mouseY, delta);
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
 
     }
 
