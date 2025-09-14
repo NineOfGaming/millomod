@@ -12,7 +12,8 @@ public abstract class Feature {
     public void onTick() {}
 
     public void onConfigUpdate(Config config) {
-        enabled = alwaysActive() || (boolean) config.get(getKey()+".enabled");
+        boolean def = !disabledByDefault();
+        enabled = alwaysActive() || config.getOrDefault(getKey() + ".enabled", def);
     }
     public void defaultConfig(Config config) {
         if (!alwaysActive()) config.setIfNull(getKey()+".enabled", !disabledByDefault());
