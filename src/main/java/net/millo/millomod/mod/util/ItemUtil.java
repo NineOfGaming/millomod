@@ -1,14 +1,15 @@
 package net.millo.millomod.mod.util;
 
+import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.millo.millomod.MilloMod;
+import net.minecraft.command.argument.ItemStringReader;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtHelper;
+import net.minecraft.nbt.*;
+import net.minecraft.util.packrat.PackratParser;
 import net.minecraft.world.World;
 
 import java.util.HashMap;
@@ -26,12 +27,17 @@ public enum ItemUtil {
 
     public static ItemStack fromNbt(String data) {
         try {
-            NbtCompound nbt = NbtHelper.fromNbtProviderString(data);
-//            ItemUtil.fromNbt(nbt);
-//            return ItemStack.fromNbtOrEmpty(MilloMod.MC.world.getRegistryManager(), nbt);
-            throw new UnsupportedOperationException("ItemUtil.fromNbt is not updated for 1.21.8");
+//            PackratParser<NbtElement> parser = SnbtParsing.createParser(NbtOps.INSTANCE);
+
+            ItemStringReader stringReader = new ItemStringReader(MilloMod.MC.world.getRegistryManager());
+            ItemStringReader.ItemResult result = stringReader.consume(new StringReader(data));
+            return new ItemStack(result.item());
+
         } catch (CommandSyntaxException e) {
             System.out.println("Error parsing item NBT: " + e.getMessage());
+            return ItemStack.EMPTY;
+        } catch (Exception e) {
+            System.out.println("Unexpected error parsing item NBT: " + e.getMessage());
             return ItemStack.EMPTY;
         }
     }

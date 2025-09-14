@@ -1,6 +1,7 @@
 package net.millo.millomod;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.millo.millomod.system.Config;
 import net.millo.millomod.mod.features.Feature;
 import net.millo.millomod.mod.features.FeatureHandler;
@@ -23,9 +24,9 @@ public class KeybindHandler {
 
         Config config = Config.getInstance();
         ClientTickEvents.END_CLIENT_TICK
-                .register(client -> features.forEach(feature -> feature.triggerKeybind(config)));
-
-
+                .register(client -> MilloMod.MC.execute(() -> {
+                    features.forEach(feature -> feature.triggerKeybind(config));
+                }));
     }
 
 }

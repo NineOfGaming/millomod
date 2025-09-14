@@ -58,19 +58,21 @@ public class PickChestValue extends Feature implements Keybound {
 
         requested = false;
 
-        ItemStack chest = packet.getStack();
-        ContainerComponent container = chest.get(DataComponentTypes.CONTAINER);
-        if (container == null) return false;
+        MilloMod.MC.execute(() -> {
+            ItemStack chest = packet.getStack();
+            ContainerComponent container = chest.get(DataComponentTypes.CONTAINER);
+            if (container == null) return;
 
-        ItemStack item = container.iterateNonEmpty().iterator().next();
-        if (item == null) return false;
+            ItemStack item = container.iterateNonEmpty().iterator().next();
+            if (item == null) return;
 
-        if (MilloMod.MC.getNetworkHandler() == null) return false;
+            if (MilloMod.MC.getNetworkHandler() == null) return;
 
-        MilloMod.MC.getNetworkHandler().sendPacket(new CreativeInventoryActionC2SPacket(packet.getSlot(), ItemStack.EMPTY));
-        MilloMod.MC.getNetworkHandler().sendPacket(new CreativeInventoryActionC2SPacket(packet.getSlot(), item));
+            MilloMod.MC.getNetworkHandler().sendPacket(new CreativeInventoryActionC2SPacket(packet.getSlot(), ItemStack.EMPTY));
+            MilloMod.MC.getNetworkHandler().sendPacket(new CreativeInventoryActionC2SPacket(packet.getSlot(), item));
 
-        SoundHandler.playClick();
+            SoundHandler.playClick();
+        });
 
         return true;
     }

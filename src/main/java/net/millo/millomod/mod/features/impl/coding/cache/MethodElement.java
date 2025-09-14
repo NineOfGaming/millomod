@@ -113,8 +113,8 @@ public class MethodElement extends HierarchyElement {
         int color = new Color(0, 0, 0, (int)(fade.getProgress() * 150)).hashCode();
         if (isHovered()) color = new Color(12, 11, 9, (int)(fade.getProgress() * 150)).hashCode();
 
-//        context.fill(x, y, x+width, y+height, 0, color);
-//        context.fill(x + xOffset, y, x + xOffset + 2, y+height, 0, method.getColor());
+        context.fill(x, y, x+width, y+height, color);
+        context.fill(x + xOffset, y, x + xOffset + 2, y+height, method.getColor());
 
         if (textWidget == null) return;
         textWidget.setX(x+10 + xOffset);

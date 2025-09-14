@@ -16,6 +16,7 @@ public class SideChatFeature extends Feature {
 
     private static String filter;
     private static boolean simpleFilter;
+    private static String hideRegex;
 
     private static final ArrayList<ChatRule> rules = new ArrayList<>();
 
@@ -38,6 +39,8 @@ public class SideChatFeature extends Feature {
         config.set("side_chat.simple_filter", true);
 
         rules.forEach(rule -> config.set(rule.getKey(), true));
+
+        config.set("side_chat.hide_regex", "");
     }
 
     @Override
@@ -47,6 +50,8 @@ public class SideChatFeature extends Feature {
         simpleFilter = config.get("side_chat.simple_filter");
 
         rules.forEach(rule -> rule.update(config));
+
+        hideRegex = config.get("side_chat.hide_regex");
     }
 
     public static boolean fitsFilter(Text text) {
@@ -64,26 +69,12 @@ public class SideChatFeature extends Feature {
             return (Arrays.stream(searchText).anyMatch(str::contains));
         }
         return Pattern.compile(filter).matcher(str).find();
+    }
 
-
-//        if (!text.getSiblings().isEmpty()) {
-//            Text sibling = text.getSiblings().get(0);
-//            TextColor color = sibling.getStyle().getColor();
-//            if (color != null) {
-//                String hexCode = color.getHexCode();
-//            }
-//
-////            if ("[SUPPORT] ".equals(sibling.getString()) &&
-////               .equals("#557FD4")) {
-////                return true;
-////            }
-//
-//        }
-
-        // SUPPORT #557FD4
-        //
-
-
+    public static boolean fitsHideFilter(Text text) {
+        String str = text.getString();
+        if (hideRegex.isEmpty()) return false;
+        return Pattern.compile(hideRegex).matcher(str).find();
     }
 
 }

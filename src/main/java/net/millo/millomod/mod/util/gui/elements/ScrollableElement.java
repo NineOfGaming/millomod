@@ -52,8 +52,9 @@ public class ScrollableElement extends ClickableWidget implements Drawable, Elem
 
                 if (drawable instanceof TextFieldElement text) {
                     if (text.isHovered() && MilloMod.MC.currentScreen != null) {
-                        text.setFocused(true);
+                        text.setFocusUnlocked(true);
                         MilloMod.MC.currentScreen.setFocused(text);
+                        text.setFocused(true);
                         text.onClick(mouseX, mouseY);
                         return true;
                     }

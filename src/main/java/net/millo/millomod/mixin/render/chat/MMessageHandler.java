@@ -21,6 +21,7 @@ public class MMessageHandler {
     @WrapOperation(method = "processChatMessageInternal", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/hud/ChatHud;addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V"))
     private void theCourtRoom(ChatHud hud, Text text, MessageSignatureData msd, MessageIndicator indicator, Operation<Void> operation) {
+        if (hideMessage(text)) return;
         if (matchSideFilter(text)) {
             getSideChat().addMessage(text, msd, indicator);
             return;
@@ -32,6 +33,7 @@ public class MMessageHandler {
     @WrapOperation(method={"onGameMessage", "method_45745"}, at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/hud/ChatHud;addMessage(Lnet/minecraft/text/Text;)V"))
     private void theBlackCourtRoom(ChatHud hud, Text text, Operation<Void> operation) {
+        if (hideMessage(text)) return;
         if (matchSideFilter(text)) {
             getSideChat().addMessage(text);
             return;
@@ -42,6 +44,11 @@ public class MMessageHandler {
     @Unique
     private boolean matchSideFilter(Text text) {
         return (SideChatFeature.fitsFilter(text));
+    }
+
+    @Unique
+    private boolean hideMessage(Text text) {
+        return (SideChatFeature.fitsHideFilter(text));
     }
 
     @Unique

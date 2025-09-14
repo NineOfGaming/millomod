@@ -49,6 +49,7 @@ public class SettingsGUI extends GUI {
         addHeader(settingsList, "Side Chat");
         addFeatureToggle(settingsList, "side_chat");
         addStringOption(settingsList, "side_chat.filter");
+        addStringOption(settingsList, "side_chat.hide_regex");
         addBooleanOption(settingsList,
                 "side_chat.simple_filter",
                 "config.millo.side_chat.simple_filter",
@@ -114,6 +115,7 @@ public class SettingsGUI extends GUI {
         String tooltip = Text.translatable("millo.feature."+key+".desc").getString();
 
         TextFieldElement field = new TextFieldElement(textRenderer, x, 0, 200, 20, Text.literal(value));
+        field.setPlaceholder(Text.translatable("millo.feature."+key).setStyle(GUIStyles.COMMENT.getStyle()));
         field.setText(value);
         field.setMaxLength(999999);
         field.setChangedListener(s -> config.set(key, s.trim()));

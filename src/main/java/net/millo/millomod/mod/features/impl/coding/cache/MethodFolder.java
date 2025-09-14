@@ -7,12 +7,12 @@ import net.millo.millomod.mod.util.gui.elements.ButtonElement;
 import net.millo.millomod.mod.util.gui.elements.ContextElement;
 import net.millo.millomod.mod.util.gui.elements.ScrollableElement;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.texture.TextureSetup;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
-import org.joml.Matrix4f;
+import org.joml.Matrix3x2f;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -86,8 +86,6 @@ public class MethodFolder extends HierarchyElement {
         float w = 3.4f;
         arrowAngle = MathHelper.clampedLerp(arrowAngle, isOpen() ? 1.5707f : 0f, delta);
 
-//        Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
-
         float x1 = MathHelper.cos(arrowAngle) * w;
         float y1 = MathHelper.sin(arrowAngle) * w;
 
@@ -97,18 +95,16 @@ public class MethodFolder extends HierarchyElement {
         float x3 = MathHelper.cos(arrowAngle + 4.188f) * w;
         float y3 = MathHelper.sin(arrowAngle + 4.188f) * w;
 
-//        context.draw((provider) -> {
-//            VertexConsumer consumer = provider.getBuffer(RenderLayer.getGui());
-//
-//            consumer.vertex(matrix4f, x + xOffset + x3 + 4, y + y3 + height / 2f, 0).color(0xFFFFFFFF);
-//            consumer.vertex(matrix4f, x + xOffset + x2 + 4, y + y2 + height / 2f, 0).color(0xFFFFFFFF);
-//            consumer.vertex(matrix4f, x + xOffset + x2 + 4, y + y2 + height / 2f, 0).color(0xFFFFFFFF);
-//            consumer.vertex(matrix4f, x + xOffset + x1 + 4, y + y1 + height / 2f, 0).color(0xFFFFFFFF);
-//        });
-//
-//
-//        context.draw();
 
+        context.state.addSimpleElement(
+                new ColoredTriangleGuiElementRenderState(
+                        RenderPipelines.GUI, TextureSetup.empty(), new Matrix3x2f(context.getMatrices()),
+                        (int)(x + xOffset + x3 + 4), (int)(y + y3 + height / 2f),
+                        (int)(x + xOffset + x2 + 4), (int)(y + y2 + height / 2f),
+                        (int)(x + xOffset + x1 + 4), (int)(y + y1 + height / 2f),
+                        new Color(0xFFFFFFFF).hashCode(),
+                        null)
+        );
 
         if (textWidget == null) return;
         textWidget.setX(x+10 + xOffset);
