@@ -383,7 +383,9 @@ public class CacheGUI extends GUI {
     }
 
     public void findMethod(String methodName) {
-        methodName = methodName.replaceAll("(?<=\\.)(start|call)_(?=(func|process))", "");
+        methodName = methodName
+                .replaceAll("(?<=\\.)(start|call)_(?=(func|process))", "")
+                .replaceAll("\\.(event|func|process|entity_event)$", "");
         Template template = FileManager.readTemplate(plotId, methodName);
         if (template != null) loadTemplate(template);
     }
