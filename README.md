@@ -49,7 +49,12 @@ Within the cache gui you can:
 - To cache an entire plot, use `/cache plotold` and wait for it to finish. (`/cache plot` only works if you have admin permissions or something 💀)
 - If you have a keybind set for Cache Line / Menu in keybind settings, using it while looking at a line starter will cache that line and open the menu to that line
 
-Note: the cached code does not automatically refresh when its changed and needs to be re-cached using one of the two methodes mentioned above
+> [!NOTE]
+> The cached code does not automatically refresh when its changed and needs to be re-cached using one of the two methodes mentioned above.  
+> The keybind also works if your aiming at up to two blocks around the actual block.
+
+> [!IMPORTANT]
+> There is a chance that caching will not work for some reason idk why, you should check if all your code is cached especially after using the command to cache the entire plot.
 
 ## Developer Tools
 `SocketServe` provides a local socket access on port `31321`, allowing external tools to:
