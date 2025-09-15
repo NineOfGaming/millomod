@@ -175,7 +175,7 @@ public class PlotCaching extends Feature implements Keybound {
         }
         if (MilloMod.MC.currentScreen != null || doingFullScan) return;
 
-        if (cacheGUI == null) cacheGUI = new CacheGUI();
+        cacheGUI = new CacheGUI();
         cacheGUI.open();
 
         MinecraftClient mc = MilloMod.MC;

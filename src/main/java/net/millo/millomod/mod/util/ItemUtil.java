@@ -51,7 +51,7 @@ public enum ItemUtil {
                 ItemStringReader.ItemResult res = reader.consume(new StringReader(s));
 
                 ItemStack stack = new ItemStack(res.item(), 1);
-                
+
                 var changes = res.components();
                 if (changes != null) {
                     stack.applyChanges(changes);
