@@ -41,9 +41,11 @@ public class MilloGUI extends GUI {
                 Text.literal("Millo5 - Thigh highs for focus").setStyle(GUIStyles.UNSAVED.getStyle()), textRenderer));
         addDrawableChild(new TextElement(x, y + 78, backgroundWidth, 16,
                 Text.literal("xtreemes & endersaltz - Testing / Ideas").setStyle(GUIStyles.UNSAVED.getStyle()), textRenderer));
-//        addDrawableChild(new TextElement(x, y + 88, backgroundWidth, 16,
-//                Text.literal("").setStyle(GUIStyles.UNSAVED.getStyle()), textRenderer));
+        addDrawableChild(new TextElement(x, y + 88, backgroundWidth, 16,
+                Text.literal("NineOfGaming - Did a thing").setStyle(GUIStyles.UNSAVED.getStyle()), textRenderer));
 //        addDrawableChild(new TextElement(x, y + 98, backgroundWidth, 16,
+//                Text.literal("").setStyle(GUIStyles.UNSAVED.getStyle()), textRenderer));
+//        addDrawableChild(new TextElement(x, y + 108, backgroundWidth, 16,
 //                Text.literal("").setStyle(GUIStyles.UNSAVED.getStyle()), textRenderer));
 
 
