@@ -211,6 +211,7 @@ public class PlotCaching extends Feature implements Keybound {
 
     public void cacheMethodFromPosition(BlockPos position) {
         var marker = findTemplateMarkerNear(position);
+        if (marker == null) return;
         var interact = MilloMod.MC.interactionManager;
         var net = MilloMod.MC.getNetworkHandler();
         var player = MilloMod.MC.player;
@@ -450,7 +451,10 @@ public class PlotCaching extends Feature implements Keybound {
 
     private BlockPos findTemplateMarkerNear(BlockPos origin) {
         var world = MilloMod.MC.world;
-        if (world == null) return origin;
+        if (world == null) return null;
+        if (TEMPLATE_MARKER.matcher(Registries.BLOCK.getId(world.getBlockState(origin).getBlock()).toString()).matches()) {
+            return origin;
+        }
 
         for (int r = 0; r <= 2; r++) {
             for (BlockPos p : BlockPos.iterateOutwards(origin, r, r, r)) {
@@ -461,7 +465,7 @@ public class PlotCaching extends Feature implements Keybound {
                 }
             }
         }
-        return origin;
+        return null;
     }
 
 }
