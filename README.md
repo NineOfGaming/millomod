@@ -6,7 +6,7 @@
 This mod aims to make coding more efficient.
 
 ## Compatibility
-Minecraft Version: 1.21.3
+Minecraft Version: 1.21.8
 
 Mod Loader: Fabric
 
@@ -44,6 +44,12 @@ Within the cache gui you can:
  - Use `Ctrl + Shift + F` to search across the hierarchy.
  - Use `Ctrl + F` to search within the current function (click the **Search** button to expand to the entire plot)
  - Access any cached-plots code by entering the desired plot id in the top-left corner.
+
+### How to use
+- To cache an entire plot, use `/cache plotold` and wait for it to finish. (`/cache plot` only works if you have admin permissions or something 💀)
+- If you have a keybind set for Cache Line / Menu in keybind settings, using it while looking at a line starter will cache that line and open the menu to that line
+
+Note: the cached code does not automatically refresh when its changed and needs to be re-cached using one of the two methodes mentioned above
 
 ## Developer Tools
 `SocketServe` provides a local socket access on port `31321`, allowing external tools to:
