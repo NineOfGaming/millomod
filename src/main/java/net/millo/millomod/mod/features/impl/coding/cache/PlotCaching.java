@@ -82,10 +82,11 @@ public class PlotCaching extends Feature implements Keybound {
     @HandlePacket
     public boolean slotUpdate(ScreenHandlerSlotUpdateS2CPacket slot) {
         if (cacheNextItem == 0) return false;
-        cacheNextItem = 0;
 
         String codeTemplateData = ItemUtil.getPBVString(slot.getStack(), "hypercube:codetemplatedata");
         if (codeTemplateData == null) return false;
+
+        cacheNextItem = 0;
 
         cachedTemplate = Template.parseItem(codeTemplateData);
         cachedTemplate.startPos = clickedLoc;
@@ -145,6 +146,17 @@ public class PlotCaching extends Feature implements Keybound {
             }
         }
 
+        /*if (cacheNextItem == 0) {
+            if (doingFullScan) {
+                if (scanPlotStep_OLD == ScanPlotStep.WAIT_FOR_CACHE) {
+                    // stop retrying from here; advance and let the FSM decide about retries
+                    scanPlotStep_OLD = ScanPlotStep.TELEPORT;
+                }
+            } else if (cacheGUI != null) {
+                cacheGUI.loadTemplate(cachedTemplate);
+            }
+        }*/
+
         if (fullScan) {
             scanTick();
         }
@@ -171,36 +183,41 @@ public class PlotCaching extends Feature implements Keybound {
 
         if (mc.getNetworkHandler() == null || player == null || mc.world == null) return;
 
-        BlockHitResult rayHit = mc.world.raycast(new RaycastContext(
+        /*BlockHitResult rayHit = mc.world.raycast(new RaycastContext(
                 player.getEyePos(),
                 player.getEyePos().add(player.getRotationVector().multiply(5d)),
                 RaycastContext.ShapeType.OUTLINE,
                 RaycastContext.FluidHandling.NONE,
                 ShapeContext.absent()
-        ));
+        ));*/
 
-        if (rayHit.getType() == HitResult.Type.MISS) return;
+        BlockHitResult hit = (mc.crosshairTarget instanceof BlockHitResult) ? (BlockHitResult) mc.crosshairTarget : null;
 
-        var blockPos = findTemplateMarkerNear(rayHit.getBlockPos());
-        Block block = mc.world.getBlockState(blockPos).getBlock();
+        if (hit == null || hit.getType() == HitResult.Type.MISS) return;
 
-        if (!Pattern.compile("minecraft:(diamond|emerald|lapis|gold)_block").matcher(Registries.BLOCK.getId(block).toString()).matches()){
+        var blockPos = hit.getBlockPos();
+        //Block block = mc.world.getBlockState(blockPos).getBlock();
+
+        cacheMethodFromPosition(blockPos);
+
+        /*if (!Pattern.compile("minecraft:(diamond|emerald|lapis|gold)_block").matcher(Registries.BLOCK.getId(block).toString()).matches()){
             blockPos = blockPos.add(1, 0, 0);
         }
 
         if (MilloMod.MC.crosshairTarget instanceof BlockHitResult hit) {
             cacheMethodFromPosition(hit.getBlockPos());
-        }
+        }*/
     }
 
     public void cacheMethodFromPosition(BlockPos position) {
+        var marker = findTemplateMarkerNear(position);
         var interact = MilloMod.MC.interactionManager;
         var net = MilloMod.MC.getNetworkHandler();
         var player = MilloMod.MC.player;
 
         if (net == null || interact == null || player == null) return;
 
-        clickedLoc = position.toCenterPos();
+        clickedLoc = marker.toCenterPos();
         cacheNextItem = 40;
 
         boolean sneaking = player.isSneaking();
@@ -210,7 +227,7 @@ public class PlotCaching extends Feature implements Keybound {
         player.getInventory().setStack(player.getInventory().getSelectedSlot(), ItemStack.EMPTY);
         PlayerUtil.sendHandItem(ItemStack.EMPTY);
         if(!sneaking) net.sendPacket(new PlayerInputC2SPacket(new PlayerInput(false, false, false, false, false, true, false)));
-        PlayerUtil.rightClickPos(position);
+        PlayerUtil.rightClickPos(marker);
         if(!sneaking) net.sendPacket(new PlayerInputC2SPacket(new PlayerInput(false, false, false, false, false, false, false)));
         PlayerUtil.sendHandItem(item);
         player.getInventory().setStack(player.getInventory().getSelectedSlot(), item);
@@ -362,19 +379,19 @@ public class PlotCaching extends Feature implements Keybound {
             MilloMod.MC.player.sendMessage(Text.of("Finished full scan"), false);
             return;
         }
-        scanPlotTicksTried_OLD++;
+        /*scanPlotTicksTried_OLD++;
         if (scanPlotTicksTried_OLD > 10 && scanStepTarget != null) {
             scanPlotStep_OLD = ScanPlotStep.CACHE;
             if (MilloMod.MC.player.getPos().distanceTo(scanStepTarget.toCenterPos()) > 4) {
                 scanStack_OLD.add(scanStepTarget);
                 scanPlotStep_OLD = ScanPlotStep.TELEPORT;
             }
-        }
+        }*/
 
 
         if (scanPlotStep_OLD == ScanPlotStep.TELEPORT) {
             teleportDelay ++;
-            if (teleportDelay < 60) {
+            if (teleportDelay < 20) {
                 return;
             }
         }
@@ -385,7 +402,6 @@ public class PlotCaching extends Feature implements Keybound {
             case TELEPORT -> {
                 scanPlotTicksTried_OLD = 0;
                 scanStepTarget = scanStack_OLD.pop();
-                System.out.println(scanStack_OLD);
                 scanPlotStep_OLD = ScanPlotStep.WAIT_FOR_TP;
                 TeleportHandler.teleportTo(scanStepTarget.toCenterPos().add(0, 1.5, 0), () -> {
                     if (!TeleportHandler.lastSuccess) {
@@ -401,7 +417,23 @@ public class PlotCaching extends Feature implements Keybound {
                 scanPlotStep_OLD = ScanPlotStep.WAIT_FOR_CACHE;
                 cacheTries = 0;
                 cacheMethodFromPosition(scanStepTarget);
-                scanPlotStep_OLD = ScanPlotStep.TELEPORT;
+            }
+            case WAIT_FOR_CACHE -> {
+                if (cacheNextItem > 0) break;
+
+                if (cacheTries > 3) {
+                    scanPlotStep_OLD = ScanPlotStep.TELEPORT;
+                } else {
+                    scanPlotStep_OLD = ScanPlotStep.TELEPORT;
+                }
+            }
+            case WAIT_FOR_TP -> {
+                if (MilloMod.MC.player == null) break;
+                
+                if (scanStepTarget != null &&
+                        MilloMod.MC.player.getPos().distanceTo(scanStepTarget.toCenterPos()) <= 4) {
+                    scanPlotStep_OLD = ScanPlotStep.CACHE;
+                }
             }
         }
 
