@@ -32,10 +32,12 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
+import net.minecraft.util.PlayerInput;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -196,21 +198,11 @@ public class PlotCaching extends Feature implements Keybound {
 
         ItemStack item = player.getMainHandStack();
 
-//        player.getInventory().setStack(player.getInventory().selectedSlot, ItemStack.EMPTY);
-//        net.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().selectedSlot, ItemStack.EMPTY));
-//        if (!sneaking) net.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY));
-//        interact.interactBlock(player, Hand.MAIN_HAND, new BlockHitResult(
-//                clickedLoc, Direction.UP, position, false
-//        ));
-//        if (!sneaking) net.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY));
-//        net.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().selectedSlot, item));
-//        player.getInventory().setStack(player.getInventory().selectedSlot, item);
-
         player.getInventory().setStack(player.getInventory().getSelectedSlot(), ItemStack.EMPTY);
         PlayerUtil.sendHandItem(ItemStack.EMPTY);
-        if (!sneaking) PlayerUtil.sendSneak(true);
+        if(!sneaking) net.sendPacket(new PlayerInputC2SPacket(new PlayerInput(false, false, false, false, false, true, false)));
         PlayerUtil.rightClickPos(position);
-        if (!sneaking) PlayerUtil.sendSneak(false);
+        if(!sneaking) net.sendPacket(new PlayerInputC2SPacket(new PlayerInput(false, false, false, false, false, false, false)));
         PlayerUtil.sendHandItem(item);
         player.getInventory().setStack(player.getInventory().getSelectedSlot(), item);
     }
@@ -399,6 +391,7 @@ public class PlotCaching extends Feature implements Keybound {
                 scanPlotStep_OLD = ScanPlotStep.WAIT_FOR_CACHE;
                 cacheTries = 0;
                 cacheMethodFromPosition(scanStepTarget);
+                scanPlotStep_OLD = ScanPlotStep.TELEPORT;
             }
         }
 
