@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "net.millo.millomod.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "network.MClientConnection",
     "render.ChestSearchAccessor",
