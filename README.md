@@ -54,7 +54,7 @@ Within the cache gui you can:
 > The keybind also works if your aiming at up to two blocks around the actual block.
 
 > [!IMPORTANT]
-> There is a chance that caching will not work for some reason idk why, you should check if all your code is cached especially after using the command to cache the entire plot.
+> There is a chance that caching of a line will not work for some reason idk why, you should check if all your code is cached especially after using the command to cache the entire plot.
 
 ## Developer Tools
 `SocketServe` provides a local socket access on port `31321`, allowing external tools to:
