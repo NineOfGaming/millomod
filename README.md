@@ -73,7 +73,9 @@ Sending data to the client requires a JSON formatted like this:
 ## Notice
 This is a fork, please do not bother the original creator about stuff on this repository.
 
-I am not planing on consistently maintaining this fork, i just wanted to use it on 1.21.8 early because i already switched to prepare for df update and fix/add a few things while im at it
+I am not planing on consistently maintaining this fork, i just wanted to use it on 1.21.8 early because i already switched to prepare for df update and fix/add a few things while im at it.
+
+I intentionally did not include the build jar file because then people will take the mod for granted until i inevitably stop maintaining this fork and then go bother the original creator about it.
 
 ## Notice (from the original repository)
 
