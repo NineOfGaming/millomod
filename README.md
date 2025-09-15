@@ -49,7 +49,12 @@ Within the cache gui you can:
 - To cache an entire plot, use `/cache plotold` and wait for it to finish. (`/cache plot` only works if you have admin permissions or something 💀)
 - If you have a keybind set for Cache Line / Menu in keybind settings, using it while looking at a line starter will cache that line and open the menu to that line
 
-Note: the cached code does not automatically refresh when its changed and needs to be re-cached using one of the two methodes mentioned above
+> [!NOTE]
+> The cached code does not automatically refresh when its changed and needs to be re-cached using one of the two methodes mentioned above.  
+> The keybind also works if your aiming at up to two blocks around the actual block.
+
+> [!IMPORTANT]
+> There is a chance that caching of a line will not work for some reason idk why, you should check if all your code is cached especially after using the command to cache the entire plot.
 
 ## Developer Tools
 `SocketServe` provides a local socket access on port `31321`, allowing external tools to:
@@ -66,6 +71,12 @@ Sending data to the client requires a JSON formatted like this:
 ```
 
 ## Notice
+This is a fork, please do not bother the original creator about stuff on this repository.
+
+I am not planing on consistently maintaining this fork, i just wanted to use it on 1.21.8 early because i already switched to prepare for df update and fix/add a few things while im at it
+
+## Notice (from the original repository)
+
 MilloMod was made for personal use. People have asked for this mod- if you have any suggestions or bug reports, please message `@im.endersaltz` on discord.
 
 I ain't responsible.
