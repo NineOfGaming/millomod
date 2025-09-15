@@ -12,6 +12,10 @@ import net.minecraft.nbt.*;
 import net.minecraft.util.packrat.PackratParser;
 import net.minecraft.world.World;
 
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.registry.RegistryOps;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -27,14 +31,46 @@ public enum ItemUtil {
 
     public static ItemStack fromNbt(String data) {
         try {
-//            PackratParser<NbtElement> parser = SnbtParsing.createParser(NbtOps.INSTANCE);
+            if (data == null) return ItemStack.EMPTY;
+            World world = MilloMod.MC.world;
+            if (world == null) return ItemStack.EMPTY;
 
-            ItemStringReader stringReader = new ItemStringReader(MilloMod.MC.world.getRegistryManager());
-            ItemStringReader.ItemResult result = stringReader.consume(new StringReader(data));
-            return new ItemStack(result.item());
+            String s = data.trim();
+            if (s.isEmpty()) return ItemStack.EMPTY;
+
+            if (s.startsWith("{")) {
+                // Full SNBT -> NbtElement -> ItemStack via CODEC (1.21+)
+                PackratParser<NbtElement> parser = SnbtParsing.createParser(NbtOps.INSTANCE);
+                NbtElement element = parser.parse(new StringReader(s));
+                var ops = RegistryOps.of(NbtOps.INSTANCE, world.getRegistryManager());
+                var result = ItemStack.CODEC.parse(ops, element);
+                return result.result().orElse(ItemStack.EMPTY);
+            } else {
+                // Item string -> Item + components
+                ItemStringReader reader = new ItemStringReader(world.getRegistryManager());
+                ItemStringReader.ItemResult res = reader.consume(new StringReader(s));
+
+                ItemStack stack = new ItemStack(res.item(), 1);
+                
+                var changes = res.components();
+                if (changes != null) {
+                    stack.applyChanges(changes);
+                }
+
+                return stack;
+            }
 
         } catch (CommandSyntaxException e) {
-            System.out.println("Error parsing item NBT: " + e.getMessage());
+            String input = e.getInput();
+            int cursor = e.getCursor();
+            if (input != null && cursor >= 0) {
+                StringBuilder caret = new StringBuilder();
+                for (int i = 0; i < cursor; i++) caret.append(' ');
+                caret.append('^');
+                System.out.println("Error parsing item NBT: " + e.getMessage() + "\n" + input + "\n" + caret);
+            } else {
+                System.out.println("Error parsing item NBT: " + e.getMessage());
+            }
             return ItemStack.EMPTY;
         } catch (Exception e) {
             System.out.println("Unexpected error parsing item NBT: " + e.getMessage());

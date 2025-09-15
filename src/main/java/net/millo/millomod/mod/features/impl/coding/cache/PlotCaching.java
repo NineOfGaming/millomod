@@ -429,7 +429,7 @@ public class PlotCaching extends Feature implements Keybound {
             }
             case WAIT_FOR_TP -> {
                 if (MilloMod.MC.player == null) break;
-                
+
                 if (scanStepTarget != null &&
                         MilloMod.MC.player.getPos().distanceTo(scanStepTarget.toCenterPos()) <= 4) {
                     scanPlotStep_OLD = ScanPlotStep.CACHE;
