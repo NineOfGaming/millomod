@@ -71,6 +71,10 @@ Sending data to the client requires a JSON formatted like this:
 ```
 
 ## Notice
+This is a fork, please do not bother the original creator about stuff on this repository.
+
+## Notice (from the original repository)
+
 MilloMod was made for personal use. People have asked for this mod- if you have any suggestions or bug reports, please message `@im.endersaltz` on discord.
 
 I ain't responsible.
