@@ -44,6 +44,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.client.gui.screen.Screen;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -156,9 +157,13 @@ public class PlotCaching extends Feature implements Keybound {
 
 
     public void trigger() {
+        if (MilloMod.MC.currentScreen instanceof CacheGUI) {
+            MilloMod.MC.setScreen((Screen) null);
+            return;
+        }
         if (MilloMod.MC.currentScreen != null || doingFullScan) return;
 
-        cacheGUI = new CacheGUI();
+        if (cacheGUI == null) cacheGUI = new CacheGUI();
         cacheGUI.open();
 
         MinecraftClient mc = MilloMod.MC;
@@ -166,7 +171,8 @@ public class PlotCaching extends Feature implements Keybound {
 
         if (mc.getNetworkHandler() == null || player == null || mc.world == null) return;
 
-        BlockHitResult rayHit = mc.world.raycast(new RaycastContext(player.getEyePos(),
+        BlockHitResult rayHit = mc.world.raycast(new RaycastContext(
+                player.getEyePos(),
                 player.getEyePos().add(player.getRotationVector().multiply(5d)),
                 RaycastContext.ShapeType.OUTLINE,
                 RaycastContext.FluidHandling.NONE,
@@ -175,13 +181,16 @@ public class PlotCaching extends Feature implements Keybound {
 
         if (rayHit.getType() == HitResult.Type.MISS) return;
 
-        var blockPos = rayHit.getBlockPos();
+        var blockPos = findTemplateMarkerNear(rayHit.getBlockPos());
         Block block = mc.world.getBlockState(blockPos).getBlock();
+
         if (!Pattern.compile("minecraft:(diamond|emerald|lapis|gold)_block").matcher(Registries.BLOCK.getId(block).toString()).matches()){
             blockPos = blockPos.add(1, 0, 0);
         }
 
-        cacheMethodFromPosition(blockPos);
+        if (MilloMod.MC.crosshairTarget instanceof BlockHitResult hit) {
+            cacheMethodFromPosition(hit.getBlockPos());
+        }
     }
 
     public void cacheMethodFromPosition(BlockPos position) {
@@ -376,6 +385,7 @@ public class PlotCaching extends Feature implements Keybound {
             case TELEPORT -> {
                 scanPlotTicksTried_OLD = 0;
                 scanStepTarget = scanStack_OLD.pop();
+                System.out.println(scanStack_OLD);
                 scanPlotStep_OLD = ScanPlotStep.WAIT_FOR_TP;
                 TeleportHandler.teleportTo(scanStepTarget.toCenterPos().add(0, 1.5, 0), () -> {
                     if (!TeleportHandler.lastSuccess) {
@@ -403,5 +413,23 @@ public class PlotCaching extends Feature implements Keybound {
 
     private enum ScanPlotStep { NONE, TELEPORT, WAIT_FOR_TP, CACHE, WAIT_FOR_CACHE }
 
+    private static final Pattern TEMPLATE_MARKER = Pattern.compile(
+            "minecraft:(diamond_block|emerald_block|lapis_block|gold_block)", Pattern.CASE_INSENSITIVE);
+
+    private BlockPos findTemplateMarkerNear(BlockPos origin) {
+        var world = MilloMod.MC.world;
+        if (world == null) return origin;
+
+        for (int r = 0; r <= 2; r++) {
+            for (BlockPos p : BlockPos.iterateOutwards(origin, r, r, r)) {
+                var b = world.getBlockState(p).getBlock();
+                var id = Registries.BLOCK.getId(b).toString();
+                if (TEMPLATE_MARKER.matcher(id).matches()) {
+                    return p;
+                }
+            }
+        }
+        return origin;
+    }
 
 }
