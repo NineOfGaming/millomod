@@ -6,7 +6,7 @@
 This mod aims to make coding more efficient.
 
 ## Compatibility
-Minecraft Version: 1.21.3
+Minecraft Version: 1.21.8
 
 Mod Loader: Fabric
 
